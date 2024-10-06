@@ -5,7 +5,7 @@ import BottomNavBar from '../../components/BottomNavBar';
 import { PieChart } from 'react-native-svg-charts'; 
 import axios from 'axios';
 
-const API_BASE_URL = 'http://civiclens-backend-production-2c6d.up.railway.app/promise/api/performance'; // Adjust if needed
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api/performance'; // Adjust if needed
 
 const statusColors: Record<string, { bg: string; text: string }> = {
   'On Track': { bg: '#D1FAE5', text: '#059669' },

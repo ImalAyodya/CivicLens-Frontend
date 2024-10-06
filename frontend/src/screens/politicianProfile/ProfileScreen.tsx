@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Alert, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import InfoRow from "../../components/politicianProfile/InfoRow";
+import BlueHeader from "../../components/BlueHeader";
 import RoleRow from "../../components/politicianProfile/RoleRow";
 import ElectionRow from "../../components/politicianProfile/ElectionRow";
 import { politician as dummyPolitician } from "../../constants/politicianData";
@@ -11,12 +12,10 @@ import { politicians as dummyPoliticians } from "../../constants/dummyData";
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
 import axios from "axios";
-// Import RootStackParamList as a type from "../../../App"
-//import type { RootStackParamList } from "../../../App";
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, "PoliticianDetails">;
 
-const API_BASE_URL = "http://civiclens-backend-production-2c6d.up.railway.app";
+const API_BASE_URL = "https://civiclens-backend-production-2c6d.up.railway.app";
 
 const ProfileScreen: React.FC = () => {
   const route = useRoute<ProfileScreenRouteProp>();
@@ -284,177 +283,143 @@ const ProfileScreen: React.FC = () => {
     );
   }
 
-   return (
-         <ScrollView className="flex-1 bg-gray-50">
-         {/* Header Banner */}
-         <View className="relative">
-           {/* <Image
-             source={{ uri: "https://your-cdn.com/politician-banner.jpg" }}
-             className="w-full h-56"
-           /> */}
-           <Image
-          source={{ uri: politician.image || 'https://via.placeholder.com/400x224/cccccc/666666?text=No+Image' }}
-          style={styles.profileImage}
-          resizeMode="cover"
-        />
-           <LinearGradient
-             colors={["transparent", "rgba(0,0,0,0.7)"]}
-             className="absolute bottom-0 left-0 right-0 h-24"
-           />
-             <TouchableOpacity 
-          className="absolute top-5 left-4 bg-black/40 p-2 rounded-full"
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={20} color="white" />
-        </TouchableOpacity>
-           {/* <TouchableOpacity className="absolute top-5 left-4 bg-black/40 p-2 rounded-full">
-             <Ionicons name="arrow-back" size={20} color="white" />
-           </TouchableOpacity> */}
-   
-           {/* Name + Party Badge */}
-           <View className="absolute bottom-4 left-4">
-             <View className="flex-row items-center space-x-2">
-               <View style={{ backgroundColor: politician.party.color || '#3B82F6' }} className="px-2 py-1 rounded-md">
-                 <Text className="text-white text-xs font-semibold">
-                   {politician.party.short}
-                 </Text>
-               </View>
-             </View>
-             <Text className="text-white text-2xl font-bold mt-2">
-               {politician.name}
-             </Text>
-             <Text className="text-gray-200 text-sm">{politician.role}</Text>
-           </View>
-         </View>
+  return (
+    <>
+      <BlueHeader
+        title={politician.name}
+        onBack={() => navigation.goBack()}
+      />
+      <ScrollView className="flex-1 bg-gray-50">
+        {/* Header Banner */}
+        <View className="relative">
+          <Image
+            source={{ uri: politician.image || 'https://via.placeholder.com/400x224/cccccc/666666?text=No+Image' }}
+            style={styles.profileImage}
+            resizeMode="cover"
+          />
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.7)"]}
+            className="absolute bottom-0 left-0 right-0 h-24"
+          />
+          {/* Name + Party Badge */}
+          <View className="absolute bottom-4 left-4">
+            <View className="flex-row items-center space-x-2">
+              <View style={{ backgroundColor: politician.party.color || '#3B82F6' }} className="px-2 py-1 rounded-md">
+                <Text className="text-white text-xs font-semibold">
+                  {politician.party.short}
+                </Text>
+              </View>
+            </View>
+            <Text className="text-white text-2xl font-bold mt-2">
+              {politician.name}
+            </Text>
+            <Text className="text-gray-200 text-sm">{politician.role}</Text>
+          </View>
+        </View>
 
-         {/* Backend Status Indicator */}
-         {backendStatus === 'disconnected' && __DEV__ && (
-           <View style={styles.statusBanner}>
-             <Ionicons name="warning" size={16} color="#ff6b35" />
-             <Text style={styles.statusText}>
-               Backend disconnected - Using sample data
-             </Text>
-           </View>
-         )}
-   
-         {/* Personal Information */}
-         <View className="bg-white rounded-2xl shadow p-4 m-4">
-           <Text className="text-lg font-semibold mb-3">Personal Information</Text>
-           <InfoRow label="Date of Birth" value={politician.dob} />
-           <InfoRow label="Region" value={politician.region} />
-           <InfoRow label="Years of Service" value={politician.serviceYears} />
-           {/* <InfoRow label="Education" value={politician.education} /> */}
-         </View>
-   
-         {/* Party Details */}
-         <View className="bg-white rounded-2xl shadow p-4 m-4">
-           <Text className="text-lg font-semibold mb-3">Party Details</Text>
-           <View className="flex-row items-center space-x-3 mb-3">
-             {politician.party.logo ? (
-               <Image 
-                 source={{ uri: politician.party.logo }} 
-                 className="w-12 h-12 rounded-lg"
-                 resizeMode="contain"
-               />
-             ) : (
-               <View style={{ backgroundColor: politician.party.color || '#3B82F6' }} className="w-12 h-12 px-3 py-2 rounded-lg items-center justify-center">
-                 <Text className="text-white font-bold text-sm">{politician.party.short}</Text>
-               </View>
-             )}
-             <View className="flex-1">
-               <Text className="font-semibold text-lg">{politician.party.name}</Text>
-               <Text className="text-gray-600 text-sm">({politician.party.short})</Text>
-             </View>
-           </View>
-           
-           {/* <View className="space-y-2">
-             <View className="flex-row items-center">
-               <Ionicons name="person-outline" size={16} color="#6B7280" />
-               <Text className="text-gray-500 text-sm ml-2">Founder: {politician.party.founder}</Text>
-             </View>
-             <View className="flex-row items-center">
-               <Ionicons name="calendar-outline" size={16} color="#6B7280" />
-               <Text className="text-gray-500 text-sm ml-2">Founded: {politician.party.founded}</Text>
-             </View>
-             <View className="flex-row items-center">
-               <Ionicons name="color-palette-outline" size={16} color="#6B7280" />
-               <Text className="text-gray-500 text-sm ml-2">Party Color: {politician.party.color}</Text>
-             </View>
-             {politician.party.ideology !== "Unknown" && (
-               <View className="flex-row items-center">
-                 <Ionicons name="library-outline" size={16} color="#6B7280" />
-                 <Text className="text-gray-500 text-sm ml-2">Ideology: {politician.party.ideology}</Text>
-               </View>
-             )}
-           </View> */}
-         </View>
-   
-         {/* Political Roles */}
-         <View className="bg-white rounded-2xl shadow p-4 m-4">
-           <Text className="text-lg font-semibold mb-3">Political Roles</Text>
-           {politician.roles && politician.roles.length > 0 ? (
-             politician.roles.map((role: any, idx: number) => (
-               <View key={idx} className="mb-3 last:mb-0">
-                 <RoleRow 
-                   title={role.title} 
-                   years={role.years} 
-                   active={role.active} 
-                 />
-                 {role.level && (
-                   <Text className="text-xs text-gray-500 mt-1 ml-2">Level: {role.level}</Text>
-                 )}
-                 {(role.startDate || role.endDate) && (
-                   <Text className="text-xs text-gray-500 mt-1 ml-2">
-                     {role.startDate && `Started: ${new Date(role.startDate).toLocaleDateString()}`}
-                     {role.startDate && role.endDate && ' • '}
-                     {role.endDate && `Ended: ${new Date(role.endDate).toLocaleDateString()}`}
-                   </Text>
-                 )}
-               </View>
-             ))
-           ) : (
-             <Text className="text-gray-500 text-sm">No role information available</Text>
-           )}
-         </View>
-   
-         {/* Achievements */}
-         <View className="bg-white rounded-2xl shadow p-4 m-4">
-           <Text className="text-lg font-semibold mb-3">Achievements & History</Text>
-           {politician.achievements && politician.achievements.length > 0 ? (
-             politician.achievements.map((ach: string, idx: number) => (
-               <Text key={idx} className="text-gray-600 text-sm leading-relaxed mb-1">
-                 • {ach}
-               </Text>
-             ))
-           ) : (
-             <Text className="text-gray-500 text-sm">No achievements information available</Text>
-           )}
-         </View>
-   
-         {/* Election Wins */}
-         <View className="bg-white rounded-2xl shadow p-4 m-4 mb-8">
-           <Text className="text-lg font-semibold mb-3">Past Election Wins</Text>
-           {politician.elections && politician.elections.length > 0 ? (
-             politician.elections.map((e: any, idx: number) => (
-               <ElectionRow
-                 key={idx}
-                 year={e.year}
-                 position={e.position}
-                 party={e.party}
-                 votes={e.votes}
-               />
-             ))
-           ) : (
-             <Text className="text-gray-500 text-sm">No election information available</Text>
-           )}
-         </View>
-       </ScrollView>
-       
-     );
- 
+        {/* Backend Status Indicator */}
+        {backendStatus === 'disconnected' && __DEV__ && (
+          <View style={styles.statusBanner}>
+            <Ionicons name="warning" size={16} color="#ff6b35" />
+            <Text style={styles.statusText}>
+              Backend disconnected - Using sample data
+            </Text>
+          </View>
+        )}
+
+        {/* Personal Information */}
+        <View className="bg-white rounded-2xl shadow p-4 m-4">
+          <Text className="text-lg font-semibold mb-3">Personal Information</Text>
+          <InfoRow label="Date of Birth" value={politician.dob} />
+          <InfoRow label="Region" value={politician.region} />
+          <InfoRow label="Years of Service" value={politician.serviceYears} />
+        </View>
+
+        {/* Party Details */}
+        <View className="bg-white rounded-2xl shadow p-4 m-4">
+          <Text className="text-lg font-semibold mb-3">Party Details</Text>
+          <View className="flex-row items-center space-x-3 mb-3">
+            {politician.party.logo ? (
+              <Image 
+                source={{ uri: politician.party.logo }} 
+                className="w-12 h-12 rounded-lg"
+                resizeMode="contain"
+              />
+            ) : (
+              <View style={{ backgroundColor: politician.party.color || '#3B82F6' }} className="w-12 h-12 px-3 py-2 rounded-lg items-center justify-center">
+                <Text className="text-white font-bold text-sm">{politician.party.short}</Text>
+              </View>
+            )}
+            <View className="flex-1">
+              <Text className="font-semibold text-lg">{politician.party.name}</Text>
+              <Text className="text-gray-600 text-sm">({politician.party.short})</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Political Roles */}
+        <View className="bg-white rounded-2xl shadow p-4 m-4">
+          <Text className="text-lg font-semibold mb-3">Political Roles</Text>
+          {politician.roles && politician.roles.length > 0 ? (
+            politician.roles.map((role: any, idx: number) => (
+              <View key={idx} className="mb-3 last:mb-0">
+                <RoleRow 
+                  title={role.title} 
+                  years={role.years} 
+                  active={role.active} 
+                />
+                {role.level && (
+                  <Text className="text-xs text-gray-500 mt-1 ml-2">Level: {role.level}</Text>
+                )}
+                {(role.startDate || role.endDate) && (
+                  <Text className="text-xs text-gray-500 mt-1 ml-2">
+                    {role.startDate && `Started: ${new Date(role.startDate).toLocaleDateString()}`}
+                    {role.startDate && role.endDate && ' • '}
+                    {role.endDate && `Ended: ${new Date(role.endDate).toLocaleDateString()}`}
+                  </Text>
+                )}
+              </View>
+            ))
+          ) : (
+            <Text className="text-gray-500 text-sm">No role information available</Text>
+          )}
+        </View>
+
+        {/* Achievements */}
+        <View className="bg-white rounded-2xl shadow p-4 m-4">
+          <Text className="text-lg font-semibold mb-3">Achievements & History</Text>
+          {politician.achievements && politician.achievements.length > 0 ? (
+            politician.achievements.map((ach: string, idx: number) => (
+              <Text key={idx} className="text-gray-600 text-sm leading-relaxed mb-1">
+                • {ach}
+              </Text>
+            ))
+          ) : (
+            <Text className="text-gray-500 text-sm">No achievements information available</Text>
+          )}
+        </View>
+
+        {/* Election Wins */}
+        <View className="bg-white rounded-2xl shadow p-4 m-4 mb-8">
+          <Text className="text-lg font-semibold mb-3">Past Election Wins</Text>
+          {politician.elections && politician.elections.length > 0 ? (
+            politician.elections.map((e: any, idx: number) => (
+              <ElectionRow
+                key={idx}
+                year={e.year}
+                position={e.position}
+                party={e.party}
+                votes={e.votes}
+              />
+            ))
+          ) : (
+            <Text className="text-gray-500 text-sm">No election information available</Text>
+          )}
+        </View>
+      </ScrollView>
+    </>
+  );
 };
-
-import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   profileImage: {

@@ -19,7 +19,8 @@ export type RootStackParamList = {
 
   
   PoliticalQuiz: undefined;
-  QuizQuestion: {
+  // Current definition in types.ts
+QuizQuestion: {
     questionId: number;
     totalQuestions: number;
     score: number;
@@ -33,6 +34,7 @@ export type RootStackParamList = {
     language: string;
     userAnswers: UserAnswer[];
   };
+  
   PoliBot: undefined;
   PoliBotChat: undefined;
   NewsFeed: undefined;
@@ -76,8 +78,8 @@ export type RootStackParamList = {
   UserProfile: undefined;
   QuizHistory: undefined;
   QuizSummary: {
-    quizId: string;
-    // other params
+    userAnswers: UserAnswer[];
+    language: string;
   };
   QuizDetail: {
     quizId: string;

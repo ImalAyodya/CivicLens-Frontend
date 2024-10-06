@@ -9,7 +9,7 @@ import * as Sharing from 'expo-sharing';
 import BottomNavBar from '../../components/BottomNavBar';
 import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 
-const API_BASE_URL = 'http://civiclens-backend-production-2c6d.up.railway.app/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
 
 const statusColors: Record<string, { bg: string; text: string }> = {
   complete: { bg: '#D1FAE5', text: '#059669' },

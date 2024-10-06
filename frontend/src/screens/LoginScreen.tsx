@@ -32,7 +32,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     try {
       if (isAdminMode) {
         if (email === 'admin@gmail.com' && password === 'admin') {
-          // navigation.navigate('AdminDashboard');
+          navigation.navigate('AdminDashboard');
         } else {
           setErrorMsg('Invalid Credentials, please try again');
         }

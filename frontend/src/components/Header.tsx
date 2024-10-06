@@ -46,16 +46,22 @@ const Header: React.FC<HeaderProps> = ({
     { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
     { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
     { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-    
-    // Performance features from politician promises
-    { id: '8', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
-    { id: '9', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
-    { id: '10', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
-    { id: '11', title: 'WatchList', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'WatchList' },
-    
+
+    // News & Election features
+    { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
+    { id: '9', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
+    { id: '10', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
+    { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
+    { id: '12', title: 'Election Notifications', icon: <Ionicons name="notifications-outline" size={22} color="#2563EB" />, screen: 'Notifications' },
+
+    // Performance features
+    { id: '13', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
+    { id: '14', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
+    { id: '15', title: 'WatchList', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'WatchList' },
+
     // Supporting features
-    { id: '12', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
-    { id: '13', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+    { id: '16', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+    { id: '17', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
@@ -152,17 +158,10 @@ const Header: React.FC<HeaderProps> = ({
                     if (
                       navigation &&
                       [
-                        'Home',
-                        'Login',
-                        'Dashboard',
-                        'Hierarchy',
-                        'Comparison',
-                        'PoliticalQuiz',
-                        'PoliBot',
-                        'QuizHistory',
-                        'HelpAndSupport',
-                        'Notifications',
-                        'Profile',
+                        'Home', 'Login', 'Dashboard', 'Hierarchy', 'Comparison', 
+                        'PoliticalQuiz', 'PoliBot', 'QuizHistory', 'HelpAndSupport', 
+                        'Notifications', 'Profile',
+                        'WatchList', 'MinistryPerformance', 'GrowthNews' // ADD THESE
                       ].includes(item.screen)
                     ) {
                       navigation.navigate(item.screen);
@@ -177,6 +176,21 @@ const Header: React.FC<HeaderProps> = ({
               )}
             />
             <View className="mt-auto p-4">
+              {/* Election Status Section */}
+              <View className="bg-gray-50 p-4 mb-2 rounded-lg">
+                <Text className="text-sm text-gray-500 mb-1">Next General Election</Text>
+                <Text className="text-base text-gray-900 font-medium mb-2">Presidential Election 2024</Text>
+                <View className="bg-blue-50 rounded-lg p-3">
+                  <View className="flex-row justify-between">
+                    <Text className="text-blue-800 font-medium">Countdown</Text>
+                    <Text className="text-blue-800 font-bold">42 days</Text>
+                  </View>
+                  <View className="h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+                    <View className="h-full bg-blue-600 rounded-full" style={{ width: '60%' }} />
+                  </View>
+                </View>
+              </View>
+              {/* Version */}
               <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
             </View>
           </View>

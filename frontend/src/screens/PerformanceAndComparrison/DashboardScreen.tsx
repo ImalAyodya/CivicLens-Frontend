@@ -154,9 +154,8 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleTabPress = (tabName: string) => {
   setActiveTab(tabName);
-  if (
-    ['Home', 'Dashboard', 'NewsFeed', 'PoliticianPromises'].includes(tabName)
-  ) {
+  // Only navigate if not already on the tab
+  if (tabName !== activeTab) {
     navigation.navigate(tabName as never);
   }
 };

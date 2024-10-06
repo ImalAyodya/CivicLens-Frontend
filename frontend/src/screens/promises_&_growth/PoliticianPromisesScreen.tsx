@@ -19,7 +19,7 @@ const getStatusColor = (status: string) =>
   statusColors[status] || { bg: '#E5E7EB', text: '#6B7280' };
 
 // Configure Axios base URL
-const API_BASE_URL = 'http://civiclens-backend-production-2c6d.up.railway.app/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -336,6 +336,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginHorizontal: 16,
     overflow: 'hidden',
+    marginTop: 16, // <-- Add this line for top margin
   },
   categoryTab: {
     flex: 1,

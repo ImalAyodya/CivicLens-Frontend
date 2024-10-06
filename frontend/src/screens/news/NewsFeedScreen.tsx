@@ -12,6 +12,7 @@ import {
   Dimensions,
   Easing
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNewsData, useBreakingNews } from '../../hooks/useNewsData';
 import { NewsCard } from '../../components/news/NewsCard';
 import { BreakingNewsCard } from '../../components/news/BreakingNewsCard';
@@ -25,6 +26,7 @@ import { useAppNavigation } from '../../hooks/useAppNavigation';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import BottomNavBar from '../../components/BottomNavBar';
+import Header from '../../components/Header';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NewsFeed'>;
 
@@ -50,9 +52,8 @@ const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
   
   const handleTabPress = (tabName: string) => {
   setActiveTab(tabName);
-  if (
-    ['Home', 'Dashboard', 'NewsFeed', 'PoliticianPromises'].includes(tabName)
-  ) {
+  // Only navigate if not already on the tab
+  if (tabName !== activeTab) {
     navigation.navigate(tabName as never);
   }
 };
@@ -242,46 +243,18 @@ const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* News-specific sidebar */}
-      <NewsSidebar 
+      {/* <NewsSidebar 
         visible={sidebarVisible} 
         onClose={() => setSidebarVisible(false)} 
+      /> */}
+
+      {/* Use shared Header for consistency */}
+      <Header
+        navigation={navigation}
+        pageTitle="News & Elections"
+        onMenuPress={toggleSidebar}
       />
-      
-      {/* Custom Header for News & Elections with sidebar button */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity
-            onPress={toggleSidebar}
-            style={styles.menuButton}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="menu" size={24} color="white" />
-          </TouchableOpacity>
-          <View style={styles.headerTitle}>
-            <View style={styles.headerIconContainer}>
-              <Text style={{ fontSize: 16 }}>📰</Text>
-            </View>
-            <Text style={styles.headerText}>News & Elections</Text>
-          </View>
-        </View>
-        
-        <View style={styles.headerRight}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Notifications')}
-            style={styles.notificationButton}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="notifications-outline" size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => console.log('Profile pressed')}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="person-circle-outline" size={28} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
-      
+
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
