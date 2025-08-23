@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
   Home: undefined;
+  MainTabs: undefined; // <-- Add this line
   NewsFeed: undefined;
   NewsDetail: {
     newsItem: NewsItem;
@@ -12,4 +13,6 @@ export type RootStackParamList = {
   ElectionCountdown: undefined;
   PastElections: undefined;
   ElectionMap: undefined;  // Add this new screen
+  PoliticianProfile: { id: string }; 
+  DirectoryScreen: undefined;
 };

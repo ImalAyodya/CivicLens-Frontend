@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
-import InfoRow from "../components/InfoRow";
+import InfoRow from "../src/components/politicianProfile/InfoRow";
 import RoleRow from "../components/RoleRow";
 import ElectionRow from "../components/ElectionRow";
 import { politician } from "../constants/politicianData";
