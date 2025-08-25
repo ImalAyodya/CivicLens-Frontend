@@ -17,6 +17,9 @@ export function useAppNavigation() {
         case 'NewsFeed':
           navigation.navigate('NewsFeed');
           break;
+        case 'DirectoryScreen':
+          navigation.navigate('DirectoryScreen');
+          break;
         // Add other cases as screens are implemented
         default:
           console.log(`Screen ${tabName} not implemented yet`);
