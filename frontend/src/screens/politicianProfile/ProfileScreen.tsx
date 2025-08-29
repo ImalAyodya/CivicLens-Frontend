@@ -16,7 +16,7 @@ import type { RootStackParamList } from '../../navigation/types';
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, "PoliticianProfile">;
 const ProfileScreen: React.FC = () => {
   const route = useRoute<ProfileScreenRouteProp>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackScreenProps<RootStackParamList>["navigation"]>();
   
   // Get politician data based on ID from route params
   const politicianId = route.params?.id;
@@ -31,17 +31,28 @@ const ProfileScreen: React.FC = () => {
          <ScrollView className="flex-1 bg-gray-50">
          {/* Header Banner */}
          <View className="relative">
-           <Image
+           {/* <Image
              source={{ uri: "https://your-cdn.com/politician-banner.jpg" }}
              className="w-full h-56"
-           />
+           /> */}
+           <Image
+          source={currentPolitician?.image || require('../../../assets/images/politician2.jpg')}
+          style={styles.profileImage}
+          resizeMode="cover"
+        />
            <LinearGradient
              colors={["transparent", "rgba(0,0,0,0.7)"]}
              className="absolute bottom-0 left-0 right-0 h-24"
            />
-           <TouchableOpacity className="absolute top-5 left-4 bg-black/40 p-2 rounded-full">
+             <TouchableOpacity 
+          className="absolute top-5 left-4 bg-black/40 p-2 rounded-full"
+          onPress={() => navigation.navigate("DirectoryScreen")}
+        >
+          <Ionicons name="arrow-back" size={20} color="white" />
+        </TouchableOpacity>
+           {/* <TouchableOpacity className="absolute top-5 left-4 bg-black/40 p-2 rounded-full">
              <Ionicons name="arrow-back" size={20} color="white" />
-           </TouchableOpacity>
+           </TouchableOpacity> */}
    
            {/* Name + Party Badge */}
            <View className="absolute bottom-4 left-4">
@@ -115,8 +126,18 @@ const ProfileScreen: React.FC = () => {
            ))}
          </View>
        </ScrollView>
+       
      );
  
 };
+
+import { StyleSheet } from "react-native";
+
+const styles = StyleSheet.create({
+  profileImage: {
+    width: "100%",
+    height: 224, // 56 * 4 (h-56 in Tailwind is 224px)
+  },
+});
 
 export default ProfileScreen;

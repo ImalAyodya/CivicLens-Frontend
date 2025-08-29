@@ -1,35 +1,36 @@
 // src/constants/dummyData.js
 
 export const politicians = [
+
   {
     id: "1",
-    name: "John Smith",
-    party: "Democratic Party",
-    role: "Senator",
-    image: require("../../assets/images/politician1.jpeg"),
-    partyColor: "#1D4ED8", // Blue
+    name: "Ranil Wickremesinghe",
+    party: "United National Party",
+    role: "Member of Parliament",
+    image: require("../../assets/images/politician2.jpg"),
+    partyColor: "#16A34A", // Red
   },
   {
     id: "2",
-    name: "Emily Johnson",
-    party: "Republican Party",
-    role: "Governor",
-    image: require("../../assets/images/politician2.jpg"),
-    partyColor: "#DC2626", // Red
+    name: "Mahinda Rajapaksa",
+    party: "Podu Jana Peramuna",
+    role: "Former President",
+    image: require("../../assets/images/politician1.jpeg"),
+    partyColor: "#DC2626", // Blue
   },
   {
     id: "3",
-    name: "Michael Brown",
-    party: "Independent",
-    role: "Mayor",
+    name: "Anura Kumara",
+    party: "National People's Power",
+    role: "President",
     image: require("../../assets/images/politician3.jpg"),
-    partyColor: "#6B7280", // Gray
+    partyColor: "#730b0bff", // Gray
   },
   {
     id: "4",
-    name: "Sophia Davis",
-    party: "Green Party",
-    role: "Council Member",
+    name: "Maithripala Sirisena",
+    party: "Sri Lanka National Party",
+    role: "Member of Parliament",
     image: require("../../assets/images/politician4.jpg"),
     partyColor: "#16A34A", // Green
   },
