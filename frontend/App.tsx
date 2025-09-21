@@ -107,7 +107,6 @@ const Input: React.FC<InputProps> = ({
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        // @ts-ignore
         className={cn(
           "w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900",
           className
