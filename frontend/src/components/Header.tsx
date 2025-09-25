@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
-  // Hardcoded menu items
+  // Updated menu items: Removed Politician Performance
   const menuItems: MenuItem[] = [
     { id: '1', title: 'Home', icon: '🏠', screen: 'Home' },
     { id: '2', title: 'Profile', icon: '👤', screen: 'Profile' },
@@ -48,23 +48,6 @@ const Header: React.FC<HeaderProps> = ({
     setMenuVisible(true);
     if (onMenuPress) {
       onMenuPress();
-    }
-  };
-
-  const handleMenuItemPress = (screen: string) => {
-    setMenuVisible(false);
-    console.log(`Navigate to ${screen}`);
-    
-    // If we have navigation, navigate to the screen
-    if (navigation && screen) {
-      // Only navigate to existing screens in RootStackParamList
-      // You can add more screens to types.ts as needed
-      if (screen === 'Home' || screen === 'Login') {
-        navigation.navigate(screen);
-      } else {
-        // For screens that don't exist yet, just log a message
-        console.log(`Screen ${screen} not implemented yet`);
-      }
     }
   };
 
@@ -109,12 +92,15 @@ const Header: React.FC<HeaderProps> = ({
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setMenuVisible(false)}
-        >
-          <View className="bg-white w-64 h-full shadow-lg">
+        <View style={styles.modalOverlay}>
+          {/* Dismiss area */}
+          <TouchableOpacity
+            style={{ flex: 1 }}
+            activeOpacity={1}
+            onPress={() => setMenuVisible(false)}
+          />
+          {/* Menu area */}
+          <View className="bg-white w-64 h-full shadow-lg absolute left-0 top-0 bottom-0">
             {/* Menu Header */}
             <View className="bg-blue-600 p-4">
               <View className="flex-row items-center">
@@ -131,20 +117,27 @@ const Header: React.FC<HeaderProps> = ({
               renderItem={({ item }) => (
                 <TouchableOpacity
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
-                  onPress={() => handleMenuItemPress(item.screen)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                    if (navigation && ['Home', 'Login', 'Dashboard'].includes(item.screen)) {
+                      navigation.navigate(item.screen);
+                    } else {
+                      console.log(`Screen ${item.screen} not implemented yet`);
+                    }
+                  }}
                 >
                   <Text className="mr-3 text-lg">{item.icon}</Text>
                   <Text className="text-gray-800 text-base">{item.title}</Text>
                 </TouchableOpacity>
               )}
             />
-            
+
             {/* App Version */}
             <View className="mt-auto p-4">
               <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
       </Modal>
     </>
   );

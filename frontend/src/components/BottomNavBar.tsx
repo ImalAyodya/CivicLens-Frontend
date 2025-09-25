@@ -18,6 +18,10 @@ const AnalyticsIcon = ({ active }: { active: boolean }) => (
   <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📊</Text>
 );
 
+const PerformanceIcon = ({ active }: { active: boolean }) => (
+  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📈</Text>
+);
+
 interface BottomNavBarProps {
   activeTab: string;
   onTabPress: (tabName: string) => void;
@@ -70,6 +74,17 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
         <AnalyticsIcon active={activeTab === 'Analytics'} />
         <Text className={`text-xs mt-1 ${activeTab === 'Analytics' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
           Analytics
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        className="items-center"
+        onPress={() => onTabPress('Dashboard')}
+        activeOpacity={0.7}
+      >
+        <PerformanceIcon active={activeTab === 'Dashboard'} />
+        <Text className={`text-xs mt-1 ${activeTab === 'Dashboard' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+          Performance
         </Text>
       </TouchableOpacity>
     </View>

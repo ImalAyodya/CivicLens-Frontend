@@ -6,6 +6,7 @@ import './global.css';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import DashboardScreen from './src/screens/DashboardScreen';
 import type { RootStackParamList } from './src/navigation/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Dashboard" component={DashboardScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
