@@ -20,8 +20,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
-    // Here you would normally navigate to different screens
-    console.log(`Navigating to ${tabName}`);
+    // Only navigate to screens that exist
+    if (['Home', 'Dashboard'].includes(tabName)) {
+      navigation.navigate(tabName as any);
+    }
   };
 
   // Dummy data for featured issues
