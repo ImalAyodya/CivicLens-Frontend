@@ -37,11 +37,14 @@ const Header: React.FC<HeaderProps> = ({
   const menuItems: MenuItem[] = [
     { id: '1', title: 'Home', icon: '🏠', screen: 'Home' },
     { id: '2', title: 'Profile', icon: '👤', screen: 'Profile' },
-    { id: '3', title: 'Reports', icon: '📝', screen: 'Reports' },
-    { id: '4', title: 'Issues', icon: '⚠️', screen: 'Issues' },
-    { id: '5', title: 'Settings', icon: '⚙️', screen: 'Settings' },
-    { id: '6', title: 'Help & Support', icon: '❓', screen: 'Help' },
-    { id: '7', title: 'Sign Out', icon: '🚪', screen: 'Login' },
+    { id: '3', title: 'Compare Politicians', icon: '⚖️', screen: 'Comparison' },
+    { id: '4', title: 'Political Quiz', icon: '🗳️', screen: 'PoliticalQuiz' },
+    { id: '5', title: 'PoliBot Assistant', icon: '🤖', screen: 'PoliBot' },
+    { id: '6', title: 'Reports', icon: '📝', screen: 'Reports' },
+    { id: '7', title: 'Issues', icon: '⚠️', screen: 'Issues' },
+    { id: '8', title: 'Settings', icon: '⚙️', screen: 'Settings' },
+    { id: '9', title: 'Help & Support', icon: '❓', screen: 'Help' },
+    { id: '10', title: 'Sign Out', icon: '🚪', screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
@@ -119,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
                   onPress={() => {
                     setMenuVisible(false);
-                    if (navigation && ['Home', 'Login', 'Dashboard'].includes(item.screen)) {
+                    if (navigation && ['Home', 'Login', 'Dashboard', 'Comparison', 'PoliticalQuiz', 'PoliBot'].includes(item.screen)) {
                       navigation.navigate(item.screen);
                     } else {
                       console.log(`Screen ${item.screen} not implemented yet`);
