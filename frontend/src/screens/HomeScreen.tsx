@@ -12,11 +12,13 @@ import type { RootStackParamList } from '../navigation/types';
 import Header from '../components/Header';
 import BottomNavBar from '../components/BottomNavBar';
 import Card from '../components/Card';
+import { useAppNavigation } from '../hooks/useAppNavigation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Home');
+  const { handleTabPress: navHandler } = useAppNavigation();
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
@@ -24,6 +26,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     if (['Home', 'Dashboard'].includes(tabName)) {
       navigation.navigate(tabName as any);
     }
+    setActiveTab(navHandler(tabName, 'Home'));
   };
 
   // Dummy data for featured issues

@@ -54,6 +54,32 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const handleMenuItemPress = (screen: string) => {
+    setMenuVisible(false);
+    console.log(`Navigate to ${screen}`);
+    
+    // If we have navigation, navigate to the screen
+    if (navigation && screen) {
+      // Only navigate to existing screens in RootStackParamList
+      // You can add more screens to types.ts as needed
+      if (screen === 'Home' || screen === 'Login') {
+        navigation.navigate(screen);
+      } else {
+        // For screens that don't exist yet, just log a message
+        console.log(`Screen ${screen} not implemented yet`);
+      }
+    }
+  };
+
+  const handleNotificationPress = () => {
+    if (navigation) {
+      navigation.navigate('Notifications');
+    }
+    if (onNotificationPress) {
+      onNotificationPress();
+    }
+  };
+
   return (
     <>
       <View className="bg-blue-600 px-4 py-3 flex-row items-center justify-between">
@@ -73,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({
         
         <View className="flex-row items-center">
           <TouchableOpacity
-            onPress={onNotificationPress}
+            onPress={handleNotificationPress}
             className="mr-4"
             activeOpacity={0.7}
           >
