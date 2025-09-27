@@ -33,15 +33,18 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
-  // Hardcoded menu items
+  // Updated menu items: Removed Politician Performance
   const menuItems: MenuItem[] = [
     { id: '1', title: 'Home', icon: '🏠', screen: 'Home' },
     { id: '2', title: 'Profile', icon: '👤', screen: 'Profile' },
-    { id: '3', title: 'Reports', icon: '📝', screen: 'Reports' },
-    { id: '4', title: 'Issues', icon: '⚠️', screen: 'Issues' },
-    { id: '5', title: 'Settings', icon: '⚙️', screen: 'Settings' },
-    { id: '6', title: 'Help & Support', icon: '❓', screen: 'Help' },
-    { id: '7', title: 'Sign Out', icon: '🚪', screen: 'Login' },
+    { id: '3', title: 'Compare Politicians', icon: '⚖️', screen: 'Comparison' },
+    { id: '4', title: 'Political Quiz', icon: '🗳️', screen: 'PoliticalQuiz' },
+    { id: '5', title: 'PoliBot Assistant', icon: '🤖', screen: 'PoliBot' },
+    { id: '6', title: 'Reports', icon: '📝', screen: 'Reports' },
+    { id: '7', title: 'Issues', icon: '⚠️', screen: 'Issues' },
+    { id: '8', title: 'Settings', icon: '⚙️', screen: 'Settings' },
+    { id: '9', title: 'Help & Support', icon: '❓', screen: 'Help' },
+    { id: '10', title: 'Sign Out', icon: '🚪', screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
@@ -118,12 +121,15 @@ const Header: React.FC<HeaderProps> = ({
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setMenuVisible(false)}
-        >
-          <View className="bg-white w-64 h-full shadow-lg">
+        <View style={styles.modalOverlay}>
+          {/* Dismiss area */}
+          <TouchableOpacity
+            style={{ flex: 1 }}
+            activeOpacity={1}
+            onPress={() => setMenuVisible(false)}
+          />
+          {/* Menu area */}
+          <View className="bg-white w-64 h-full shadow-lg absolute left-0 top-0 bottom-0">
             {/* Menu Header */}
             <View className="bg-blue-600 p-4">
               <View className="flex-row items-center">
@@ -140,20 +146,27 @@ const Header: React.FC<HeaderProps> = ({
               renderItem={({ item }) => (
                 <TouchableOpacity
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
-                  onPress={() => handleMenuItemPress(item.screen)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                    if (navigation && ['Home', 'Login', 'Dashboard', 'Comparison', 'PoliticalQuiz', 'PoliBot'].includes(item.screen)) {
+                      navigation.navigate(item.screen);
+                    } else {
+                      console.log(`Screen ${item.screen} not implemented yet`);
+                    }
+                  }}
                 >
                   <Text className="mr-3 text-lg">{item.icon}</Text>
                   <Text className="text-gray-800 text-base">{item.title}</Text>
                 </TouchableOpacity>
               )}
             />
-            
+
             {/* App Version */}
             <View className="mt-auto p-4">
               <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
       </Modal>
     </>
   );
