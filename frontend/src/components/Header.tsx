@@ -68,6 +68,15 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const handleNotificationPress = () => {
+    if (navigation) {
+      navigation.navigate('Notifications');
+    }
+    if (onNotificationPress) {
+      onNotificationPress();
+    }
+  };
+
   return (
     <>
       <View className="bg-blue-600 px-4 py-3 flex-row items-center justify-between">
@@ -87,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({
         
         <View className="flex-row items-center">
           <TouchableOpacity
-            onPress={onNotificationPress}
+            onPress={handleNotificationPress}
             className="mr-4"
             activeOpacity={0.7}
           >
