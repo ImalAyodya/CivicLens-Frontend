@@ -11,7 +11,5 @@ export type RootStackParamList = {
   Notifications: undefined;
   ElectionCountdown: undefined;
   PastElections: undefined;
-  ElectionMap: undefined;
-  VoterEducation: undefined; // Add this new screen
-  ElectionLaws: undefined;   // Add this new screen
+  ElectionMap: undefined;  // Add this new screen
 };

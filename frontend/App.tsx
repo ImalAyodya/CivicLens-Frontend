@@ -11,8 +11,6 @@ import NewsDetailScreen from './src/screens/news/NewsDetailScreen';
 import NotificationsScreen from './src/screens/notifications/NotificationsScreen';
 import ElectionCountdownScreen from './src/screens/elections/ElectionCountdownScreen';
 import PastElectionsScreen from './src/screens/elections/PastElectionsScreen';
-import VoterEducationScreen from './src/screens/elections/VoterEducationScreen';
-import ElectionLawsScreen from './src/screens/elections/ElectionLawsScreen';
 import type { RootStackParamList } from './src/navigation/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -43,8 +41,6 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="ElectionCountdown" component={ElectionCountdownScreen} />
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
-        <Stack.Screen name="VoterEducation" component={VoterEducationScreen} />
-        <Stack.Screen name="ElectionLaws" component={ElectionLawsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

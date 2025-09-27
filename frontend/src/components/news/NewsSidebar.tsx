@@ -4,8 +4,10 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
+  Image,
   Animated,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -26,16 +28,17 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
 
   React.useEffect(() => {
     if (visible) {
-      Animated.timing(translateX, {
+      Animated.spring(translateX, {
         toValue: 0,
-        duration: 300,
-        useNativeDriver: true
+        useNativeDriver: true,
+        tension: 80,
+        friction: 11,
       }).start();
     } else {
       Animated.timing(translateX, {
         toValue: -screenWidth,
         duration: 300,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
   }, [visible, screenWidth, translateX]);
@@ -44,7 +47,7 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
     // Screens that don't require parameters
     const screensWithoutParams: (keyof RootStackParamList)[] = [
       'Home', 'NewsFeed', 'Login', 'SignUp', 'Notifications', 
-      'ElectionCountdown', 'PastElections', 'VoterEducation', 'ElectionLaws'
+      'ElectionCountdown', 'PastElections', 'ElectionMap'
     ];
     
     if (screensWithoutParams.includes(screen)) {
@@ -66,29 +69,35 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
   if (!visible) return null;
 
   return (
-    <View style={styles.container}>
-      {/* Backdrop */}
+    <View className="absolute inset-0 z-50">
       <TouchableOpacity
-        style={styles.backdrop}
+        className="absolute inset-0 bg-black/30"
         activeOpacity={1}
         onPress={onClose}
       />
-      
-      {/* Sidebar */}
       <Animated.View
         style={[
+          { transform: [{ translateX }] },
           styles.sidebar,
-          { transform: [{ translateX }] }
         ]}
       >
-        {/* Header */}
-        <View className="px-4 py-5 bg-blue-600">
-          <Text className="text-white text-xl font-bold mb-1">News & Elections</Text>
-          <Text className="text-blue-100">Stay informed, vote wisely</Text>
+        {/* Sidebar Header */}
+        <View className="bg-blue-600 p-4 pt-12">
+          <View className="flex-row justify-between items-center">
+            <View className="flex-row items-center">
+              <View className="bg-white rounded-lg w-10 h-10 items-center justify-center mr-3">
+                <Text className="text-xl">📰</Text>
+              </View>
+              <Text className="text-white text-xl font-bold">News & Elections</Text>
+            </View>
+            <TouchableOpacity onPress={onClose}>
+              <Ionicons name="close" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
-        
+
         {/* Menu Items */}
-        <View className="flex-1">
+        <ScrollView className="flex-1">
           {/* News Feed */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
@@ -99,7 +108,6 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             </View>
             <Text className="text-gray-800 ml-3 font-medium">News Feed</Text>
           </TouchableOpacity>
-          
           {/* Election Countdown */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
@@ -113,7 +121,18 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
               <Text className="text-xs text-blue-700">42 days</Text>
             </View>
           </TouchableOpacity>
-          
+
+          {/* Election Notifications */}
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('Notifications')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="notifications-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Election Notifications</Text>
+          </TouchableOpacity>
+
           {/* Past Elections */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
@@ -124,39 +143,54 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             </View>
             <Text className="text-gray-800 ml-3 font-medium">Past Elections</Text>
           </TouchableOpacity>
-          
-          {/* Election Laws & Regulations */}
+
+          {/* Election Maps */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateTo('ElectionLaws')}
+            onPress={() => navigateTo('ElectionMap')}
           >
             <View className="w-10 items-center">
-              <Ionicons name="document-text-outline" size={22} color="#2563EB" />
+              <Ionicons name="map-outline" size={22} color="#2563EB" />
             </View>
-            <Text className="text-gray-800 ml-3 font-medium">Election Laws</Text>
+            <Text className="text-gray-800 ml-3 font-medium">Election Maps</Text>
           </TouchableOpacity>
-          
-          {/* Voter Education */}
+
+          {/* Voting Information */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateTo('VoterEducation')}
+            onPress={() => navigateToFutureScreen('Voting Information')}
           >
             <View className="w-10 items-center">
-              <Ionicons name="school-outline" size={22} color="#2563EB" />
+              <Ionicons name="information-circle-outline" size={22} color="#2563EB" />
             </View>
-            <Text className="text-gray-800 ml-3 font-medium">Voter Education</Text>
+            <Text className="text-gray-800 ml-3 font-medium">Voting Information</Text>
           </TouchableOpacity>
-        </View>
-        
-        {/* Footer */}
-        <View className="p-4 border-t border-gray-200">
+
+          {/* Candidate Profiles */}
           <TouchableOpacity 
-            className="flex-row items-center"
-            onPress={() => navigateTo('Home')}
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateToFutureScreen('Candidate Profiles')}
           >
-            <Ionicons name="home-outline" size={22} color="#2563EB" />
-            <Text className="text-blue-600 ml-3 font-medium">Back to Home</Text>
+            <View className="w-10 items-center">
+              <Ionicons name="people-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Candidate Profiles</Text>
           </TouchableOpacity>
+        </ScrollView>
+
+        {/* Election Status */}
+        <View className="bg-gray-50 p-4">
+          <Text className="text-sm text-gray-500 mb-1">Next General Election</Text>
+          <Text className="text-base text-gray-900 font-medium mb-2">Presidential Election 2024</Text>
+          <View className="bg-blue-50 rounded-lg p-3">
+            <View className="flex-row justify-between">
+              <Text className="text-blue-800 font-medium">Countdown</Text>
+              <Text className="text-blue-800 font-bold">42 days</Text>
+            </View>
+            <View className="h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+              <View className="h-full bg-blue-600 rounded-full" style={{ width: '60%' }} />
+            </View>
+          </View>
         </View>
       </Animated.View>
     </View>
@@ -164,25 +198,6 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1000, // High z-index to ensure it's above everything
-    elevation: 1000, // For Android
-  },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    zIndex: 1000,
-    elevation: 1000,
-  },
   sidebar: {
     position: 'absolute',
     top: 0,
@@ -190,8 +205,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 280,
     backgroundColor: 'white',
-    zIndex: 1001, // Higher than backdrop
-    elevation: 1001, // For Android
+    elevation: 10,
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.3,
