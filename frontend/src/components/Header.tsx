@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({
           </TouchableOpacity>
           <View className="flex-row items-center">
             <AppLogo />
-            <Text className="text-white text-xl font-bold ml-2">PollTrack</Text>
+            <Text className="text-white text-xl font-bold ml-2">CivicLens</Text>
           </View>
         </View>
         
