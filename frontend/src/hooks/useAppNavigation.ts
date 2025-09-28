@@ -17,8 +17,10 @@ export function useAppNavigation() {
         case 'NewsFeed':
           navigation.navigate('NewsFeed');
           break;
+        case 'DirectoryScreen':
+          navigation.navigate('DirectoryScreen');
         case 'PoliticianPromises': // <-- Add this case!
-          navigation.navigate('PoliticianPromises');
+          navigation.navigate({ name: 'PoliticianPromises' });
           break;
         // Add other cases as screens are implemented
         default:

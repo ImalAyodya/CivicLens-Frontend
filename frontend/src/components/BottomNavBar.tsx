@@ -14,6 +14,10 @@ const NewsIcon = ({ active }: { active: boolean }) => (
   <Ionicons name="newspaper-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
+const DirectoryIcon = ({ active }: { active: boolean }) => (
+  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📋</Text>
+);
+
 const ReportIcon = ({ active }: { active: boolean }) => (
   <Ionicons name="document-text-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
@@ -71,6 +75,17 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
         <NewsIcon active={activeTab === 'NewsFeed'} />
         <Text className={`text-xs mt-1 ${activeTab === 'NewsFeed' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
           News
+        </Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity
+        className="items-center"
+        onPress={() => onTabPress('DirectoryScreen')}
+        activeOpacity={0.7}
+      >
+         <DirectoryIcon active={activeTab === 'DirectoryScreen'} />
+        <Text className={`text-xs mt-1 ${activeTab === 'DirectoryScreen' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+          Directory
         </Text>
       </TouchableOpacity>
       
