@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-// Icons (using placeholder text for now, replace with actual icons)
-const MenuIcon = () => <Text style={styles.iconText}>☰</Text>;
-const NotificationIcon = () => <Text style={styles.iconText}>🔔</Text>;
-const ProfileIcon = () => <Text style={styles.iconText}>👤</Text>;
+const MenuIcon = () => <Ionicons name="menu" size={28} color="white" />;
+const NotificationIcon = () => <Ionicons name="notifications-outline" size={24} color="white" />;
+const ProfileIcon = () => <Ionicons name="person-circle-outline" size={28} color="white" />;
 const AppLogo = () => (
   <View style={styles.logoContainer}>
-    <Text style={styles.logoText}>📊</Text>
+    <Ionicons name="stats-chart-outline" size={22} color="#2563EB" />
   </View>
 );
 
@@ -15,13 +15,13 @@ interface HeaderProps {
   onMenuPress?: () => void;
   onNotificationPress?: () => void;
   onProfilePress?: () => void;
-  navigation?: any; // Add navigation prop
+  navigation?: any;
 }
 
 interface MenuItem {
   id: string;
   title: string;
-  icon: string;
+  icon: React.ReactNode;
   screen: string;
 }
 
@@ -33,41 +33,23 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
-  // Updated menu items: Removed Politician Performance
   const menuItems: MenuItem[] = [
-    { id: '1', title: 'Home', icon: '🏠', screen: 'Home' },
-    { id: '2', title: 'Profile', icon: '👤', screen: 'Profile' },
-    { id: '3', title: 'Compare Politicians', icon: '⚖️', screen: 'Comparison' },
-    { id: '4', title: 'Political Quiz', icon: '🗳️', screen: 'PoliticalQuiz' },
-    { id: '5', title: 'PoliBot Assistant', icon: '🤖', screen: 'PoliBot' },
-    { id: '6', title: 'Reports', icon: '📝', screen: 'Reports' },
-    { id: '7', title: 'Issues', icon: '⚠️', screen: 'Issues' },
-    { id: '8', title: 'Settings', icon: '⚙️', screen: 'Settings' },
-    { id: '9', title: 'Help & Support', icon: '❓', screen: 'Help' },
-    { id: '10', title: 'Sign Out', icon: '🚪', screen: 'Login' },
+    { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
+    { id: '2', title: 'Profile', icon: <Ionicons name="person-outline" size={22} color="#2563EB" />, screen: 'Profile' },
+    { id: '3', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
+    { id: '4', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
+    { id: '5', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
+    { id: '6', title: 'Reports', icon: <Ionicons name="document-text-outline" size={22} color="#2563EB" />, screen: 'Reports' },
+    { id: '7', title: 'Issues', icon: <Ionicons name="alert-circle-outline" size={22} color="#2563EB" />, screen: 'Issues' },
+    { id: '8', title: 'Settings', icon: <Ionicons name="settings-outline" size={22} color="#2563EB" />, screen: 'Settings' },
+    { id: '9', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'Help' },
+    { id: '10', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
     setMenuVisible(true);
     if (onMenuPress) {
       onMenuPress();
-    }
-  };
-
-  const handleMenuItemPress = (screen: string) => {
-    setMenuVisible(false);
-    console.log(`Navigate to ${screen}`);
-    
-    // If we have navigation, navigate to the screen
-    if (navigation && screen) {
-      // Only navigate to existing screens in RootStackParamList
-      // You can add more screens to types.ts as needed
-      if (screen === 'Home' || screen === 'Login') {
-        navigation.navigate(screen);
-      } else {
-        // For screens that don't exist yet, just log a message
-        console.log(`Screen ${screen} not implemented yet`);
-      }
     }
   };
 
@@ -122,15 +104,12 @@ const Header: React.FC<HeaderProps> = ({
         onRequestClose={() => setMenuVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          {/* Dismiss area */}
           <TouchableOpacity
             style={{ flex: 1 }}
             activeOpacity={1}
             onPress={() => setMenuVisible(false)}
           />
-          {/* Menu area */}
           <View className="bg-white w-64 h-full shadow-lg absolute left-0 top-0 bottom-0">
-            {/* Menu Header */}
             <View className="bg-blue-600 p-4">
               <View className="flex-row items-center">
                 <AppLogo />
@@ -138,8 +117,6 @@ const Header: React.FC<HeaderProps> = ({
               </View>
               <Text className="text-blue-100 mt-2">Tracking Political Priorities</Text>
             </View>
-
-            {/* Menu Items */}
             <FlatList
               data={menuItems}
               keyExtractor={(item) => item.id}
@@ -155,13 +132,11 @@ const Header: React.FC<HeaderProps> = ({
                     }
                   }}
                 >
-                  <Text className="mr-3 text-lg">{item.icon}</Text>
+                  <View style={{ marginRight: 12 }}>{item.icon}</View>
                   <Text className="text-gray-800 text-base">{item.title}</Text>
                 </TouchableOpacity>
               )}
             />
-
-            {/* App Version */}
             <View className="mt-auto p-4">
               <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
             </View>
@@ -173,10 +148,6 @@ const Header: React.FC<HeaderProps> = ({
 };
 
 const styles = StyleSheet.create({
-  iconText: {
-    fontSize: 24,
-    color: 'white',
-  },
   logoContainer: {
     backgroundColor: 'white',
     width: 32,
@@ -184,9 +155,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logoText: {
-    fontSize: 18,
   },
   modalOverlay: {
     flex: 1,

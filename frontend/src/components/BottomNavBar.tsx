@@ -1,29 +1,29 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-// Tab Icons (placeholder text, replace with actual icons)
 const HomeIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>🏠</Text>
+  <Ionicons name="home-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const ExploreIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>🔍</Text>
+  <Ionicons name="search-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const NewsIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📰</Text>
+  <Ionicons name="newspaper-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const ReportIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📝</Text>
+  <Ionicons name="document-text-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const AnalyticsIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📊</Text>
+  <Ionicons name="stats-chart-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const PerformanceIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📈</Text>
+  <Ionicons name="trending-up-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 interface BottomNavBarProps {
