@@ -5,6 +5,24 @@ export type RootStackParamList = {
   SignUp: undefined;
   Home: undefined;
   MainTabs: undefined; // <-- Add this line
+  Dashboard: undefined;
+  Comparison: undefined;
+  ComparisonResult: {
+    politician1: any;
+    politician2: any;
+  };
+  PoliticalQuiz: undefined;
+  QuizQuestion: {
+    questionId: number;
+    totalQuestions: number;
+    score: number;
+  };
+  QuizResult: {
+    score: number;
+    totalQuestions: number;
+  };
+  PoliBot: undefined;
+  PoliBotChat: undefined;
   NewsFeed: undefined;
   NewsDetail: {
     newsItem: NewsItem;
@@ -12,7 +30,12 @@ export type RootStackParamList = {
   Notifications: undefined;
   ElectionCountdown: undefined;
   PastElections: undefined;
-  ElectionMap: undefined;  // Add this new screen
   PoliticianProfile: { id: string }; 
   DirectoryScreen: undefined;
+  ElectionMap: undefined;
+  PoliticianPromises: undefined;
+  GrowthNews: undefined;
+  MinistryPerformance: undefined; 
+  PromiseDetail: { promise: any };
+  GrowthNewsDetail: { news: any };
 };
