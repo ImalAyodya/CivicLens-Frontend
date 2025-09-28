@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-// Tab Icons (placeholder text, replace with actual icons)
 const HomeIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>🏠</Text>
+  <Ionicons name="home-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const ExploreIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>🔍</Text>
+  <Ionicons name="search-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const NewsIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📰</Text>
+  <Ionicons name="newspaper-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 const DirectoryIcon = ({ active }: { active: boolean }) => (
@@ -19,11 +19,19 @@ const DirectoryIcon = ({ active }: { active: boolean }) => (
 );
 
 const ReportIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📝</Text>
+  <Ionicons name="document-text-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
+);
+
+const PromisesIcon = ({ active }: { active: boolean }) => (
+  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📜</Text>
 );
 
 const AnalyticsIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📊</Text>
+  <Ionicons name="stats-chart-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
+);
+
+const PerformanceIcon = ({ active }: { active: boolean }) => (
+  <Ionicons name="trending-up-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
 
 interface BottomNavBarProps {
@@ -65,8 +73,8 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
         activeOpacity={0.7}
       >
         <NewsIcon active={activeTab === 'NewsFeed'} />
-        <Text className={`text-xs mt-1 ${activeTab === 'NewsFeed' ? 'text-blue-600 font-medium' : 'text-gray-500'} text-center`} numberOfLines={2}>
-          News &{"\n"}Elections
+        <Text className={`text-xs mt-1 ${activeTab === 'NewsFeed' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+          News
         </Text>
       </TouchableOpacity>
       
@@ -91,15 +99,26 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
           Report
         </Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity
         className="items-center"
-        onPress={() => onTabPress('Analytics')}
+        onPress={() => onTabPress('PoliticianPromises')}
         activeOpacity={0.7}
       >
-        <AnalyticsIcon active={activeTab === 'Analytics'} />
-        <Text className={`text-xs mt-1 ${activeTab === 'Analytics' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
-          Analytics
+        <PromisesIcon active={activeTab === 'PoliticianPromises'} />
+        <Text className={`text-xs mt-1 ${activeTab === 'PoliticianPromises' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+          Promises
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        className="items-center"
+        onPress={() => onTabPress('Dashboard')}
+        activeOpacity={0.7}
+      >
+        <PerformanceIcon active={activeTab === 'Dashboard'} />
+        <Text className={`text-xs mt-1 ${activeTab === 'Dashboard' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+          Performance
         </Text>
       </TouchableOpacity>
     </View>
