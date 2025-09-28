@@ -17,12 +17,14 @@ export function useAppNavigation() {
         case 'NewsFeed':
           navigation.navigate('NewsFeed');
           break;
+        case 'PoliticianPromises': // <-- Add this case!
+          navigation.navigate('PoliticianPromises');
+          break;
         // Add other cases as screens are implemented
         default:
           console.log(`Screen ${tabName} not implemented yet`);
       }
     }
-    
     return tabName; // Return the tab name for setting activeTab
   };
   
