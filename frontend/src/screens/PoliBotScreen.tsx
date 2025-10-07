@@ -137,70 +137,7 @@ const PoliBotScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Demo and Help buttons */}
-        <View className="flex-row px-4 mb-8 justify-between">
-          <TouchableOpacity 
-            className="flex-1 border border-gray-300 rounded-lg py-3 mr-2 items-center"
-            onPress={handleDemo}
-          >
-            <Text className="text-gray-700 flex-row items-center">
-              <Text className="mr-1">▶</Text> Demo
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            className="flex-1 border border-gray-300 rounded-lg py-3 ml-2 items-center"
-            onPress={handleHelp}
-          >
-            <Text className="text-gray-700 flex-row items-center">
-              <Text className="mr-1">❓</Text> Help
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Quick Actions */}
-        <View className="px-4 mb-6">
-          <Text className="text-center text-gray-500 mb-3">Quick Actions</Text>
-          <View className="flex-row justify-around">
-            <TouchableOpacity className="items-center">
-              <View className="h-10 w-10 rounded-full bg-gray-100 items-center justify-center mb-1">
-                <Text>🔍</Text>
-              </View>
-              <Text className="text-xs text-gray-600">Search Politicians</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity className="items-center">
-              <View className="h-10 w-10 rounded-full bg-gray-100 items-center justify-center mb-1">
-                <Text>📰</Text>
-              </View>
-              <Text className="text-xs text-gray-600">Recent Updates</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity className="items-center">
-              <View className="h-10 w-10 rounded-full bg-gray-100 items-center justify-center mb-1">
-                <Text>⭐</Text>
-              </View>
-              <Text className="text-xs text-gray-600">Top Rated</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity className="items-center">
-              <View className="h-10 w-10 rounded-full bg-gray-100 items-center justify-center mb-1">
-                <Text>📈</Text>
-              </View>
-              <Text className="text-xs text-gray-600">Trending</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Footer */}
-        <View className="items-center mb-8">
-          <Text className="text-xs text-gray-400">Powered by AI • Secure & Private</Text>
-          <View className="flex-row mt-2">
-            <Text className="text-gray-400 mx-1">📄</Text>
-            <Text className="text-gray-400 mx-1">⚙️</Text>
-            <Text className="text-gray-400 mx-1">❓</Text>
-          </View>
-        </View>
+        
       </ScrollView>
     </View>
   );

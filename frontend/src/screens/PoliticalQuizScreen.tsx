@@ -11,7 +11,7 @@ const PoliticalQuizScreen: React.FC<Props> = ({ navigation }) => {
   const handleStartQuiz = () => {
     navigation.navigate('QuizQuestion', {
       questionId: 1, 
-      totalQuestions: 8,
+      totalQuestions: 20, // updated to 20
       score: 0
     });
   };
@@ -98,11 +98,11 @@ const PoliticalQuizScreen: React.FC<Props> = ({ navigation }) => {
         <View className="mx-4 mb-6">
           <View className="flex-row justify-between mb-4">
             <View className="items-center">
-              <Text className="text-blue-600 font-bold text-xl">15</Text>
+              <Text className="text-blue-600 font-bold text-xl">20</Text> {/* updated */}
               <Text className="text-gray-500 text-xs">Questions</Text>
             </View>
             <View className="items-center">
-              <Text className="text-amber-500 font-bold text-xl">5</Text>
+              <Text className="text-amber-500 font-bold text-xl">10</Text> {/* adjust time if needed */}
               <Text className="text-gray-500 text-xs">Minutes</Text>
             </View>
             <View className="items-center">
@@ -121,7 +121,7 @@ const PoliticalQuizScreen: React.FC<Props> = ({ navigation }) => {
             <Text className="text-white font-bold text-lg">Start Quiz</Text>
           </TouchableOpacity>
           <Text className="text-center text-gray-500 text-xs mt-2">
-            Takes about 5 minutes to complete
+            Takes about 10 minutes to complete
           </Text>
         </View>
       </ScrollView>

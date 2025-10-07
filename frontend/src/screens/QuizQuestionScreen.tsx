@@ -3,102 +3,15 @@ import { View, Text, TouchableOpacity, TextInput, ScrollView } from 'react-nativ
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
 import Card from '../components/Card';
+import { fetchRandomQuestions } from '../services/APIservices';
+import { 
+  hardcodedQuizQuestions, 
+  mapApiQuestions, 
+  shuffle, 
+  QuizQuestion 
+} from '../services/quizQuestions';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'QuizQuestion'>;
-
-interface QuizQuestion {
-  id: number;
-  title: string;
-  type: 'multiple' | 'essay' | 'ranking';
-  options?: string[];
-  correctOption?: number;
-  hint?: string;
-}
-
-const quizQuestions: QuizQuestion[] = [
-  {
-    id: 1,
-    title: 'Which of the following best describes Sri Lanka\'s form of government?',
-    type: 'multiple',
-    options: [
-      'Federal Republic',
-      'Semi-Presidential Republic',
-      'Parliamentary Republic',
-      'Constitutional Monarchy'
-    ],
-    correctOption: 1,
-    hint: 'Sri Lanka has both a President and Prime Minister with specific constitutional powers.'
-  },
-  {
-    id: 2,
-    title: 'What is the term length for the President of Sri Lanka?',
-    type: 'multiple',
-    options: [
-      '4 years',
-      '5 years',
-      '6 years',
-      '7 years'
-    ],
-    correctOption: 1,
-    hint: 'The term was reduced following a constitutional amendment.'
-  },
-  {
-    id: 3,
-    title: 'Explain your understanding of how the 13th Amendment to the Sri Lankan Constitution impacts provincial governance:',
-    type: 'essay',
-    hint: 'Consider aspects of devolution of power and provincial councils.'
-  },
-  {
-    id: 4,
-    title: 'Which political party has held power for the most years since Sri Lanka\'s independence?',
-    type: 'multiple',
-    options: [
-      'United National Party (UNP)',
-      'Sri Lanka Freedom Party (SLFP)',
-      'Sri Lanka Podujana Peramuna (SLPP)',
-      'Tamil National Alliance (TNA)'
-    ],
-    correctOption: 1,
-    hint: 'Consider which parties have historically alternated in power since 1948.'
-  },
-  {
-    id: 5,
-    title: 'What measures would you implement to address ethnic reconciliation in Sri Lanka? Explain your approach and expected outcomes:',
-    type: 'essay',
-    hint: 'Consider language policies, devolution of power, and historical grievances.'
-  },
-  {
-    id: 6,
-    title: 'Rank these economic priorities for Sri Lanka from most important (1) to least important (4):',
-    type: 'ranking',
-    options: [
-      'Reducing foreign debt',
-      'Increasing tourism',
-      'Agricultural self-sufficiency',
-      'Technology sector development'
-    ],
-    hint: 'Consider both immediate economic challenges and long-term development goals.'
-  },
-  {
-    id: 7,
-    title: 'Which of these leaders was NOT a President of Sri Lanka?',
-    type: 'multiple',
-    options: [
-      'Chandrika Kumaratunga',
-      'Ranil Wickremesinghe',
-      'Maithripala Sirisena',
-      'Sirimavo Bandaranaike'
-    ],
-    correctOption: 3,
-    hint: 'Consider who held the position of Prime Minister versus President.'
-  },
-  {
-    id: 8,
-    title: 'How would you address Sri Lanka\'s economic challenges while balancing international relations? Detail your policy approach:',
-    type: 'essay',
-    hint: 'Consider IMF involvement, relations with India, China, and Western nations.'
-  }
-];
 
 const QuizQuestionScreen: React.FC<Props> = ({ navigation, route }) => {
   const { questionId, totalQuestions, score } = route.params;
@@ -107,8 +20,43 @@ const QuizQuestionScreen: React.FC<Props> = ({ navigation, route }) => {
   const [rankings, setRankings] = useState<number[]>([0, 0, 0, 0]);
   const [showHint, setShowHint] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [useApiQuestions, setUseApiQuestions] = useState(false);
+  const [apiQuestions, setApiQuestions] = useState<QuizQuestion[]>([]);
+  const [loadingApi, setLoadingApi] = useState(false);
   
-  const currentQuestion = quizQuestions[questionId - 1];
+  useEffect(() => {
+    setLoadingApi(true);
+    fetchRandomQuestions(20).then(qs => {
+      const mapped = mapApiQuestions(qs);
+      const combined = [...hardcodedQuizQuestions, ...mapped];
+      const shuffled = shuffle(combined).slice(0, 20);
+      setApiQuestions(shuffled);
+      setLoadingApi(false);
+      console.log('Fetched questions from backend:', qs);
+      console.log('Mapped questions:', mapped);
+      console.log('Combined and shuffled questions:', shuffled);
+      console.log('Final quiz count:', shuffled.length);
+    });
+  }, []);
+
+  const questionsToUse = apiQuestions.length === 20 ? apiQuestions : hardcodedQuizQuestions;
+  console.log(
+    questionsToUse === hardcodedQuizQuestions
+      ? `Using hardcoded questions (${hardcodedQuizQuestions.length})`
+      : `Using API questions (${apiQuestions.length})`
+  );
+
+  const currentQuestion = questionsToUse[questionId - 1];
+
+  // Log the source of the current question
+  if (currentQuestion) {
+    if (currentQuestion.id >= 1000) {
+      console.log(`Question ${questionId}: API fetched (id=${currentQuestion.id})`);
+    } else {
+      console.log(`Question ${questionId}: Hardcoded (id=${currentQuestion.id})`);
+    }
+  }
+  
   const progress = (questionId / totalQuestions) * 100;
   
   const isLastQuestion = questionId === totalQuestions;

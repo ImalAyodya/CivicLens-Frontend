@@ -48,16 +48,7 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
         </Text>
       </TouchableOpacity>
       
-      <TouchableOpacity
-        className="items-center"
-        onPress={() => onTabPress('Explore')}
-        activeOpacity={0.7}
-      >
-        <ExploreIcon active={activeTab === 'Explore'} />
-        <Text className={`text-xs mt-1 ${activeTab === 'Explore' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
-          Explore
-        </Text>
-      </TouchableOpacity>
+      
       
       <TouchableOpacity
         className="items-center"
@@ -81,6 +72,8 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
         </Text>
       </TouchableOpacity>
       
+      
+
       <TouchableOpacity
         className="items-center"
         onPress={() => onTabPress('Analytics')}

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
+import { suggestedQueries, poliBot } from '../services/polibotLogic'; // <-- updated import
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PoliBotChat'>;
 
@@ -34,19 +35,10 @@ const PoliBotChatScreen: React.FC<Props> = ({ navigation }) => {
   const [isTyping, setIsTyping] = useState(false);
   const scrollViewRef = useRef<FlatList>(null);
 
-  // Suggested queries
-  const suggestedQueries = [
-    "How is President Wickremesinghe performing?",
-    "What's happening with the economic reforms?",
-    "Tell me about recent political news",
-    "Compare UNP and SLPP policies"
-  ];
-
   // Function to handle sending a message
   const handleSend = () => {
     if (message.trim() === '') return;
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       text: message,
@@ -58,28 +50,9 @@ const PoliBotChatScreen: React.FC<Props> = ({ navigation }) => {
     setMessage('');
     setIsTyping(true);
 
-    // Simulate bot response after a delay
     setTimeout(() => {
-      let botResponse = '';
-      
-      // Simple response logic based on keywords
-      const lowerCaseMessage = message.toLowerCase();
-      
-      if (lowerCaseMessage.includes('hello') || lowerCaseMessage.includes('hi')) {
-        botResponse = "Hello! How can I help you with political information today?";
-      } 
-      else if (lowerCaseMessage.includes('wickremesinghe') || lowerCaseMessage.includes('president')) {
-        botResponse = "President Ranil Wickremesinghe has implemented several economic reforms since taking office. His administration has been focused on debt restructuring and stabilizing the economy. His approval rating is currently at 52%.";
-      }
-      else if (lowerCaseMessage.includes('economic') || lowerCaseMessage.includes('economy')) {
-        botResponse = "The Sri Lankan economy has shown signs of stabilization in recent months. Inflation has decreased to 10.5% from its peak of over 70%. The government is currently in negotiations with the IMF for additional support.";
-      }
-      else if (lowerCaseMessage.includes('compare') || lowerCaseMessage.includes('unp') || lowerCaseMessage.includes('slpp')) {
-        botResponse = "The UNP (United National Party) generally favors liberal economic policies and international cooperation, while the SLPP (Sri Lanka Podujana Peramuna) tends to promote more nationalist policies with a focus on self-sufficiency. Would you like more specific policy comparisons?";
-      }
-      else {
-        botResponse = "That's an interesting question about Sri Lankan politics. Let me find some information for you. Is there a specific aspect you'd like to know more about?";
-      }
+      // Use poliBot.getResponse instead of getPoliBotResponse
+      const botResponse = poliBot.getResponse(message);
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -142,87 +115,91 @@ const PoliBotChatScreen: React.FC<Props> = ({ navigation }) => {
       </View>
 
       {/* Chat Messages */}
-      <FlatList
-        ref={scrollViewRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 10 }}
-        renderItem={({ item }) => (
-          <View 
-            className={`mb-3 max-w-3/4 ${
-              item.sender === 'user' ? 'self-end ml-auto' : 'self-start'
-            }`}
-          >
+      <View className="flex-1">
+        <FlatList
+          ref={scrollViewRef}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ padding: 10 }}
+          renderItem={({ item }) => (
             <View 
-              className={`rounded-lg p-3 ${
-                item.sender === 'user' 
-                  ? 'bg-blue-600 rounded-tr-none' 
-                  : 'bg-white rounded-tl-none shadow-sm'
+              className={`mb-3 max-w-3/4 ${
+                item.sender === 'user' ? 'self-end ml-auto' : 'self-start'
               }`}
             >
-              <Text 
-                className={`${
-                  item.sender === 'user' ? 'text-white' : 'text-gray-800'
+              <View 
+                className={`rounded-lg p-3 ${
+                  item.sender === 'user' 
+                    ? 'bg-blue-600 rounded-tr-none' 
+                    : 'bg-white rounded-tl-none shadow-sm'
                 }`}
               >
-                {item.text}
+                <Text 
+                  className={`${
+                    item.sender === 'user' ? 'text-white' : 'text-gray-800'
+                  }`}
+                >
+                  {item.text}
+                </Text>
+              </View>
+              <Text className={`text-xs text-gray-500 mt-1 ${
+                item.sender === 'user' ? 'text-right' : 'text-left'
+              }`}>
+                {formatTime(item.timestamp)}
               </Text>
             </View>
-            <Text className={`text-xs text-gray-500 mt-1 ${
-              item.sender === 'user' ? 'text-right' : 'text-left'
-            }`}>
-              {formatTime(item.timestamp)}
-            </Text>
+          )}
+        />
+        {/* Typing indicator */}
+        {isTyping && (
+          <View className="flex-row items-center px-4 py-2">
+            <View className="h-6 w-6 rounded-full bg-gray-200 items-center justify-center mr-2">
+              <Text className="text-sm">⌛</Text>
+            </View>
+            <Text className="text-sm text-gray-500">PoliBot is typing...</Text>
           </View>
         )}
-      />
+      </View>
 
-      {/* Typing indicator */}
-      {isTyping && (
-        <View className="flex-row items-center px-4 py-2">
-          <View className="h-6 w-6 rounded-full bg-gray-200 items-center justify-center mr-2">
-            <Text className="text-sm">⌛</Text>
-          </View>
-          <Text className="text-sm text-gray-500">PoliBot is typing...</Text>
-        </View>
-      )}
-
-      {/* Suggested queries */}
-      <ScrollView 
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 10 }}
-        className="mb-2"
-      >
-        {suggestedQueries.map((query, index) => (
-          <TouchableOpacity 
-            key={index}
-            className="bg-white px-3 py-2 rounded-full border border-gray-200 mr-2"
-            onPress={() => handleSuggestedQuery(query)}
-          >
-            <Text className="text-gray-700">{query}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Message Input */}
-      <View className="px-4 py-2 bg-white border-t border-gray-200 flex-row items-center">
-        <TouchableOpacity className="mr-3">
-          <Text className="text-xl text-gray-500">➕</Text>
-        </TouchableOpacity>
-        <TextInput
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
-          placeholder="Message PoliBot..."
-          value={message}
-          onChangeText={setMessage}
-          multiline={false}
-        />
-        <TouchableOpacity 
-          className="h-10 w-10 rounded-full bg-blue-600 items-center justify-center"
-          onPress={handleSend}
+      {/* Bottom section - group suggestions with input */}
+      <View className="bg-white border-t border-gray-200">
+        {/* Suggested queries - now in white background section with input */}
+        <ScrollView 
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 10 }}
+          className="py-2"
         >
-          <Text className="text-white text-lg">↑</Text>
-        </TouchableOpacity>
+          {suggestedQueries.map((query, index) => (
+            <TouchableOpacity 
+              key={index}
+              className="bg-gray-100 px-4 h-8 items-center justify-center rounded-full border border-gray-200 mr-2"
+              onPress={() => handleSuggestedQuery(query)}
+            >
+              <Text className="text-gray-700 text-sm">{query}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Message Input */}
+        <View className="px-4 py-2 flex-row items-center">
+          <TouchableOpacity className="mr-3">
+            <Text className="text-xl text-gray-500">➕</Text>
+          </TouchableOpacity>
+          <TextInput
+            className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
+            placeholder="Message PoliBot..."
+            value={message}
+            onChangeText={setMessage}
+            multiline={false}
+          />
+          <TouchableOpacity 
+            className="h-10 w-10 rounded-full bg-blue-600 items-center justify-center"
+            onPress={handleSend}
+          >
+            <Text className="text-white text-lg">↑</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
