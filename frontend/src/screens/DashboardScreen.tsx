@@ -48,7 +48,18 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
-    if (['Home', 'Dashboard'].includes(tabName)) {
+    // Only navigate if the tabName matches a valid screen in your navigator
+    if (
+      [
+        'Home',
+        'Dashboard',
+        'Explore',
+        'NewsFeed',
+        'Report',
+        'Analytics',
+        'Performance'
+      ].includes(tabName)
+    ) {
       navigation.navigate(tabName as any);
     }
   };

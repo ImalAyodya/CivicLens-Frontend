@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
   Home: undefined;
+  MainTabs: undefined; // <-- Add this line
   Dashboard: undefined;
   Comparison: undefined;
   ComparisonResult: {
@@ -29,5 +30,12 @@ export type RootStackParamList = {
   Notifications: undefined;
   ElectionCountdown: undefined;
   PastElections: undefined;
-  ElectionMap: undefined;  // Add this new screen
+  PoliticianProfile: { id: string }; 
+  DirectoryScreen: undefined;
+  ElectionMap: undefined;
+  PoliticianPromises: undefined;
+  GrowthNews: undefined;
+  MinistryPerformance: undefined; 
+  PromiseDetail: { promise: any };
+  GrowthNewsDetail: { news: any };
 };
