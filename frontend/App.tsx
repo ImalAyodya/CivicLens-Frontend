@@ -19,9 +19,11 @@ import NewsDetailScreen from './src/screens/news/NewsDetailScreen';
 import NotificationsScreen from './src/screens/notifications/NotificationsScreen';
 import ElectionCountdownScreen from './src/screens/elections/ElectionCountdownScreen';
 import PastElectionsScreen from './src/screens/elections/PastElectionsScreen';
+import DirectoryScreen from './src/screens/politicianDirectory/DirectoryScreen';
+import ProfileScreen from './src/screens/politicianProfile/ProfileScreen';
 import PoliticianPromisesScreen from './src/screens/promises_&_growth/PoliticianPromisesScreen';
 import GrowthNewsScreen from './src/screens/promises_&_growth/GrowthNewsScreen';
-import MinistryPerformanceScreen from '~/screens/promises_&_growth/MinistryPerformanceScreen';
+import MinistryPerformanceScreen from './src/screens/promises_&_growth/MinistryPerformanceScreen';
 import PromiseDetailScreen from './src/screens/promises_&_growth/PromiseDetailScreen';
 import GrowthNewsDetailScreen from './src/screens/promises_&_growth/GrowthNewsDetailScreen';
 import type { RootStackParamList } from './src/navigation/types';
@@ -62,6 +64,9 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="ElectionCountdown" component={ElectionCountdownScreen} />
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
+        <Stack.Screen name="DirectoryScreen" component={DirectoryScreen} />
+        <Stack.Screen name="PoliticianProfile" component={ProfileScreen} />
+      
         <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
         <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
         <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
