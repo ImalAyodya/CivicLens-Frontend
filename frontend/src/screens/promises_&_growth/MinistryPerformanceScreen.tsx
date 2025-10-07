@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 import BottomNavBar from '../../components/BottomNavBar';
-import { PieChart } from 'react-native-svg-charts'; 
+import { PieChart } from 'react-native-chart-kit';
 
 // Dummy data for chart and table
 const chartData = [
@@ -30,16 +30,18 @@ export default function MinistryPerformanceScreen({ navigation }: { navigation: 
   const lastYear = chartData.find(d => d.year === '2024');
   const pieData = [
     {
-      key: 1,
-      value: lastYear?.profit ?? 0,
-      svg: { fill: '#2563EB' },
-      label: 'Profit',
+      name: 'Profit',
+      population: lastYear?.profit ?? 0,
+      color: '#2563EB',
+      legendFontColor: '#1E293B',
+      legendFontSize: 13,
     },
     {
-      key: 2,
-      value: lastYear?.loss ?? 0,
-      svg: { fill: '#22C55E' },
-      label: 'Loss',
+      name: 'Loss',
+      population: lastYear?.loss ?? 0,
+      color: '#22C55E',
+      legendFontColor: '#1E293B',
+      legendFontSize: 13,
     },
   ];
 
@@ -78,11 +80,17 @@ export default function MinistryPerformanceScreen({ navigation }: { navigation: 
           <Text style={styles.sectionTitle}>Overall Profits & Loss (2024)</Text>
           <View style={{ alignItems: 'center', marginVertical: 12 }}>
             <PieChart
-              style={{ height: 160, width: 160 }}
               data={pieData}
-              innerRadius={40}
-              outerRadius={80}
-              padAngle={0.03}
+              width={Dimensions.get('window').width - 48}
+              height={160}
+              chartConfig={{
+                color: () => '#2563EB',
+                labelColor: () => '#1E293B',
+              }}
+              accessor="population"
+              backgroundColor="transparent"
+              paddingLeft="0"
+              hasLegend={false}
             />
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 12 }}>
               <View style={styles.legendItem}>
