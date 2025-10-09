@@ -30,7 +30,7 @@ import QuizHistoryScreen from './src/screens/politicalQuiz/QuizHistoryScreen';
 import QuizSummaryScreen from './src/screens/politicalQuiz/QuizSummaryScreen';
 import QuizDetailScreen from './src/screens/politicalQuiz/QuizDetailScreen';
 import type { RootStackParamList } from './src/navigation/types';
-
+import './global.css';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
