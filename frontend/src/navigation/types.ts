@@ -1,5 +1,4 @@
 import type { NewsItem } from '../types/news';
-import { AIQuestion, UserAnswer } from '../services/types';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -17,15 +16,10 @@ export type RootStackParamList = {
     questionId: number;
     totalQuestions: number;
     score: number;
-    language: string;
-    questions: AIQuestion[];
-    userAnswers?: UserAnswer[];
   };
   QuizResult: {
-    score?: number; // Make score optional since we're not using it
+    score: number;
     totalQuestions: number;
-    language: string;
-    userAnswers: UserAnswer[];
   };
   PoliBot: undefined;
   PoliBotChat: undefined;
@@ -44,12 +38,4 @@ export type RootStackParamList = {
   MinistryPerformance: undefined; 
   PromiseDetail: { promise: any };
   GrowthNewsDetail: { news: any };
-  QuizSummary: {
-    userAnswers: UserAnswer[];
-    language: string;
-  };
-  QuizHistory: undefined;
-  QuizDetail: {
-    quizId: string;
-  };
 };
