@@ -15,4 +15,14 @@ export type RootStackParamList = {
   ElectionMap: undefined;  // Add this new screen
   PoliticianProfile: { id: string }; 
   DirectoryScreen: undefined;
+  AdminPanel: undefined;
+  AddParty: undefined;
+  PartyList: undefined;
+  PoliticianList: undefined;
+  AddPoliticianForm: undefined;
+  RoleList: undefined;
+  AddRole: undefined;
+  LevelList: undefined;
+  AddLevel: undefined;
+  Hierarchy: undefined;
 };

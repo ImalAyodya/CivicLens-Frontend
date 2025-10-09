@@ -13,7 +13,17 @@ import ElectionCountdownScreen from './src/screens/elections/ElectionCountdownSc
 import PastElectionsScreen from './src/screens/elections/PastElectionsScreen';
 import DirectoryScreen from './src/screens/politicianDirectory/DirectoryScreen';
 import ProfileScreen from './src/screens/politicianProfile/ProfileScreen';
+import AdminPanelScreen from './src/screens/adminPanel/AdminPanelScreen';
+import HierarchyScreen from './src/screens/politicianHierarchy/HierarchyScreen';
+import AddPartyScreen from './src/screens/adminPanel/AddPartyScreen';
+import PartyListScreen from './src/screens/adminPanel/PartyListScreen';
+import PoliticianListScreen from './src/screens/adminPanel/PoliticianListScreen';
+import AddPoliticianForm from './src/screens/adminPanel/AddPoliticianForm';
 import type { RootStackParamList } from './src/navigation/types';
+import RoleListScreen from './src/screens/adminPanel/RoleListScreen';
+import AddRoleScreen from './src/screens/adminPanel/AddRoleScreen';
+import LevelListScreen from './src/screens/adminPanel/LevelListScreen';
+import AddLevelScreen from './src/screens/adminPanel/AddLevelScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -45,6 +55,17 @@ export default function App() {
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
         <Stack.Screen name="DirectoryScreen" component={DirectoryScreen} />
         <Stack.Screen name="PoliticianProfile" component={ProfileScreen} />
+        <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
+        <Stack.Screen name="AddParty" component={AddPartyScreen} />
+        <Stack.Screen name="PartyList" component={PartyListScreen} />
+        <Stack.Screen name="PoliticianList" component={PoliticianListScreen} />
+        <Stack.Screen name="AddPoliticianForm" component={AddPoliticianForm} />
+        <Stack.Screen name="RoleList" component={RoleListScreen} />
+        <Stack.Screen name="AddRole" component={AddRoleScreen} />
+        <Stack.Screen name="Hierarchy" component={HierarchyScreen} />
+        <Stack.Screen name="LevelList" component={LevelListScreen} />
+        <Stack.Screen name="AddLevel" component={AddLevelScreen} />
+
       
       </Stack.Navigator>
     </NavigationContainer>

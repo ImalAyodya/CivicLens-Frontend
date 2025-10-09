@@ -22,6 +22,10 @@ const ReportIcon = ({ active }: { active: boolean }) => (
   <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📝</Text>
 );
 
+const HierarchyIcon = ({ active }: { active: boolean }) => (
+  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>🏛️</Text>
+);
+
 const AnalyticsIcon = ({ active }: { active: boolean }) => (
   <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📊</Text>
 );
@@ -94,12 +98,12 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
       
       <TouchableOpacity
         className="items-center"
-        onPress={() => onTabPress('Analytics')}
+        onPress={() => onTabPress('Hierarchy')}
         activeOpacity={0.7}
       >
-        <AnalyticsIcon active={activeTab === 'Analytics'} />
-        <Text className={`text-xs mt-1 ${activeTab === 'Analytics' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
-          Analytics
+        <HierarchyIcon active={activeTab === 'Hierarchy'} />
+        <Text className={`text-xs mt-1 ${activeTab === 'Hierarchy' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+          Hierarchy
         </Text>
       </TouchableOpacity>
     </View>

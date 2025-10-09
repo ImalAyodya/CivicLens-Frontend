@@ -117,11 +117,16 @@ const Header: React.FC<HeaderProps> = ({
         transparent={true}
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
+        accessibilityViewIsModal={true}
+        supportedOrientations={['portrait', 'landscape']}
       >
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setMenuVisible(false)}
+          accessibilityRole="button"
+          accessibilityLabel="Close menu"
+          accessibilityHint="Closes the navigation menu"
         >
           <View className="bg-white w-64 h-full shadow-lg">
             {/* Menu Header */}
