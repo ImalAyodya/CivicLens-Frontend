@@ -1,19 +1,47 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
-import Header from '../../components/Header';
 import Card from '../../components/Card';
+import { generateAIQuiz } from '../../services/APIservices';
+import { QuizResponse } from '../../services/types'; // Add this import
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PoliticalQuiz'>;
 
 const PoliticalQuizScreen: React.FC<Props> = ({ navigation }) => {
-  const handleStartQuiz = () => {
-    navigation.navigate('QuizQuestion', {
-      questionId: 1, 
-      totalQuestions: 20, // updated to 20
-      score: 0
-    });
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const languages = ['English', 'Sinhala', 'Tamil'];
+
+  const handleStartQuiz = async () => {
+    setIsLoading(true);
+    try {
+      const quizData = await generateAIQuiz(selectedLanguage);
+      console.log('Quiz data received:', quizData); // Debug log
+      
+      // Safely check all properties with proper defaults
+      if (quizData && quizData.success && Array.isArray(quizData.quiz) && quizData.quiz.length > 0) {
+        const totalQuestions = quizData.totalQuestions || quizData.quiz.length;
+        
+        navigation.navigate('QuizQuestion', {
+          questionId: 1,
+          totalQuestions,
+          score: 0,
+          language: selectedLanguage,
+          questions: quizData.quiz
+        });
+      } else {
+        // Handle case where API returned success: false or empty quiz
+        const errorMessage = quizData.message || 'Failed to get quiz questions';
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error('Error starting quiz:', error);
+      alert('Failed to generate quiz. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,10 +78,34 @@ const PoliticalQuizScreen: React.FC<Props> = ({ navigation }) => {
               <Text className="text-white font-bold">i</Text>
             </View>
             <Text className="text-gray-700 font-medium">
-              This comprehensive quiz will evaluate your understanding of political issues, decision-making skills, and knowledge of governance.
+              This AI-powered quiz will evaluate your understanding of political issues, decision-making skills, and knowledge of governance.
             </Text>
           </View>
         </Card>
+
+        {/* Language Selection */}
+        <View className="mx-4 mb-6">
+          <Text className="text-lg font-bold text-gray-800 mb-2">Select Language</Text>
+          <View className="flex-row flex-wrap">
+            {languages.map((language) => (
+              <TouchableOpacity
+                key={language}
+                className={`rounded-full py-2 px-4 m-1 ${
+                  selectedLanguage === language ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+                onPress={() => setSelectedLanguage(language)}
+              >
+                <Text
+                  className={`${
+                    selectedLanguage === language ? 'text-white' : 'text-gray-800'
+                  }`}
+                >
+                  {language}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
 
         <View className="mx-4 mb-8">
           <Text className="text-lg font-bold text-gray-800 mb-4">What You'll Discover</Text>
@@ -98,27 +150,36 @@ const PoliticalQuizScreen: React.FC<Props> = ({ navigation }) => {
         <View className="mx-4 mb-6">
           <View className="flex-row justify-between mb-4">
             <View className="items-center">
-              <Text className="text-blue-600 font-bold text-xl">20</Text> {/* updated */}
+              <Text className="text-blue-600 font-bold text-xl">20</Text>
               <Text className="text-gray-500 text-xs">Questions</Text>
             </View>
             <View className="items-center">
-              <Text className="text-amber-500 font-bold text-xl">10</Text> {/* adjust time if needed */}
+              <Text className="text-amber-500 font-bold text-xl">10</Text>
               <Text className="text-gray-500 text-xs">Minutes</Text>
             </View>
             <View className="items-center">
               <Text className="text-green-600 font-bold text-xl">100%</Text>
-              <Text className="text-gray-500 text-xs">Accurate</Text>
+              <Text className="text-gray-500 text-xs">AI-Powered</Text>
             </View>
           </View>
         </View>
 
         <View className="mx-4 mb-8">
           <TouchableOpacity 
-            className="bg-blue-600 rounded-lg py-4 items-center flex-row justify-center"
+            className={`rounded-lg py-4 items-center flex-row justify-center ${
+              isLoading ? 'bg-blue-400' : 'bg-blue-600'
+            }`}
             onPress={handleStartQuiz}
+            disabled={isLoading}
           >
-            <Text className="text-white font-bold mr-2">▶</Text>
-            <Text className="text-white font-bold text-lg">Start Quiz</Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#ffffff" style={{ marginRight: 8 }} />
+            ) : (
+              <Text className="text-white font-bold mr-2">▶</Text>
+            )}
+            <Text className="text-white font-bold text-lg">
+              {isLoading ? 'Generating Quiz...' : 'Start Quiz'}
+            </Text>
           </TouchableOpacity>
           <Text className="text-center text-gray-500 text-xs mt-2">
             Takes about 10 minutes to complete

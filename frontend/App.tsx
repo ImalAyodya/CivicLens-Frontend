@@ -1,8 +1,8 @@
+
 import React from 'react';
-import './global.css';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import { UserProvider } from './src/context/UserContext';
 import LoginScreen from './src/screens/common/LoginScreen';
 import SignUpScreen from './src/screens/common/SignUpScreen';
 import HomeScreen from './src/screens/common/HomeScreen';
@@ -26,12 +26,17 @@ import GrowthNewsScreen from './src/screens/promises_&_growth/GrowthNewsScreen';
 import MinistryPerformanceScreen from './src/screens/promises_&_growth/MinistryPerformanceScreen';
 import PromiseDetailScreen from './src/screens/promises_&_growth/PromiseDetailScreen';
 import GrowthNewsDetailScreen from './src/screens/promises_&_growth/GrowthNewsDetailScreen';
+import QuizHistoryScreen from './src/screens/politicalQuiz/QuizHistoryScreen';
+import QuizSummaryScreen from './src/screens/politicalQuiz/QuizSummaryScreen';
+import QuizDetailScreen from './src/screens/politicalQuiz/QuizDetailScreen';
 import type { RootStackParamList } from './src/navigation/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
+    <UserProvider>
+      
     <NavigationContainer>
       <Stack.Navigator 
         initialRouteName="Login"
@@ -72,7 +77,11 @@ export default function App() {
         <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
         <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} />
         <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
+        <Stack.Screen name="QuizHistory" component={QuizHistoryScreen} />
+        <Stack.Screen name="QuizSummary" component={QuizSummaryScreen} />
+        <Stack.Screen name="QuizDetail" component={QuizDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </UserProvider>
   );
 }
