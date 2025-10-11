@@ -13,7 +13,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
       <Image 
         source={{ uri: candidate.imageUrl }}
         className="w-12 h-12 rounded-full"
-        defaultSource={require('../../../assets/candidate-placeholder.png')}
+        defaultSource={require('../../../assets/anura_kumara.jpg')}
       />
       
       <View className="flex-1 ml-3">
