@@ -35,4 +35,5 @@ export type RootStackParamList = {
   MinistryPerformance: undefined; 
   PromiseDetail: { promise: any };
   GrowthNewsDetail: { news: any };
+  Profile: undefined;
 };
