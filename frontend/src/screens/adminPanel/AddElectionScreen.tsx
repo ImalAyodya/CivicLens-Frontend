@@ -15,7 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
+//import DateTimePicker from "@react-native-community/datetimepicker";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { RootStackParamList } from "../../navigation/types";
 
@@ -176,14 +176,14 @@ const AddElectionScreen: React.FC = () => {
             <Ionicons name="calendar-outline" size={20} color="#64748B" />
           </TouchableOpacity>
           
-          {showDatePicker && (
+          {/* {showDatePicker && (
             <DateTimePicker
               value={form.date}
               mode="date"
               display="default"
               onChange={onDateChange}
             />
-          )}
+          )} */}
 
           {/* Description */}
           <Text style={styles.label}>Description *</Text>

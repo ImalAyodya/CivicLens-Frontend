@@ -27,6 +27,7 @@ import { useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns';
 import { ElectionData } from '../../types/election';
 import BlueHeader from '../../components/BlueHeader';
+import CandidateImage from '../../components/elections/CandidateImage';
 
 const { width } = Dimensions.get('window');
 
@@ -282,22 +283,20 @@ const PastElectionsScreen: React.FC<Props> = ({ navigation }) => {
             </Text>
           </View>
           
-          <View style={styles.candidatesPreview}>
-            {item.candidates && item.candidates.slice(0, 3).map((candidate) => (
-              <View 
-                key={candidate._id || candidate.id || Math.random().toString()} 
-                style={styles.candidateRow}
-              >
-                <View style={[styles.partyDot, { backgroundColor: getPartyColor(candidate.party) }]} />
-                <Text style={styles.candidateName}>
-                  {candidate.name} <Text style={styles.partyText}>({candidate.party})</Text>
-                </Text>
+          <View style={styles.candidatesRow}>
+            {item.candidates && item.candidates.slice(0, 3).map((candidate, idx) => (
+              <View key={idx} style={styles.candidateThumb}>
+                <CandidateImage 
+                  imageUrl={candidate.imageUrl || candidate.image} 
+                  size={32} 
+                  borderRadius={16} 
+                />
               </View>
             ))}
             {item.candidates && item.candidates.length > 3 && (
-              <Text style={styles.moreText}>
-                +{item.candidates.length - 3} more candidates
-              </Text>
+              <View style={styles.moreCandidates}>
+                <Text style={styles.moreCandidatesText}>+{item.candidates.length - 3}</Text>
+              </View>
             )}
           </View>
           
@@ -739,36 +738,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#4A5568',
   },
-  candidatesPreview: {
-    marginTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#EDF2F7',
-    paddingTop: 10,
-  },
-  candidateRow: {
+  candidatesRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginTop: 8,
+    marginBottom: 4,
   },
-  partyDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 8,
+  candidateThumb: {
+    marginRight: -10,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    borderRadius: 16,
   },
-  candidateName: {
-    fontSize: 14,
-    color: '#2D3748',
+  moreCandidates: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#E2E8F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 4,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
-  partyText: {
-    color: '#4A5568',
+  moreCandidatesText: {
+    fontSize: 12,
     fontWeight: '500',
-  },
-  moreText: {
-    fontSize: 13,
-    color: '#718096',
-    marginTop: 4,
-    fontStyle: 'italic',
+    color: '#4A5568',
   },
   cardFooter: {
     flexDirection: 'row',
