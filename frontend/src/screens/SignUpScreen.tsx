@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -7,18 +7,52 @@ import GoogleIcon from '../components/icons/GoogleIcon';
 import AppIcon from '../components/icons/AppIcon';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
+import axios from 'axios';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
+
+const API_BASE_URL = 'http://localhost:5000/promise/api/signup';
 
 const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [nic, setNic] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
-    console.log('Sign up attempted with:', { name, email });
-    // Add your registration logic here
+  const handleSignUp = async () => {
+    // Basic validation
+    if (!name || !email || !phoneNumber || !nic || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill all fields.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      Alert.alert('Error', 'Phone number must be 10 digits.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.post(API_BASE_URL, {
+        fullName: name,
+        email,
+        phoneNumber,
+        nic,
+        password
+      });
+      Alert.alert('Success', 'Account created successfully!');
+      navigation.navigate('Login');
+    } catch (error: any) {
+      Alert.alert('Sign Up Failed', error?.response?.data?.error || 'Something went wrong.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,27 +82,39 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 label="Full Name"
                 placeholder="John Doe"
                 value={name}
-                onChangeText={(text) => setName(text)}
+                onChangeText={setName}
               />
               <Input
                 label="Email"
                 placeholder="you@example.com"
                 value={email}
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={setEmail}
+              />
+              <Input
+                label="Phone Number"
+                placeholder="0771234567"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+              />
+              <Input
+                label="NIC No"
+                placeholder="123456789V"
+                value={nic}
+                onChangeText={setNic}
               />
               <Input
                 label="Password"
                 secureTextEntry={true}
                 placeholder="••••••••"
                 value={password}
-                onChangeText={(text) => setPassword(text)}
+                onChangeText={setPassword}
               />
               <Input
                 label="Confirm Password"
                 secureTextEntry={true}
                 placeholder="••••••••"
                 value={confirmPassword}
-                onChangeText={(text) => setConfirmPassword(text)}
+                onChangeText={setConfirmPassword}
               />
               
               <Button
@@ -76,7 +122,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
                 className="w-full mt-2"
                 onPress={handleSignUp}
               >
-                Create Account
+                {loading ? 'Creating...' : 'Create Account'}
               </Button>
             </View>
 

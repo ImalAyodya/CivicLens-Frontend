@@ -65,5 +65,6 @@ export type RootStackParamList = {
   AdminUserManagement: undefined;
   AdminReports: undefined;
   AdminSettings: undefined;
+  Profile: undefined;
 };
 

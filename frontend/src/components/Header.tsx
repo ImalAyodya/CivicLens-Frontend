@@ -89,7 +89,14 @@ const Header: React.FC<HeaderProps> = ({
             <NotificationIcon />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={onProfilePress}
+            onPress={() => {
+              if (navigation) {
+                navigation.navigate('Profile');
+              }
+              if (onProfilePress) {
+                onProfilePress();
+              }
+            }}
             activeOpacity={0.7}
           >
             <ProfileIcon />

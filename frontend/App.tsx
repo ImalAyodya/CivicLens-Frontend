@@ -38,6 +38,7 @@ import AdminDashboardScreen from './src/screens/admin/AdminDashboardScreen';
 import AdminSupportTicketsScreen from './src/screens/admin/AdminSupportTicketsScreen';
 import AdminTicketDetailScreen from './src/screens/admin/AdminTicketDetailScreen';
 
+import ProfileScreen from './src/screens/ProfileScreen';
 import type { RootStackParamList } from './src/navigation/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -93,6 +94,7 @@ export default function App() {
         <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
         <Stack.Screen name="AdminSupportTickets" component={AdminSupportTicketsScreen} />
         <Stack.Screen name="AdminTicketDetail" component={AdminTicketDetailScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </UserProvider>

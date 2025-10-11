@@ -7,33 +7,51 @@ import GoogleIcon from '../components/icons/GoogleIcon';
 import AppIcon from '../components/icons/AppIcon';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
+
+const API_BASE_URL = 'http://localhost:5000/promise/api/login';
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(''); // Add error message state
 
-  const handleLogin = () => {
-    console.log('Login attempted with:', email);
-    
-    if (isAdminMode) {
-      // Check admin credentials
-      if (email === 'admin@gmail.com' && password === 'admin') {
-        navigation.navigate('AdminDashboard');
+  const handleLogin = async () => {
+    setErrorMsg('');
+    if (!email || !password) {
+      setErrorMsg('Please enter both email and password.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (isAdminMode) {
+        if (email === 'admin@gmail.com' && password === 'admin') {
+          // navigation.navigate('AdminDashboard');
+        } else {
+          setErrorMsg('Invalid Credentials, please try again');
+        }
       } else {
-        Alert.alert('Login Failed', 'Invalid admin credentials. Please try again.');
+        const response = await axios.post(API_BASE_URL, { email, password });
+        const token = response.data.token;
+        await AsyncStorage.setItem('token', token);
+        setErrorMsg('');
+        navigation.navigate('Home');
       }
-    } else {
-      // Regular user login
-      navigation.navigate('Home');
+    } catch (error: any) {
+      setErrorMsg('Invalid Credentials, please try again');
+    } finally {
+      setLoading(false);
     }
   };
 
   const toggleAdminMode = () => {
     setIsAdminMode(!isAdminMode);
-    // Clear fields when switching modes
     setEmail('');
     setPassword('');
   };
@@ -85,6 +103,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 value={password}
                 onChangeText={(text) => setPassword(text)}
               />
+              {/* Show error message if exists */}
+              {errorMsg ? (
+                <Text style={{ color: '#B91C1C', marginBottom: 8, textAlign: 'center' }}>
+                  {errorMsg}
+                </Text>
+              ) : null}
               <View className="flex-row justify-end mb-6">
                 <Button variant="link" className="p-0" onPress={() => {}}>
                   <Text className="text-sm text-blue-600">Forgot Password?</Text>
@@ -95,7 +119,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 className="w-full"
                 onPress={handleLogin}
               >
-                {isAdminMode ? 'Admin Login' : 'Log In'}
+                {loading ? 'Logging in...' : isAdminMode ? 'Admin Login' : 'Log In'}
               </Button>
             </View>
 
