@@ -19,6 +19,7 @@ import type { ElectionData } from '../../types/election';
 import VoterTurnoutChart from '../../components/elections/VoterTurnoutChart';
 import VoteDistributionChart from '../../components/elections/VoteDistributionChart';
 import CandidateCard from '../../components/elections/CandidateCard';
+import CandidateImage from '../../components/elections/CandidateImage';
 import { format } from 'date-fns';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
@@ -81,6 +82,10 @@ export default function PastElectionDetailsScreen() {
       Haptics.selectionAsync();
     }
     setActiveTab(tab);
+  };
+
+  const renderCandidateImage = (imageUrl?: string, size = 40) => {
+    return <CandidateImage imageUrl={imageUrl} size={size} borderRadius={size/2} />;
   };
 
   if (loading) {
@@ -293,10 +298,11 @@ export default function PastElectionDetailsScreen() {
                 </View>
                 <View style={styles.winnerContent}>
                   {winner.imageUrl ? (
-                    <Image 
-                      source={{ uri: winner.imageUrl }} 
-                      style={styles.winnerImage} 
-                      resizeMode="cover"
+                    <CandidateImage 
+                      imageUrl={winner.imageUrl} 
+                      size={90} 
+                      borderRadius={45} 
+                      style={styles.winnerImage}
                     />
                   ) : (
                     <View style={[styles.winnerImage, styles.winnerImagePlaceholder]}>
@@ -328,9 +334,12 @@ export default function PastElectionDetailsScreen() {
             
             {/* Vote Distribution */}
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>Vote Distribution</Text>
-              <VoteDistributionChart data={election.voteDistribution} />
-            </View>
+                    <Text style={styles.sectionTitle}>Vote Distribution</Text>
+                    <VoteDistributionChart data={election.voteDistribution.map(item => ({
+                      ...item,
+                      votes: Math.round(item.percentage * 1000) // Adding estimated votes based on percentage
+                    }))} />
+                  </View>
             
             {/* Voter Turnout */}
             <View style={styles.sectionCard}>
@@ -419,18 +428,7 @@ export default function PastElectionDetailsScreen() {
                       <Text style={styles.positionText}>{index + 1}</Text>
                     </View>
                     
-                    {candidate.imageUrl ? (
-                      <Image 
-                        source={{ uri: candidate.imageUrl }} 
-                        style={styles.resultCandidateImage} 
-                      />
-                    ) : (
-                      <View style={styles.resultCandidateImagePlaceholder}>
-                        <Text style={styles.candidateInitials}>
-                          {candidate.name.split(' ').map(n => n[0]).join('')}
-                        </Text>
-                      </View>
-                    )}
+                    {renderCandidateImage(candidate.imageUrl, 20)}
                     
                     <Text style={styles.resultCandidateName} numberOfLines={1}>
                       {candidate.name}
@@ -459,11 +457,17 @@ export default function PastElectionDetailsScreen() {
             </View>
             
             <View style={styles.divider} />
-            
-            {/* Detailed Vote Distribution */}
-            <Text style={styles.subSectionTitle}>Complete Vote Distribution</Text>
             <View style={styles.voteDistributionCard}>
-              <VoteDistributionChart data={election.voteDistribution} />
+              <VoteDistributionChart data={election.voteDistribution.map(item => ({
+                ...item,
+                votes: Math.round(item.percentage * 1000) // Adding estimated votes based on percentage
+              }))} />
+            </View>
+            <View style={styles.voteDistributionCard}>
+              <VoteDistributionChart data={election.voteDistribution.map(item => ({
+                ...item,
+                votes: Math.round(item.percentage * 1000) // Adding estimated votes based on percentage
+              }))} />
             </View>
             
             {/* Provincial Results */}

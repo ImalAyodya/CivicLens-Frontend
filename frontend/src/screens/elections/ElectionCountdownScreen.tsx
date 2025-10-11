@@ -7,7 +7,8 @@ import {
   ActivityIndicator, 
   StatusBar,
   Share,
-  StyleSheet
+  StyleSheet,
+  Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -22,6 +23,9 @@ import { useElectionData } from '../../hooks/useElectionData';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ElectionCountdown'>;
+
+// Banner image for election
+const ELECTION_BANNER = require('../../../assets/election-banner.png');
 
 const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
   const { 
@@ -89,33 +93,40 @@ const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <View className="flex-1 bg-blue-50">
+    <View style={styles.container}>
       {/* Header */}
-      <View className="bg-blue-600 pt-10 pb-3">
-        <View className="flex-row justify-between items-center px-4">
-          <TouchableOpacity onPress={handleBackPress} className="p-2">
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
           
-          <Text className="text-white font-bold text-lg">Election Tracker</Text>
+          <Text style={styles.headerTitle}>Election Tracker</Text>
           
-          <View className="flex-row">
-            <TouchableOpacity onPress={handleSharePress} className="p-2">
+          <View style={styles.headerActions}>
+            <TouchableOpacity onPress={handleSharePress} style={styles.actionButton}>
               <Ionicons name="share-outline" size={22} color="white" />
             </TouchableOpacity>
             
-            <TouchableOpacity className="p-2">
+            <TouchableOpacity style={styles.actionButton}>
               <Ionicons name="ellipsis-vertical" size={22} color="white" />
             </TouchableOpacity>
           </View>
         </View>
         
+        {/* Election Banner */}
+        <Image 
+          source={ELECTION_BANNER}
+          style={styles.headerBanner}
+          resizeMode="cover"
+        />
+        
         {/* Election Day Countdown */}
         <Animated.View 
           entering={FadeIn.duration(600)} 
-          className="px-4 pt-3"
+          style={styles.countdownContainer}
         >
-          <Text className="text-center text-white font-medium text-base mb-2">
+          <Text style={styles.countdownTitle}>
             <Ionicons name="calendar-outline" size={16} /> Election Day Countdown
           </Text>
           
@@ -126,28 +137,28 @@ const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
             seconds={timeRemaining.seconds}
           />
           
-          <Text className="text-center text-blue-100 text-sm mt-2 mb-1">
+          <Text style={styles.electionName}>
             {electionData.electionName}
           </Text>
         </Animated.View>
       </View>
       
       {/* Tab Navigation */}
-      <View className="flex-row border-b border-gray-200 bg-white">
-        <TouchableOpacity className="flex-1 py-3 px-4 items-center border-b-2 border-blue-600">
-          <Text className="text-blue-600 font-medium">Candidates</Text>
+      <View style={styles.tabNavigation}>
+        <TouchableOpacity style={[styles.tabButton, styles.activeTab]}>
+          <Text style={styles.activeTabText}>Candidates</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity className="flex-1 py-3 px-4 items-center">
-          <Text className="text-gray-500">Past</Text>
+        <TouchableOpacity style={styles.tabButton}>
+          <Text style={styles.tabText}>Past</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity className="flex-1 py-3 px-4 items-center">
-          <Text className="text-gray-500">Elections</Text>
+        <TouchableOpacity style={styles.tabButton}>
+          <Text style={styles.tabText}>Elections</Text>
         </TouchableOpacity>
       </View>
       
-      <ScrollView className="flex-1 p-4">
+      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
         {/* Election Fact */}
         <ElectionFact 
           fact={electionData.electionFacts[0].content}
@@ -155,8 +166,8 @@ const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
         />
         
         {/* Candidates Section */}
-        <View className="mb-4">
-          <Text className="font-bold text-gray-800 mb-3">Candidates</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Candidates</Text>
           
           {electionData.candidates.map(candidate => (
             <Animated.View 
@@ -169,18 +180,29 @@ const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
         </View>
         
         {/* Voter Turnout */}
-        <Animated.View entering={FadeIn.delay(500).duration(600)}>
+        <Animated.View 
+          entering={FadeIn.delay(500).duration(600)}
+          style={styles.chartSection}
+        >
           <VoterTurnoutChart data={electionData.voterTurnout} />
         </Animated.View>
         
         {/* Vote Distribution */}
-        <Animated.View entering={FadeIn.delay(700).duration(600)}>
-          <VoteDistributionChart data={electionData.voteDistribution} />
+        <Animated.View 
+          entering={FadeIn.delay(700).duration(600)}
+          style={styles.chartSection}
+        >
+          <VoteDistributionChart 
+            data={electionData.voteDistribution.map(item => ({
+              ...item,
+              votes: item.percentage * 1000, // Estimating votes based on percentage
+            }))} 
+          />
         </Animated.View>
         
         {/* AI Election Trends Button */}
         <TouchableOpacity 
-          className="bg-blue-100 rounded-lg p-4 mb-4 flex-row items-center"
+          style={styles.aiButton}
           onPress={() => {
             const id = electionData.id;
             if (!id) return;
@@ -188,18 +210,21 @@ const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
           }}
         >
           <Ionicons name="analytics-outline" size={24} color="#2563EB" />
-          <View className="ml-3">
-            <Text className="text-blue-800 font-bold">AI Election Trends</Text>
-            <Text className="text-blue-600 text-xs">See voting predictions and analysis</Text>
+          <View style={styles.aiButtonContent}>
+            <Text style={styles.aiButtonTitle}>AI Election Trends</Text>
+            <Text style={styles.aiButtonSubtitle}>See voting predictions and analysis</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#2563EB" style={{ marginLeft: 'auto' }} />
+          <Ionicons name="chevron-forward" size={20} color="#2563EB" style={styles.aiButtonIcon} />
         </TouchableOpacity>
+        
+        {/* Add space for FAB */}
+        <View style={styles.fabSpace} />
       </ScrollView>
       
       {/* Floating Action Button */}
       <TouchableOpacity 
-        className="absolute bottom-6 right-6 bg-blue-600 w-14 h-14 rounded-full items-center justify-center shadow-lg"
-        style={styles.fabShadow}
+        style={styles.fab}
+        onPress={handleSharePress}
       >
         <Ionicons name="share-social-outline" size={24} color="white" />
       </TouchableOpacity>
@@ -208,36 +233,146 @@ const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  fabShadow: {
-    shadowColor: '#1D4ED8',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 6
-  },
   container: {
     flex: 1,
+    backgroundColor: '#F7FAFC',
+  },
+  header: {
+    backgroundColor: '#2563EB',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 50,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    zIndex: 10,
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  headerActions: {
+    flexDirection: 'row',
+  },
+  actionButton: {
+    padding: 8,
+  },
+  headerBanner: {
+    width: '100%',
+    height: 80,
+    opacity: 0.5,
+  },
+  countdownContainer: {
     padding: 16,
+    paddingTop: 0,
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
+  countdownTitle: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
     textAlign: 'center',
+    marginBottom: 8,
   },
-  sectionHeading: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 24,
+  electionName: {
+    color: '#E0F2FE',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  tabNavigation: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#2563EB',
+  },
+  tabText: {
+    color: '#64748B',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: '#2563EB',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1E293B',
     marginBottom: 12,
   },
-  candidatesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  chartSection: {
+    marginBottom: 24,
   },
-  factsContainer: {
-    marginTop: 20,
+  aiButton: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  aiButtonContent: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  aiButtonTitle: {
+    color: '#1E40AF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  aiButtonSubtitle: {
+    color: '#3B82F6',
+    fontSize: 12,
+  },
+  aiButtonIcon: {
+    marginLeft: 'auto',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#2563EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    shadowColor: '#1D4ED8',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  fabSpace: {
+    height: 72,
   },
   loadingContainer: {
     flex: 1,
@@ -245,18 +380,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 10,
+    marginTop: 16,
     fontSize: 16,
+    color: '#4B5563',
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 24,
   },
   errorText: {
+    color: '#EF4444',
     fontSize: 16,
-    color: 'red',
     textAlign: 'center',
   },
 });
