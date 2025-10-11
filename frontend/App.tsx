@@ -1,4 +1,3 @@
-import 'text-encoding';
 import PoliticalPartyListScreen from './src/screens/party/PoliticalPartyListScreen';
 import React from 'react';
 import './global.css';
