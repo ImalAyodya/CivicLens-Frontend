@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
@@ -9,13 +9,21 @@ import type { RootStackParamList } from '../../navigation/types';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'AddRole'>;
 
+type Level = {
+  _id: string;
+  name: string;
+  description?: string;
+};
+
 const API_URL = "http://localhost:5000/api/roles";
+const API_BASE_URL = "http://localhost:5000";
 
 const AddRoleScreen = () => {
   const navigation = useNavigation<NavigationProp>();
+  const [levels, setLevels] = useState<Level[]>([]);
   const [form, setForm] = useState({
     title: "",
-    level: "MP",
+    level: "",
     startDate: "",
     endDate: "",
     region: ""
@@ -31,8 +39,8 @@ const AddRoleScreen = () => {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        
-        const response = await fetch('http://localhost:5000/api/roles', { 
+
+        const response = await fetch('http://localhost:5000/api/roles', {
           method: 'GET',
           signal: controller.signal
         });
@@ -55,9 +63,46 @@ const AddRoleScreen = () => {
     checkBackendConnection();
   }, []);
 
+  // Fetch levels from backend when backend status changes
+  useEffect(() => {
+    const fetchLevels = async () => {
+      if (backendStatus === 'connected') {
+        try {
+          console.log("Fetching levels from:", `${API_BASE_URL}/api/levels`);
+          const response = await axios.get(`${API_BASE_URL}/api/levels`);
+          console.log("Levels response:", response.data);
+          setLevels(response.data);
+        } catch (error) {
+          console.log("Error fetching levels:", error);
+          // Fallback to hardcoded levels if API fails
+          setLevels([
+            { _id: '1', name: 'MP' },
+            { _id: '2', name: 'DC' },
+            { _id: '3', name: 'Minister' },
+            { _id: '4', name: 'President' },
+            { _id: '5', name: 'General' }
+          ]);
+        }
+      } else if (backendStatus === 'disconnected') {
+        // Use hardcoded levels when backend is disconnected
+        setLevels([
+          { _id: '1', name: 'MP' },
+          { _id: '2', name: 'DC' },
+          { _id: '3', name: 'Minister' },
+          { _id: '4', name: 'President' },
+          { _id: '5', name: 'General' }
+        ]);
+      }
+    };
+
+    if (backendStatus !== 'checking') {
+      fetchLevels();
+    }
+  }, [backendStatus]);
+
   const handleSubmit = async () => {
-    if (!form.title.trim() || !form.startDate.trim()) {
-      Alert.alert("Validation Error", "Please fill in at least the Title and Start Date fields");
+    if (!form.title.trim() || !form.startDate.trim() || !form.level.trim()) {
+      Alert.alert("Validation Error", "Please fill in Title, Level, and Start Date fields");
       return;
     }
 
@@ -89,7 +134,7 @@ const AddRoleScreen = () => {
             // Reset form
             setForm({
               title: "",
-              level: "MP",
+              level: "",
               startDate: "",
               endDate: "",
               region: ""
@@ -118,7 +163,7 @@ const AddRoleScreen = () => {
       // Reset form
       setForm({
         title: "",
-        level: "MP",
+        level: "",
         startDate: "",
         endDate: "",
         region: ""
@@ -189,12 +234,14 @@ const AddRoleScreen = () => {
             onValueChange={(v: string) => handleChange("level", v)}
             style={styles.picker}
           >
-            <Picker.Item label="President" value="President" />
-            <Picker.Item label="Prime Minister" value="PrimeMinister" />
-            <Picker.Item label="Cabinet Minister" value="CabinetMinister" />
-            <Picker.Item label="MP" value="MP" />
-            <Picker.Item label="Provincial Member" value="ProvincialMember" />
-            <Picker.Item label="Local Authority Member" value="LocalAuthorityMember" />
+            <Picker.Item label="Select Level" value="" />
+            {levels.map((level) => (
+              <Picker.Item 
+                key={level._id} 
+                label={level.name} 
+                value={level._id} 
+              />
+            ))}
           </Picker>
         </View>
 
