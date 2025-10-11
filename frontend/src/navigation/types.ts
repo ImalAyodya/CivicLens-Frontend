@@ -89,6 +89,12 @@ QuizQuestion: {
   };
   ElectionPredictions: { electionId: string };
   PublicEngagementScore: undefined;
+  NewsList: undefined;
+  AddNews: undefined;
+  EditNews: { newsId: string };
+  ElectionList: undefined;
+  AddElection: undefined;
+  EditElection: { electionId: string };
 };
 
 
