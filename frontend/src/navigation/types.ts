@@ -44,11 +44,14 @@ export type RootStackParamList = {
     electionId: string;
   };
   ElectionMap: undefined;
+  ElectionScreen: undefined;
+  AddElectionScreen: undefined;
   PoliticianDetails: { id: string }; 
   DirectoryScreen: undefined;
   AdminPanel: undefined;
   AddParty: undefined;
   PartyList: undefined;
+  PoliticalPartyList: undefined;
   PoliticianList: undefined;
   AddPoliticianForm: undefined;
   RoleList: undefined;

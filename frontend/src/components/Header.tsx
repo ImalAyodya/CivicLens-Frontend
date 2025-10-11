@@ -249,11 +249,11 @@ const Header: React.FC<HeaderProps> = ({
     { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
     { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
     { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-    // { id: '8', title: 'Reports', icon: <Ionicons name="document-text-outline" size={22} color="#2563EB" />, screen: 'Reports' },
-    // { id: '9', title: 'Issues', icon: <Ionicons name="alert-circle-outline" size={22} color="#2563EB" />, screen: 'Issues' },
-    // { id: '10', title: 'Settings', icon: <Ionicons name="settings-outline" size={22} color="#2563EB" />, screen: 'Settings' },
-    { id: '11', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
-    { id: '12', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+    { id: '8', title: 'Virtual Election', icon: <Ionicons name="checkbox-outline" size={22} color="#2563EB" />, screen: 'ElectionScreen' },
+    { id: '9', title: 'Add Election', icon: <Ionicons name="add-circle-outline" size={22} color="#2563EB" />, screen: 'AddElectionScreen' },
+    { id: '10', title: 'All Parties', icon: <Ionicons name="flag-outline" size={22} color="#2563EB" />, screen: 'PoliticalPartyList' },
+    { id: '13', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+    { id: '14', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
@@ -344,9 +344,11 @@ const Header: React.FC<HeaderProps> = ({
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
                   onPress={() => {
                     setMenuVisible(false);
-                    if (
-                      navigation &&
-                      [
+                    if (navigation) {
+                      // Add explicit navigation for All Parties
+                      if (item.screen === 'PoliticalPartyList') {
+                        navigation.navigate('PoliticalPartyList');
+                      } else if ([
                         'Home',
                         'Login',
                         'Dashboard',
@@ -355,12 +357,14 @@ const Header: React.FC<HeaderProps> = ({
                         'PoliticalQuiz',
                         'PoliBot',
                         'QuizHistory',
+                        'ElectionScreen',
+                        'AddElectionScreen',
                         'HelpAndSupport',
-                      ].includes(item.screen)
-                    ) {
-                      navigation.navigate(item.screen);
-                    } else {
-                      console.log(`Screen ${item.screen} not implemented yet`);
+                      ].includes(item.screen)) {
+                        navigation.navigate(item.screen);
+                      } else {
+                        console.log(`Screen ${item.screen} not implemented yet`);
+                      }
                     }
                   }}
                 >

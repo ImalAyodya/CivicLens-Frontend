@@ -20,6 +20,7 @@ export const UserContext = createContext<UserContextType>({
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Hard-coded user until login is implemented
+  // TODO: Replace with actual authentication token from login
   const [user, setUser] = useState<User | null>({
     id: 'user123',
     username: 'DemoUser',
@@ -27,7 +28,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   return (
-    <UserContext.Provider value={{ user, setUser, isLoggedIn: !!user }}>
+    <UserContext.Provider value={{ 
+      user, 
+      setUser, 
+      isLoggedIn: !!user, 
+    }}>
       {children}
     </UserContext.Provider>
   );
