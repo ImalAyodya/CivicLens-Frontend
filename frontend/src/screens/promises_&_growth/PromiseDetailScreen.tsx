@@ -1,53 +1,52 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, TextInput, ActivityIndicator, Linking, Platform } from 'react-native';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
+import * as FileSystem from 'expo-file-system';
 import BottomNavBar from '../../components/BottomNavBar';
 import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 
-const evidenceData = [
-  {
-    id: 1,
-    icon: <FontAwesome name="facebook-square" size={28} color="#2563EB" />,
-    label: 'Facebook video of promise',
-  },
-  {
-    id: 2,
-    icon: <Ionicons name="people" size={28} color="#2563EB" />,
-    label: 'Political campaign meeting evidence',
-  },
-];
+const API_BASE_URL = 'http://localhost:5000/promise/api';
 
-const commentsData = [
-  {
-    id: 1,
-    name: 'Amali Priyadarshani',
-    date: '2023-02-08',
-    comment: 'All prices of medical equipments is low now. Thank you soo much for that',
-  },
-  {
-    id: 2,
-    name: 'Chaminda Perera',
-    date: '2023-05-12',
-    comment: 'I hope they are prioritize hiring local teachers for these new schools.',
-  },
-];
+const statusColors: Record<string, { bg: string; text: string }> = {
+  complete: { bg: '#D1FAE5', text: '#059669' },
+  pending: { bg: '#FEF3C7', text: '#B45309' },
+  broken: { bg: '#FEE2E2', text: '#B91C1C' },
+};
 
 export default function PromiseDetailScreen({ route, navigation }: any) {
-  // You can get promise details from route.params
-  const promise = route.params?.promise || {
-    name: 'Dilmini Edirisinghe',
-    role: 'Minister of Health',
-    avatar: require('../../../assets/candidate-placeholder.png'),
-    status: 'Completed',
-    title: 'Reduce Health Care cost by 15%',
-    description:
-      'This initiative aims to improve educational access in underserved rural communities across the country. The promise includes construction of 100 new schools with modern facilities including computer labs, libraries, and sports facilities. Each school will be staffed with qualified teachers and will serve approximately 500 students.',
-    image: require('../../../assets/news-placeholder.png'),
-    progress: 100,
-  };
+  const promiseId = route.params?.promise?._id || route.params?.promise?.id;
+  const [promise, setPromise] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Comments and evidence can be fetched from backend if available
   const [comment, setComment] = useState('');
-  const [comments, setComments] = useState(commentsData);
+  const [comments, setComments] = useState<any[]>([]);
+  const [evidence, setEvidence] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!promiseId) {
+      setError('No promise ID provided.');
+      setLoading(false);
+      return;
+    }
+    const fetchPromise = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get(`${API_BASE_URL}/promises/${promiseId}`);
+        setPromise(response.data);
+        setEvidence(response.data.evidence || []);
+        setComments(response.data.citizenFeedback ? [{ id: 1, name: 'Citizen', date: '', comment: response.data.citizenFeedback }] : []);
+      } catch (err) {
+        setError('Failed to load promise details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPromise();
+  }, [promiseId]);
 
   const handleAddComment = () => {
     if (comment.trim()) {
@@ -64,48 +63,144 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
     }
   };
 
+  // Get color for current promiseStatus
+  const statusColor = statusColors[promise?.promiseStatus] || { bg: '#E5E7EB', text: '#6B7280' };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <ActivityIndicator size="large" color="#2563EB" />
+        <Text style={{ marginTop: 12, color: '#64748B' }}>Loading promise details...</Text>
+      </View>
+    );
+  }
+
+  if (error || !promise) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <Text style={{ color: '#EF4444', fontSize: 16 }}>{error || 'Promise not found.'}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.retryButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // Helper to check if evidence is a document
+  const isDocumentType = (type: string) =>
+    ['pdf', 'word', 'excel', 'text', 'doc', 'docx', 'xlsx', 'ppt', 'pptx'].includes(type?.toLowerCase());
+
+  const getDocumentIcon = (type: string) => {
+    switch (type?.toLowerCase()) {
+      case 'pdf':
+        return <FontAwesome name="file-pdf-o" size={28} color="#EF4444" />;
+      case 'word':
+      case 'doc':
+      case 'docx':
+        return <FontAwesome name="file-word-o" size={28} color="#2563EB" />;
+      case 'excel':
+      case 'xlsx':
+        return <FontAwesome name="file-excel-o" size={28} color="#22C55E" />;
+      case 'ppt':
+      case 'pptx':
+        return <FontAwesome name="file-powerpoint-o" size={28} color="#F59E42" />;
+      case 'text':
+        return <FontAwesome name="file-text-o" size={28} color="#64748B" />;
+      default:
+        return <FontAwesome name="file-o" size={28} color="#2563EB" />;
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       <PoliticianPromisesHeader navigation={navigation} pageTitle="Promise Details" />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 80 }}>
-        {/* Back Button and Title */}
+        {/* Back Button */}
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#222" />
         </TouchableOpacity>
         {/* Card */}
         <View style={styles.card}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-            <Image source={promise.avatar} style={styles.avatar} />
+            <Image
+              source={
+                promise.politicianImage && typeof promise.politicianImage === 'string' && promise.politicianImage.startsWith('http')
+                  ? { uri: promise.politicianImage }
+                  : require('../../../assets/candidate-placeholder.png')
+              }
+              style={styles.avatar}
+            />
             <View style={{ marginLeft: 10 }}>
-              <Text style={styles.name}>{promise.name}</Text>
-              <Text style={styles.role}>{promise.role}</Text>
+              <Text style={styles.name}>{promise.ministerName || 'Unknown Politician'}</Text>
+              <Text style={styles.role}>{promise.ministryName || 'Unknown Ministry'}</Text>
             </View>
           </View>
-          <Text style={styles.title}>{promise.title}</Text>
-          <Image source={promise.image} style={styles.promiseImage} />
-          <Text style={styles.desc}>{promise.description}</Text>
+          <Text style={styles.title}>{promise.promiseTitle || 'No Title'}</Text>
+          <Image
+            source={
+              promise.promiseImage && typeof promise.promiseImage === 'string' && promise.promiseImage.startsWith('http')
+                ? { uri: promise.promiseImage }
+                : require('../../../assets/news-placeholder.png')
+            }
+            style={styles.promiseImage}
+          />
+          <Text style={styles.desc}>{promise.promiseDetails || 'No description available.'}</Text>
           {/* Progress Bar */}
           <View style={{ marginTop: 10 }}>
             <Text style={styles.progressLabel}>Progress</Text>
             <View style={styles.progressBarBg}>
-              <View style={[styles.progressBarFill, { width: `${promise.progress}%` }]} />
+              <View style={[styles.progressBarFill, { width: `${promise.fulfillmentRate || 0}%` }]} />
             </View>
-            <Text style={styles.progressPercent}>{promise.progress}%</Text>
+            <Text style={styles.progressPercent}>{promise.fulfillmentRate || 0}%</Text>
           </View>
           {/* Status */}
-          <View style={[styles.statusTag, { backgroundColor: '#D1FAE5' }]}>
-            <Text style={[styles.statusTagText, { color: '#059669' }]}>Completed</Text>
+          <View style={[styles.statusTag, { backgroundColor: statusColor.bg }]}>
+            <Text style={[styles.statusTagText, { color: statusColor.text }]}>
+              {promise.promiseStatus || 'pending'}
+            </Text>
           </View>
         </View>
         {/* Evidence Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Evidence</Text>
-          {evidenceData.map(e => (
-            <View key={e.id} style={styles.evidenceCard}>
-              {e.icon}
-              <Text style={styles.evidenceLabel}>{e.label}</Text>
-            </View>
-          ))}
+          {evidence.length === 0 ? (
+            <Text style={{ color: '#64748B', marginBottom: 8 }}>No evidence available.</Text>
+          ) : (
+            evidence.map((e: any, idx: number) => {
+              const isDoc = isDocumentType(e.type);
+              return (
+                <View key={idx} style={styles.evidenceCard}>
+                  {getDocumentIcon(e.type)}
+                  <Text style={styles.evidenceLabel}>
+                    {e.type || 'Evidence'}: {isDoc ? 'Document' : e.link}
+                  </Text>
+                  <TouchableOpacity
+                    style={isDoc ? styles.downloadBtn : styles.openBtn}
+                    onPress={async () => {
+                      if (isDoc && e.link) {
+                        // Open the document link in a new tab or browser
+                        if (Platform.OS === 'web') {
+                          window.open(e.link, '_blank');
+                        } else {
+                          Linking.openURL(e.link).catch(() =>
+                            alert('Unable to open this link.')
+                          );
+                        }
+                      } else if (e.link && typeof e.link === 'string') {
+                        Linking.openURL(e.link).catch(() =>
+                          alert('Unable to open this link.')
+                        );
+                      }
+                    }}
+                  >
+                    <Text style={isDoc ? styles.downloadBtnText : styles.openBtnText}>
+                      {isDoc ? 'Download' : 'Open'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })
+          )}
         </View>
         {/* Comments Section */}
         <View style={styles.section}>
@@ -322,5 +417,40 @@ const styles = StyleSheet.create({
   commentText: {
     fontSize: 13,
     color: '#374151',
+  },
+  retryButton: {
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  downloadBtn: {
+    marginLeft: 'auto',
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  downloadBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 13,
+  },
+  openBtn: {
+    marginLeft: 'auto',
+    backgroundColor: '#22C55E',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  openBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 13,
   },
 });

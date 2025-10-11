@@ -35,15 +35,16 @@ const Header: React.FC<HeaderProps> = ({
 
   const menuItems: MenuItem[] = [
     { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
-    { id: '2', title: 'Profile', icon: <Ionicons name="person-outline" size={22} color="#2563EB" />, screen: 'Profile' },
+    // { id: '2', title: 'Profile', icon: <Ionicons name="person-outline" size={22} color="#2563EB" />, screen: 'Profile' },
     { id: '3', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
     { id: '4', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
-    { id: '5', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-    { id: '6', title: 'Reports', icon: <Ionicons name="document-text-outline" size={22} color="#2563EB" />, screen: 'Reports' },
-    { id: '7', title: 'Issues', icon: <Ionicons name="alert-circle-outline" size={22} color="#2563EB" />, screen: 'Issues' },
-    { id: '8', title: 'Settings', icon: <Ionicons name="settings-outline" size={22} color="#2563EB" />, screen: 'Settings' },
-    { id: '9', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'Help' },
-    { id: '10', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+    { id: '5', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
+    { id: '6', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
+    // { id: '7', title: 'Reports', icon: <Ionicons name="document-text-outline" size={22} color="#2563EB" />, screen: 'Reports' },
+    // { id: '8', title: 'Issues', icon: <Ionicons name="alert-circle-outline" size={22} color="#2563EB" />, screen: 'Issues' },
+    // { id: '9', title: 'Settings', icon: <Ionicons name="settings-outline" size={22} color="#2563EB" />, screen: 'Settings' },
+    { id: '10', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+    { id: '11', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
@@ -113,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({
             <View className="bg-blue-600 p-4">
               <View className="flex-row items-center">
                 <AppLogo />
-                <Text className="text-white text-xl font-bold ml-2">PollTrack</Text>
+                <Text className="text-white text-xl font-bold ml-2">CivicLens</Text>
               </View>
               <Text className="text-blue-100 mt-2">Tracking Political Priorities</Text>
             </View>
@@ -125,7 +126,19 @@ const Header: React.FC<HeaderProps> = ({
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
                   onPress={() => {
                     setMenuVisible(false);
-                    if (navigation && ['Home', 'Login', 'Dashboard', 'Comparison', 'PoliticalQuiz', 'PoliBot'].includes(item.screen)) {
+                    if (
+                      navigation &&
+                      [
+                        'Home',
+                        'Login',
+                        'Dashboard',
+                        'Comparison',
+                        'PoliticalQuiz',
+                        'PoliBot',
+                        'QuizHistory', // <-- add this
+                        'HelpAndSupport',
+                      ].includes(item.screen)
+                    ) {
                       navigation.navigate(item.screen);
                     } else {
                       console.log(`Screen ${item.screen} not implemented yet`);

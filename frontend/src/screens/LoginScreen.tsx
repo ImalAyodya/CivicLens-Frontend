@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -13,11 +13,29 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
   const handleLogin = () => {
     console.log('Login attempted with:', email);
-    // Add your authentication logic here
-    navigation.navigate('Home');
+    
+    if (isAdminMode) {
+      // Check admin credentials
+      if (email === 'admin@gmail.com' && password === 'admin') {
+        navigation.navigate('AdminDashboard');
+      } else {
+        Alert.alert('Login Failed', 'Invalid admin credentials. Please try again.');
+      }
+    } else {
+      // Regular user login
+      navigation.navigate('Home');
+    }
+  };
+
+  const toggleAdminMode = () => {
+    setIsAdminMode(!isAdminMode);
+    // Clear fields when switching modes
+    setEmail('');
+    setPassword('');
   };
 
   return (
@@ -37,14 +55,26 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
           {/* Login Card */}
           <Card className="p-6">
-            <View className="mb-6">
-              <Text className="text-xl font-semibold text-gray-900 mb-1">Sign In</Text>
+            <View className="mb-6 flex-row justify-between items-center">
+              <Text className="text-xl font-semibold text-gray-900 mb-1">
+                {isAdminMode ? 'Admin Login' : 'Sign In'}
+              </Text>
+              
+              {/* Admin mode toggle button */}
+              <TouchableOpacity
+                onPress={toggleAdminMode}
+                className={`px-3 py-1 rounded-full ${isAdminMode ? 'bg-blue-600' : 'bg-gray-200'}`}
+              >
+                <Text className={`text-xs font-medium ${isAdminMode ? 'text-white' : 'text-gray-600'}`}>
+                  {isAdminMode ? 'Admin Mode' : 'Admin Login'}
+                </Text>
+              </TouchableOpacity>
             </View>
 
             <View className="space-y-1">
               <Input
                 label="Email"
-                placeholder="user@gmail.com"
+                placeholder={isAdminMode ? "admin@gmail.com" : "user@gmail.com"}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
@@ -65,33 +95,46 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 className="w-full"
                 onPress={handleLogin}
               >
-                Log In
+                {isAdminMode ? 'Admin Login' : 'Log In'}
               </Button>
             </View>
 
-            {/* Divider */}
-            <View className="flex-row items-center my-6">
-              <View className="flex-1 border-t border-gray-300" />
-              <Text className="px-4 text-gray-500 text-sm">or</Text>
-              <View className="flex-1 border-t border-gray-300" />
-            </View>
+            {/* Divider - Only show for regular users */}
+            {!isAdminMode && (
+              <>
+                <View className="flex-row items-center my-6">
+                  <View className="flex-1 border-t border-gray-300" />
+                  <Text className="px-4 text-gray-500 text-sm">or</Text>
+                  <View className="flex-1 border-t border-gray-300" />
+                </View>
 
-            {/* Google Login */}
-            <Button
-              variant="outline"
-              className="w-full mb-6"
-              icon={<GoogleIcon />}
-            >
-              Continue with Google
-            </Button>
+                {/* Google Login */}
+                <Button
+                  variant="outline"
+                  className="w-full mb-6"
+                  icon={<GoogleIcon />}
+                >
+                  Continue with Google
+                </Button>
 
-            {/* Sign Up Link */}
-            <View className="items-center flex-row justify-center">
-              <Text className="text-gray-600 text-sm">Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                <Text className="text-blue-600 text-sm font-medium">Sign Up</Text>
-              </TouchableOpacity>
-            </View>
+                {/* Sign Up Link */}
+                <View className="items-center flex-row justify-center">
+                  <Text className="text-gray-600 text-sm">Don't have an account? </Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+                    <Text className="text-blue-600 text-sm font-medium">Sign Up</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+            
+            {/* Admin mode hint - Only show in admin mode */}
+            {isAdminMode && (
+              <View className="mt-4 bg-blue-50 p-2 rounded">
+                <Text className="text-xs text-blue-700">
+                  Admin credentials: admin@gmail.com / admin
+                </Text>
+              </View>
+            )}
           </Card>
 
           {/* Language Selection */}

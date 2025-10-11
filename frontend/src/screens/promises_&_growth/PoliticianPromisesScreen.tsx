@@ -1,76 +1,106 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 import BottomNavBar from '../../components/BottomNavBar';
 
 const categories = ['ALL', 'Education', 'Health', 'Economy', 'Others'];
-const statuses = ['All', 'Completed', 'Pending', 'Broken'];
-
-const promisesData = [
-  {
-    id: 1,
-    name: 'Harini Amarasuriya',
-    role: 'Minister of Education',
-    avatar: require('../../../assets/harini_amarasuriya.jpg'),
-    status: 'Pending',
-    title: 'Pledge for educational reforms',
-    description: 'Prime Minister pledges immediate action on educational reforms and fund collection practices',
-    category: 'Education',
-  },
-  {
-    id: 2,
-    name: 'Dr. Nalinda Jayathissa',
-    role: 'Health & Mass Media Minister',
-    avatar: require('../../../assets/nalinda_Jayathissa.jpg'),
-    status: 'Completed',
-    title: 'Cost-cutting measures',
-    description: 'He said he would give up his ministerial salary and parliamentary allowances; give up luxury vehicles; halve fuel allocations for ministers; stop using official residences allocated for ministers.',
-    category: 'Health',
-  },
-  {
-    id: 3,
-    name: 'Anura Kumara Dissanayake',
-    role: 'Sri Lankan President & Finance Minister',
-    avatar: require('../../../assets/anura_kumara.jpg'),
-    status: 'Pending',
-    title: '5% Economic Growth Target',
-    description: 'President Anura Kumara Dissanayake (also Finance Minister) promised that the Sri Lankan economy will grow by about 5% in 2025.',
-    category: 'Economy',
-  },
-  {
-    id: 4,
-    name: 'Aruna Ranwala',
-    role: 'Parliament Minister',
-    avatar: require('../../../assets/candidate-placeholder.png'),
-    status: 'Broken',
-    title: 'Renovate all major highways',
-    description: 'Main infrastructure project to repair and upgrade all national highways to improve transportation and safety.',
-    category: 'Others',
-  },
-];
+const statuses = ['All', 'complete', 'pending', 'broken'];
 
 const statusColors: Record<string, { bg: string; text: string }> = {
-  Completed: { bg: '#D1FAE5', text: '#059669' },
-  Pending: { bg: '#FEF3C7', text: '#B45309' },
-  Broken: { bg: '#FEE2E2', text: '#B91C1C' },
+  complete: { bg: '#D1FAE5', text: '#059669' },
+  pending: { bg: '#FEF3C7', text: '#B45309' },
+  broken: { bg: '#FEE2E2', text: '#B91C1C' },
 };
 
 const getStatusColor = (status: string) =>
   statusColors[status] || { bg: '#E5E7EB', text: '#6B7280' };
 
+// Configure Axios base URL
+const API_BASE_URL = 'http://localhost:5000/promise/api';
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000, // 10 seconds timeout
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export default function PoliticianPromisesScreen() {
+
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('PoliticianPromises');
+  const [promises, setPromises] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isFocused) setActiveTab('PoliticianPromises');
   }, [isFocused]);
+
+  useEffect(() => {
+    fetchPromises();
+  }, []);
+
+  const fetchPromises = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('Fetching promises from:', `${API_BASE_URL}/promises`);
+      
+      const response = await api.get('/promises');
+      
+      console.log('Response received:', response.data);
+      
+      const data = response.data;
+      setPromises(Array.isArray(data) ? data : []);
+      
+      // Debug info
+      if (Array.isArray(data) && data.length > 0) {
+        console.log('First promise structure:', JSON.stringify(data[0], null, 2));
+        console.log('All categories in data:', [...new Set(data.map((p: any) => p.category))]);
+        console.log('All statuses in data:', [...new Set(data.map((p: any) => p.status))]);
+      }
+      
+    } catch (error) {
+      console.error('Error fetching promises:', error);
+      
+      let errorMessage = 'Failed to fetch promises';
+      
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as import('axios').AxiosError;
+        if (axiosError.response) {
+          // Server responded with error status
+          errorMessage = `Server Error: ${axiosError.response.status} - ${
+            typeof axiosError.response.data === 'object' && axiosError.response.data && 'message' in axiosError.response.data
+              ? (axiosError.response.data as { message?: string }).message
+              : axiosError.response.statusText
+          }`;
+        } else if (axiosError.request) {
+          // Request was made but no response received
+          errorMessage = 'Network Error: Unable to connect to server. Make sure your backend is running.';
+        } else {
+          // Something else happened
+          errorMessage = `Request Error: ${axiosError.message}`;
+        }
+      } else {
+        errorMessage = String(error);
+      }
+      
+      setError(errorMessage);
+      setPromises([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
@@ -79,19 +109,117 @@ export default function PoliticianPromisesScreen() {
     }
   };
 
-  const filteredPromises = promisesData.filter(p => {
-    const matchCategory = selectedCategory === 'ALL' || p.category === selectedCategory;
-    const matchStatus = selectedStatus === 'All' || p.status === selectedStatus;
-    const matchSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.title.toLowerCase().includes(search.toLowerCase());
-    return matchCategory && matchStatus && matchSearch;
+  const filteredPromises = promises.filter((p: any) => {
+    try {
+      // Category filter - show all if "ALL" is selected, otherwise match exact category
+      const matchCategory = selectedCategory === 'ALL' || (p.promiseCategory === selectedCategory);
+      
+      // Status filter - show all if "All" is selected, otherwise match exact status
+      const matchStatus = selectedStatus === 'All' || (p.promiseStatus === selectedStatus);
+      
+      // Search filter - if search is empty, show all, otherwise check name and title
+      const matchSearch = search.trim() === '' || 
+        (p.promiseName && p.promiseName.toLowerCase().includes(search.toLowerCase())) ||
+        (p.title && p.title.toLowerCase().includes(search.toLowerCase()));
+      
+      return matchCategory && matchStatus && matchSearch;
+    } catch (err) {
+      console.error('Error filtering promise:', err, p);
+      return false;
+    }
   });
+
+  // Add debug logging to see what's happening
+  console.log('Total promises:', promises.length);
+  console.log('Selected category:', selectedCategory);
+  console.log('Selected status:', selectedStatus);
+  console.log('Search term:', search);
+  console.log('Filtered promises:', filteredPromises.length);
+  console.log('Sample promise:', promises[0]); // To see the structure of your data
+
+  const renderPromiseCard = (p: any) => {
+    try {
+      return (
+        <TouchableOpacity 
+          key={p._id || p.id || Math.random()} 
+          style={styles.card} 
+          onPress={() => (navigation as any).navigate('PromiseDetail', { promise: p })}
+        >
+          <Image 
+            source={
+              p.politicianImage && typeof p.politicianImage === 'string' && p.politicianImage.startsWith('http')
+                ? { uri: p.politicianImage }
+                : require('../../../assets/candidate-placeholder.png')
+            } 
+            style={styles.avatar} 
+          />
+          <View style={styles.cardContent}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.name}>{p.ministerName || 'Unknown Politician'}</Text>
+              <Text style={styles.role}>{p.ministryName || 'Unknown Role'}</Text>
+            </View>
+            <View style={[
+              styles.statusBadge,
+              { backgroundColor: getStatusColor(p.promiseStatus || 'pending').bg }
+            ]}>
+              <Text style={[
+                styles.statusBadgeText,
+                { color: getStatusColor(p.promiseStatus || 'pending').text }
+              ]}>
+                {p.promiseStatus || 'pending'}
+              </Text>
+            </View>
+            <Text style={styles.cardTitle}>{p.promiseTitle || 'No Title Available'}</Text>
+            {/* <Text style={styles.cardDesc} numberOfLines={3}>
+              {p.promiseDetails || 'No description available'}
+            </Text> */}
+          </View>
+        </TouchableOpacity>
+      );
+    } catch (err) {
+      console.error('Error rendering promise card:', err, p);
+      return null;
+    }
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="#2563EB" />
+          <Text style={styles.loadingText}>Loading promises...</Text>
+        </View>
+      );
+    }
+
+    if (error) {
+      return (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={fetchPromises}>
+            <Text style={styles.retryButtonText}>Retry</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    if (filteredPromises.length === 0) {
+      return (
+        <View style={styles.centerContainer}>
+          <Text style={styles.emptyText}>
+            {promises.length === 0 ? 'No promises available' : 'No promises match your filters'}
+          </Text>
+        </View>
+      );
+    }
+
+    return filteredPromises.map(renderPromiseCard).filter(Boolean);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      {/* Header must be at the top and not inside ScrollView */}
       <PoliticianPromisesHeader navigation={navigation} pageTitle="Politicians Promises" />
+      
       {/* Category Filter */}
       <View style={styles.categoryTabContainer}>
         {categories.map(cat => (
@@ -110,6 +238,7 @@ export default function PoliticianPromisesScreen() {
           </TouchableOpacity>
         ))}
       </View>
+      
       {/* Status Filter */}
       <View style={styles.statusContainer}>
         {statuses.map(stat => (
@@ -128,6 +257,7 @@ export default function PoliticianPromisesScreen() {
           </TouchableOpacity>
         ))}
       </View>
+      
       {/* Search Input */}
       <View style={styles.searchContainer}>
         <Ionicons name="search-outline" size={16} color="#9CA3AF" style={styles.searchIcon} />
@@ -139,44 +269,54 @@ export default function PoliticianPromisesScreen() {
           placeholderTextColor="#9CA3AF"
         />
       </View>
+      
       {/* Promise Cards */}
       <ScrollView 
         style={styles.promisesScroll} 
         contentContainerStyle={styles.promisesContainer}
         showsVerticalScrollIndicator={false}
       >
-        {filteredPromises.map(p => (
-          <TouchableOpacity key={p.id} style={styles.card} onPress={() => (navigation as any).navigate('PromiseDetail', { promise: p })}>
-            <Image source={p.avatar} style={styles.avatar} />
-            <View style={styles.cardContent}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.name}>{p.name}</Text>
-                <Text style={styles.role}>{p.role}</Text>
-              </View>
-              <View style={[
-                styles.statusBadge,
-                { backgroundColor: getStatusColor(p.status).bg }
-              ]}>
-                <Text style={[
-                  styles.statusBadgeText,
-                  { color: getStatusColor(p.status).text }
-                ]}>
-                  {p.status}
-                </Text>
-              </View>
-              <Text style={styles.cardTitle}>{p.title}</Text>
-              <Text style={styles.cardDesc}>{p.description}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+        {renderContent()}
       </ScrollView>
-      {/* Use imported BottomNavBar */}
+      
       <BottomNavBar activeTab={activeTab} onTabPress={handleTabPress} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#64748B',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#EF4444',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
