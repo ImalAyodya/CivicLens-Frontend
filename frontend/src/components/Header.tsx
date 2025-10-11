@@ -88,7 +88,14 @@ const Header: React.FC<HeaderProps> = ({
             <NotificationIcon />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={onProfilePress}
+            onPress={() => {
+              if (navigation) {
+                navigation.navigate('Profile');
+              }
+              if (onProfilePress) {
+                onProfilePress();
+              }
+            }}
             activeOpacity={0.7}
           >
             <ProfileIcon />
@@ -125,7 +132,7 @@ const Header: React.FC<HeaderProps> = ({
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
                   onPress={() => {
                     setMenuVisible(false);
-                    if (navigation && ['Home', 'Login', 'Dashboard', 'Comparison', 'PoliticalQuiz', 'PoliBot'].includes(item.screen)) {
+                    if (navigation && item.screen) {
                       navigation.navigate(item.screen);
                     } else {
                       console.log(`Screen ${item.screen} not implemented yet`);

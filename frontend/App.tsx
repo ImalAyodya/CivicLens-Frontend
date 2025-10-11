@@ -24,6 +24,7 @@ import GrowthNewsScreen from './src/screens/promises_&_growth/GrowthNewsScreen';
 import MinistryPerformanceScreen from '~/screens/promises_&_growth/MinistryPerformanceScreen';
 import PromiseDetailScreen from './src/screens/promises_&_growth/PromiseDetailScreen';
 import GrowthNewsDetailScreen from './src/screens/promises_&_growth/GrowthNewsDetailScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 import type { RootStackParamList } from './src/navigation/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -67,6 +68,7 @@ export default function App() {
         <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
         <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} />
         <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
