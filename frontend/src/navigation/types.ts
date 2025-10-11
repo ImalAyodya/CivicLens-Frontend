@@ -1,41 +1,45 @@
-import type { NewsItem } from '../types/news';
+import { NewsItem } from '../types/news';
 
 export type RootStackParamList = {
+  // Auth screens
   Login: undefined;
   SignUp: undefined;
+  
+  // Main screens
   Home: undefined;
-  MainTabs: undefined; // <-- Add this line
   Dashboard: undefined;
+  
+  // Comparison feature
   Comparison: undefined;
-  ComparisonResult: {
-    politician1: any;
-    politician2: any;
-  };
+  ComparisonResult: undefined;
+  
+  // Quiz feature
   PoliticalQuiz: undefined;
-  QuizQuestion: {
-    questionId: number;
-    totalQuestions: number;
-    score: number;
-  };
-  QuizResult: {
-    score: number;
-    totalQuestions: number;
-  };
+  QuizQuestion: undefined;
+  QuizResult: undefined;
+  
+  // PoliBot feature
   PoliBot: undefined;
   PoliBotChat: undefined;
+  
+  // News feature
   NewsFeed: undefined;
-  NewsDetail: {
-    newsItem: NewsItem;
-  };
-  Notifications: undefined;
+  NewsDetail: { newsItem: NewsItem };
+  Search: undefined;
+  GrowthNewsDetail: { newsItem: NewsItem };
+  
+  // Election feature
   ElectionCountdown: undefined;
   PastElections: undefined;
-  PoliticianProfile: { id: string }; 
-  DirectoryScreen: undefined;
-  ElectionMap: undefined;
-  PoliticianPromises: undefined;
-  GrowthNews: undefined;
-  MinistryPerformance: undefined; 
-  PromiseDetail: { promise: any };
-  GrowthNewsDetail: { news: any };
+  ElectionDetail: { electionId: string };
+  
+  // Politician feature
+  PoliticianDirectory: undefined;
+  PoliticianProfile: { politicianId: string };
+  PoliticianPromises: { politicianId: string };
+  
+  // Other features
+  Notifications: undefined;
+  MinistryPerformance: undefined;
+  PromiseDetail: { promiseId: string };
 };

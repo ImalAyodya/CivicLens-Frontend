@@ -2,37 +2,47 @@ export interface Candidate {
   id: string;
   name: string;
   party: string;
-  imageUrl: string;
-  promiseFulfillment: number; // Percentage of promises fulfilled
-  position: string;
+  photoUrl?: string;
+  votes?: number;
+  votePercentage?: number;
+  color?: string;
+  manifesto?: string;
+  promises?: string[];
+  biography?: string;
+  experience?: string;
 }
 
-export interface ElectionFact {
+export interface ElectionFactType {  // Renamed to avoid conflicts
   id: string;
+  title: string;
   content: string;
+  category?: string;
   source?: string;
+  verified?: boolean;
 }
 
-export interface VoterTurnoutPoint {
-  year: number;
-  percentage: number;
-}
-
-export interface VoteDistribution {
+export interface ElectionResult {
+  candidateId: string;
+  candidateName: string;
   party: string;
+  votes: number;
   percentage: number;
-  color: string;
+  color?: string;
 }
 
-export interface ElectionData {
-  electionName: string;
-  electionDate: Date;
-  daysRemaining: number;
-  hoursRemaining: number;
-  minutesRemaining: number;
-  secondsRemaining: number;
+export interface Election {
+  id: string;
+  title: string;
+  type: 'presidential' | 'parliamentary' | 'provincial' | 'local';
+  status: 'upcoming' | 'ongoing' | 'completed';
+  date: string;
+  description: string;
+  imageUrl?: string;
+  location?: string;
   candidates: Candidate[];
-  electionFacts: ElectionFact[];
-  voterTurnout: VoterTurnoutPoint[];
-  voteDistribution: VoteDistribution[];
+  turnout?: number;
+  totalRegisteredVoters?: number;
+  votingCenters?: number;
+  electionFacts?: ElectionFactType[];
+  results?: ElectionResult[];
 }

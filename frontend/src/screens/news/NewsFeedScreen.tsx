@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../navigation/types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/types';
 import Header from '../../components/Header';
 import BottomNavBar from '../../components/BottomNavBar';
 import NewsCard from '../../components/news/NewsCard';
@@ -9,47 +9,63 @@ import BreakingNewsCard from '../../components/news/BreakingNewsCard';
 import NewsHeader from '../../components/news/NewsHeader';
 import CategoryFilter from '../../components/news/CategoryFilter';
 import NewsSidebar from '../../components/news/NewsSidebar';
-import { useNewsData } from '../../hooks/useNewsData';
+import { useNewsData, useBreakingNews } from '../../hooks/useNewsData';
 import { useAppNavigation } from '../../hooks/useAppNavigation';
 import { Ionicons } from '@expo/vector-icons';
+import { newsService } from '../../services/newsService';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NewsFeed'>;
 
 const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('NewsFeed');
-  const { news, loading, error } = useNewsData();
-  const [refreshing, setRefreshing] = useState(false);
-  const { handleTabPress: navHandler } = useAppNavigation();
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  
-  // Category filter tabs
-  const categories = ['All', 'Politics', 'Economy', 'Education', 'Healthcare', 'Infrastructure'];
   const [activeCategory, setActiveCategory] = useState('All');
+  const [refreshing, setRefreshing] = useState(false);
   
-  // Update the handleTabPress function
-  const handleTabPress = (tabName: string) => {
-    setActiveTab(navHandler(tabName, 'NewsFeed'));
-  };
+  const { news, loading: newsLoading, error: newsError } = useNewsData(
+    activeCategory === 'All' ? undefined : activeCategory
+  );
   
-  // Find breaking news
-  const breakingNews = news.find(item => item.isBreaking);
+  const { 
+    breakingNews, 
+    loading: breakingNewsLoading, 
+    error: breakingNewsError 
+  } = useBreakingNews();
   
-  // Filter news by category
-  const filteredNews = news.filter(item => {
-    if (activeCategory === 'All') return true;
-    return item.category === activeCategory;
-  });
+  const loading = newsLoading || breakingNewsLoading;
+  const error = newsError || breakingNewsError;
+
+  const categories = [
+    'All',
+    'Politics',
+    'Election',
+    'Economy',
+    'Law',
+    'Policy',
+    'Education',
+    'Development'
+  ];
+
+  // Filter news based on selected category
+  const filteredNews = news.filter(item => 
+    activeCategory === 'All' || 
+    item.category.toLowerCase() === activeCategory.toLowerCase()
+  );
   
-  // Filter out breaking news from regular news
   const regularNews = filteredNews.filter(item => !item.isBreaking);
   
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    // Simulate a refresh
-    setTimeout(() => {
+    try {
+      const freshNews = await newsService.getAllNews(
+        activeCategory === 'All' ? undefined : activeCategory
+      );
       setRefreshing(false);
-    }, 2000);
-  }, []);
+    } catch (error) {
+      console.error('Error refreshing news:', error);
+      setRefreshing(false);
+    }
+  }, [activeCategory]);
 
   const handleNewsPress = (itemId: string) => {
     console.log('News pressed', itemId);
@@ -59,8 +75,8 @@ const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
-  const handleBreakingNewsPress = (itemId: string) => {
-    console.log('Breaking news pressed', itemId);
+  const handleBreakingNewsPress = () => {
+    console.log('Breaking news pressed');
     if (breakingNews) {
       navigation.navigate('NewsDetail', { newsItem: breakingNews });
     }
@@ -68,6 +84,20 @@ const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
+  };
+  
+  const handleTabPress = (tabName: string) => {
+    setActiveTab(tabName);
+    
+    // Simple check to avoid screens that definitely need parameters
+    const screensWithParams = ['NewsDetail', 'ElectionDetail', 'PoliticianProfile', 'PoliticianPromises', 'PromiseDetail', 'GrowthNewsDetail', 'ComparisonResult'];
+    
+    if (!screensWithParams.includes(tabName)) {
+      // Cast as any to bypass TypeScript's strict checking
+      navigation.navigate(tabName as any);
+    } else {
+      console.log(`Screen ${tabName} requires parameters`);
+    }
   };
 
   return (
@@ -100,38 +130,35 @@ const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('Notifications')}
             className="mr-4"
-            activeOpacity={0.7}
           >
             <Ionicons name="notifications-outline" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => console.log('Profile pressed')}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="person-circle-outline" size={28} color="white" />
+          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <Ionicons name="search-outline" size={24} color="white" />
           </TouchableOpacity>
         </View>
       </View>
       
       <ScrollView 
-        contentContainerStyle={{ paddingBottom: 20 }}
+        className="flex-1" 
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         {/* Election Countdown Banner */}
-        <View className="bg-blue-50 p-3 border-b border-blue-200">
+        <View className="bg-blue-50 p-4 mx-4 mt-4 rounded-xl shadow-sm">
           <View className="flex-row justify-between items-center">
-            <View>
-              <Text className="text-blue-800 font-bold">Presidential Election 2024</Text>
-              <Text className="text-blue-600">42 days remaining</Text>
+            <View className="flex-1">
+              <Text className="text-sm text-blue-700 font-medium mb-1">UPCOMING ELECTION</Text>
+              <Text className="text-lg font-bold text-gray-800">2025 Presidential Election</Text>
+              <Text className="text-sm text-gray-600 mb-2">100 days remaining</Text>
+              <TouchableOpacity
+                className="bg-blue-600 px-3 py-1.5 rounded-lg"
+                onPress={() => navigation.navigate('ElectionCountdown')}
+              >
+                <Text className="text-white text-xs font-medium">Details</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity 
-              className="bg-blue-600 px-3 py-1.5 rounded-lg"
-              onPress={() => navigation.navigate('ElectionCountdown')}
-            >
-              <Text className="text-white text-xs font-medium">Details</Text>
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -155,7 +182,7 @@ const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
                   <NewsHeader title="Breaking News" />
                   <BreakingNewsCard 
                     item={breakingNews} 
-                    onPress={() => handleBreakingNewsPress(breakingNews.id)}
+                    onPress={() => handleBreakingNewsPress()}
                   />
                 </>
               )}
