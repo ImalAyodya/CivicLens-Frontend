@@ -24,6 +24,7 @@ const AddPartyScreen = () => {
   const [form, setForm] = useState({
     fullName: "",
     abbreviation: "",
+    founder: "",
     logo: "",
     color: "#007bff"
   });
@@ -120,6 +121,7 @@ const AddPartyScreen = () => {
       const formData = new FormData();
       formData.append('fullName', form.fullName);
       formData.append('abbreviation', form.abbreviation);
+      formData.append('founder', form.founder);
       formData.append('color', form.color);
 
       // Add the logo file
@@ -155,6 +157,7 @@ const AddPartyScreen = () => {
       setForm({
         fullName: "",
         abbreviation: "",
+        founder: "",
         logo: "",
         color: "#007bff"
       });
@@ -204,6 +207,14 @@ const AddPartyScreen = () => {
           placeholder="e.g., UNP, SLPP"
           value={form.abbreviation}
           onChangeText={v => handleChange("abbreviation", v)} 
+        />
+
+        <Text style={styles.label}>Founder</Text>
+        <TextInput 
+          style={styles.input} 
+          placeholder="Enter founder's name"
+          value={form.founder}
+          onChangeText={v => handleChange("founder", v)} 
         />
 
         <Text style={styles.label}>Logo</Text>

@@ -84,8 +84,57 @@ const AddPoliticianForm: React.FC = () => {
   const fetchRoles = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/roles`);
-      setRoles(res.data || []);
-    } catch {
+      
+      if (res.data && Array.isArray(res.data)) {
+        // Process roles to fetch level names for ObjectIds
+        const processedRoles = await Promise.all(
+          res.data.map(async (role: any) => {
+            let levelName = 'Unknown Level';
+            
+            if (__DEV__) {
+              console.log('Processing role level for AddPolitician:', role.title, 'Level ID:', role.level);
+            }
+            
+            // If level is an ObjectId string, fetch the level details
+            if (role.level && typeof role.level === 'string') {
+              const isObjectId = /^[0-9a-f]{24}$/i.test(role.level);
+              
+              if (isObjectId) {
+                try {
+                  // Fetch level details from the levels endpoint
+                  const levelResponse = await axios.get(`${API_BASE_URL}/api/levels/${role.level}`);
+                  levelName = levelResponse.data?.name || 'Political Role';
+                  
+                  if (__DEV__) {
+                    console.log('Fetched level name for role', role.title, ':', levelName);
+                  }
+                } catch (levelError) {
+                  console.error('Error fetching level details for role:', role.title, levelError);
+                  levelName = 'Political Role';
+                }
+              } else {
+                // If it's not an ObjectId, use it directly
+                levelName = role.level;
+              }
+            } else if (typeof role.level === 'object' && role.level?.name) {
+              // Handle if level is already populated as an object
+              levelName = role.level.name;
+            }
+            
+            return {
+              _id: role._id,
+              title: role.title,
+              level: levelName
+            };
+          })
+        );
+        
+        setRoles(processedRoles);
+      } else {
+        setRoles([]);
+      }
+    } catch (error) {
+      console.error('Error fetching roles:', error);
       loadDummyRoles();
     }
   };
@@ -281,25 +330,7 @@ const AddPoliticianForm: React.FC = () => {
         <View style={styles.placeholder} />
       </View>
 
-      {/* Backend Status Indicator */}
-      {backendStatus === 'checking' && (
-        <View style={[styles.statusBanner, styles.statusChecking]}>
-          <Ionicons name="sync" size={16} color="#666" />
-          <Text style={styles.statusText}>Checking backend connection...</Text>
-        </View>
-      )}
-      {backendStatus === 'connected' && (
-        <View style={[styles.statusBanner, styles.statusConnected]}>
-          <Ionicons name="checkmark-circle" size={16} color="#22c55e" />
-          <Text style={styles.statusText}>Backend connected</Text>
-        </View>
-      )}
-      {backendStatus === 'disconnected' && (
-        <View style={[styles.statusBanner, styles.statusDisconnected]}>
-          <Ionicons name="warning" size={16} color="#f59e0b" />
-          <Text style={styles.statusText}>Using offline mode</Text>
-        </View>
-      )}
+
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.section}>
@@ -463,27 +494,7 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 40,
   },
-  statusBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  statusChecking: {
-    backgroundColor: '#f3f4f6',
-  },
-  statusConnected: {
-    backgroundColor: '#dcfce7',
-  },
-  statusDisconnected: {
-    backgroundColor: '#fef3c7',
-  },
-  statusText: {
-    marginLeft: 8,
-    fontSize: 12,
-    fontWeight: '500',
-  },
+
   content: {
     flex: 1,
     padding: 16,

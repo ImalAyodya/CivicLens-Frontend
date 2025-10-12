@@ -36,7 +36,7 @@ const PoliticianListScreen: React.FC<{ navigation: any }> = ({ navigation }) => 
       const transformedPoliticians = politiciansData.map((politician: any) => ({
         id: politician._id,
         name: politician.name,
-        image: politician.image || '../../../assets/images/default-politician.jpg',
+        image: politician.image || 'https://via.placeholder.com/100x100/cccccc/666666?text=No+Image',
         currentRole: { title: politician.currentRole?.title || 'N/A' },
         party: { fullName: politician.party?.fullName || 'Independent' },
         region: politician.region || 'N/A',
@@ -58,7 +58,7 @@ const PoliticianListScreen: React.FC<{ navigation: any }> = ({ navigation }) => 
           {
             id: "1",
             name: "John Mitchell",
-            image: "../../../assets/images/politician2.jpg",
+            image: "https://via.placeholder.com/100x100/4F46E5/FFFFFF?text=JM",
             currentRole: { title: "Mayor" },
             party: { fullName: "Democratic Party" },
             region: "California, District 12",
@@ -67,7 +67,7 @@ const PoliticianListScreen: React.FC<{ navigation: any }> = ({ navigation }) => 
           {
             id: "2",
             name: "Sarah Johnson",
-            image: "../../../assets/images/politician3.jpg",
+            image: "https://via.placeholder.com/100x100/DC2626/FFFFFF?text=SJ",
             currentRole: { title: "Senator" },
             party: { fullName: "Republican Party" },
             region: "Texas, District 8",
@@ -159,7 +159,7 @@ const PoliticianListScreen: React.FC<{ navigation: any }> = ({ navigation }) => 
       </View>
 
       {/* Backend Status Indicator */}
-      {backendStatus === 'checking' && (
+      {/* {backendStatus === 'checking' && (
         <View className="flex-row items-center justify-center py-2 px-4 bg-gray-100">
           <Ionicons name="sync" size={16} color="#666" />
           <Text className="ml-2 text-sm text-gray-600">Checking backend connection...</Text>
@@ -176,7 +176,7 @@ const PoliticianListScreen: React.FC<{ navigation: any }> = ({ navigation }) => 
           <Ionicons name="warning" size={16} color="#f59e0b" />
           <Text className="ml-2 text-sm text-yellow-700">Using offline mode</Text>
         </View>
-      )}
+      )} */}
 
       <View className="flex-1 p-4">
         {/* Search */}

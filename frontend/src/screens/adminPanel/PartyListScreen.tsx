@@ -15,6 +15,7 @@ type Party = {
   fullName: string;
   logo?: string;
   founded?: string;
+  founder?: string;
   status: string;
 };
 
@@ -88,6 +89,7 @@ const PartyListScreen = () => {
             abbreviation: 'UNP',
             color: '#00A859',
             founded: '1946',
+            founder: 'D.S. Senanayake',
             status: 'Active'
           },
           {
@@ -96,6 +98,7 @@ const PartyListScreen = () => {
             abbreviation: 'SLPP',
             color: '#8B0000',
             founded: '2016',
+            founder: 'Mahinda Rajapaksa',
             status: 'Active'
           },
           {
@@ -104,6 +107,7 @@ const PartyListScreen = () => {
             abbreviation: 'SJB',
             color: '#FF6B35',
             founded: '2020',
+            founder: 'Sajith Premadasa',
             status: 'Active'
           },
           {
@@ -112,6 +116,7 @@ const PartyListScreen = () => {
             abbreviation: 'JVP',
             color: '#FF0000',
             founded: '1965',
+            founder: 'Rohana Wijeweera',
             status: 'Active'
           },
           {
@@ -120,6 +125,7 @@ const PartyListScreen = () => {
             abbreviation: 'TNA',
             color: '#FFD700',
             founded: '2001',
+            founder: 'R. Sampanthan',
             status: 'Inactive'
           }
         ];
@@ -203,7 +209,8 @@ const PartyListScreen = () => {
       <PartyLogo party={item} />
       <View style={styles.info}>
         <Text style={styles.name}>{item.fullName}</Text>
-        <Text style={styles.sub}>Founded {item.founded || "N/A"}</Text>
+        {/* <Text style={styles.sub}>Founded {item.founded || "N/A"}</Text> */}
+        <Text style={styles.founder}>👤 Founder: {item.founder || "N/A"}</Text>
         <Text style={[styles.status, 
           item.status === "Active" ? styles.active : 
           item.status === "Pending" ? styles.pending : styles.inactive]}>
@@ -451,6 +458,12 @@ const styles = StyleSheet.create({
   sub: { 
     fontSize: 12, 
     color: "#888",
+    marginBottom: 4,
+  },
+  founder: {
+    fontSize: 12,
+    color: "#666",
+    fontStyle: 'italic',
     marginBottom: 6,
   },
   status: { 

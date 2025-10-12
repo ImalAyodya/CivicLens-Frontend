@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Politician } from "../../types/Politician";
@@ -10,13 +10,41 @@ interface Props {
 }
 
 const PoliticianCard: React.FC<Props> = ({ politician, onEdit, onDelete }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoading(false);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+    setImageError(false);
+  };
+
+  const getImageSource = () => {
+    if (imageError || !politician.image) {
+      return { uri: 'https://via.placeholder.com/100x100/cccccc/666666?text=No+Image' };
+    }
+    return { uri: politician.image };
+  };
+
   return (
     <View className="bg-white rounded-2xl shadow p-4 mb-3 flex-row items-center">
       {/* Profile Image */}
-      <Image
-        source={{ uri: politician.image }}
-        className="w-12 h-12 rounded-full mr-4"
-      />
+      <View className="w-12 h-12 rounded-full mr-4 bg-gray-200 justify-center items-center overflow-hidden">
+        {imageLoading && !imageError && (
+          <Ionicons name="person" size={24} color="#999" />
+        )}
+        <Image
+          source={getImageSource()}
+          className="w-12 h-12 rounded-full"
+          onError={handleImageError}
+          onLoad={handleImageLoad}
+          style={{ position: imageLoading ? 'absolute' : 'relative' }}
+        />
+      </View>
 
       {/* Info */}
       <View className="flex-1">
