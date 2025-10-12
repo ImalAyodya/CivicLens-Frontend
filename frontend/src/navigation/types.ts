@@ -51,7 +51,7 @@ export type RootStackParamList = {
   ElectionCountdown: undefined;
   PastElections: undefined;
   ElectionMap: undefined;  // Add this new screen
-  PoliticianProfile: { id: string }; 
+  PoliticianDetails: { id: string }; 
   DirectoryScreen: undefined;
   AdminPanel: undefined;
   AddParty: undefined;
@@ -80,7 +80,7 @@ export type RootStackParamList = {
   AdminUserManagement: undefined;
   AdminReports: undefined;
   AdminSettings: undefined;
-  Profile: undefined;
+  UserProfile: undefined;
 };
   
 

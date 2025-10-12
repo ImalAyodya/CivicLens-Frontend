@@ -5,6 +5,7 @@ import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import axios from "axios";
 import PoliticianCard from "../../components/adminPanel/PoliticianCard";
+import BlueHeader from "../../components/BlueHeader";
 import { Politician } from "../../types/Politician";
 import type { RootStackParamList } from '../../navigation/types';
 
@@ -175,25 +176,15 @@ const HierarchyPoliticianList: React.FC = () => {
 
   const handlePoliticianPress = (politician: Politician) => {
     // Navigate to politician profile
-    navigation.navigate("PoliticianProfile", { id: politician.id });
+    navigation.navigate("PoliticianDetails", { id: politician.id });
   };
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="flex-row items-center justify-between p-4 bg-white border-b border-gray-200">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="p-2">
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <View className="flex-1 items-center">
-          <Text className="text-lg font-bold text-gray-800">{levelName}</Text>
-          <Text className="text-sm text-gray-500">Political Hierarchy</Text>
-        </View>
-        <View className="w-10" />
-      </View>
+      <BlueHeader title={`${levelName} - Political Hierarchy`} onBack={() => navigation.goBack()} />
 
       {/* Backend Status Indicator */}
-      {backendStatus === 'checking' && (
+      {/* {backendStatus === 'checking' && (
         <View className="flex-row items-center justify-center py-2 px-4 bg-gray-100">
           <ActivityIndicator size="small" color="#666" />
           <Text className="ml-2 text-sm text-gray-600">Checking backend connection...</Text>
@@ -210,7 +201,7 @@ const HierarchyPoliticianList: React.FC = () => {
           <Ionicons name="warning" size={16} color="#f59e0b" />
           <Text className="ml-2 text-sm text-yellow-700">Using offline mode</Text>
         </View>
-      )}
+      )} */}
 
       <View className="flex-1 p-4">
         {/* Search */}

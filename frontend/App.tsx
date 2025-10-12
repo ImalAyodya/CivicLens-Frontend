@@ -46,7 +46,8 @@ import AdminDashboardScreen from './src/screens/admin/AdminDashboardScreen';
 import AdminSupportTicketsScreen from './src/screens/admin/AdminSupportTicketsScreen';
 import AdminTicketDetailScreen from './src/screens/admin/AdminTicketDetailScreen';
 
-import ProfileScreen from './src/screens/ProfileScreen';
+import UserProfileScreen from './src/screens/ProfileScreen';
+import PoliticianProfileScreen from './src/screens/politicianProfile/ProfileScreen';
 import type { RootStackParamList } from './src/navigation/types';
 import RoleListScreen from './src/screens/adminPanel/RoleListScreen';
 import AddRoleScreen from './src/screens/adminPanel/AddRoleScreen';
@@ -91,7 +92,7 @@ export default function App() {
         <Stack.Screen name="ElectionCountdown" component={ElectionCountdownScreen} />
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
         <Stack.Screen name="DirectoryScreen" component={DirectoryScreen} />
-        <Stack.Screen name="PoliticianProfile" component={ProfileScreen} />
+        <Stack.Screen name="PoliticianDetails" component={PoliticianProfileScreen} />
         <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
         <Stack.Screen name="AddParty" component={AddPartyScreen} />
         <Stack.Screen name="PartyList" component={PartyListScreen} />
@@ -121,7 +122,7 @@ export default function App() {
         <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
         <Stack.Screen name="AdminSupportTickets" component={AdminSupportTicketsScreen} />
         <Stack.Screen name="AdminTicketDetail" component={AdminTicketDetailScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="UserProfile" component={UserProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </UserProvider>

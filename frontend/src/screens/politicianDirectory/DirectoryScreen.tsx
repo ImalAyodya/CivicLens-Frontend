@@ -3,6 +3,7 @@ import { View, FlatList, StyleSheet, TouchableOpacity, Text, ActivityIndicator, 
 import { Ionicons } from "@expo/vector-icons";
 import PoliticianCard from "../../components/politicianDirectory/PoliticianCard";
 import SearchBar from "../../components/politicianDirectory/SearchBar";
+import BlueHeader from "../../components/BlueHeader";
 import { politicians as dummyPoliticians } from "../../constants/dummyData";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -10,7 +11,7 @@ import type { RootStackParamList } from "../../navigation/types";
 import axios from "axios";
 import type { Politician } from "../../types/Politician";
 
-// Use the correct navigation type with access to the PoliticianProfile route
+// Use the correct navigation type with access to the PoliticianDetails route
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const API_BASE_URL = "http://localhost:5000";
@@ -151,53 +152,45 @@ const DirectoryScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header with back button */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.navigate("Home")}
-        >
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Politicians Directory</Text>
-      </View>
+      <BlueHeader title="Politicians Directory" onBack={() => navigation.navigate("Home")} />
       
-      
-      {/* Backend Status Indicator */}
-      {backendStatus === 'disconnected' && __DEV__ && (
-        <View style={styles.statusBanner}>
-          <Ionicons name="warning" size={16} color="#ff6b35" />
-          <Text style={styles.statusText}>
-            Backend disconnected - Using sample data
-          </Text>
-        </View>
-      )}
-      
-      <SearchBar value={searchText} onChangeText={setSearchText} />
-      
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007bff" />
-          <Text style={styles.loadingText}>Loading politicians...</Text>
-        </View>
-      ) : (
-        <FlatList
-        data={filteredData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <PoliticianCard
-            name={item.name}
-            party={item.party}
-            role={item.role}
-            image={typeof item.image === 'string' ? { uri: item.image } : item.image}
-            partyColor={item.partyColor}
-            fullWidth={true}
-            onPress={() => navigation.navigate("PoliticianProfile", { id: item.id })}
-          />
+      <View style={styles.content}>
+        {/* Backend Status Indicator */}
+        {backendStatus === 'disconnected' && __DEV__ && (
+          <View style={styles.statusBanner}>
+            <Ionicons name="warning" size={16} color="#ff6b35" />
+            <Text style={styles.statusText}>
+              Backend disconnected - Using sample data
+            </Text>
+          </View>
         )}
-        contentContainerStyle={styles.listContent}
-      />
-      )}
+        
+        <SearchBar value={searchText} onChangeText={setSearchText} />
+        
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#007bff" />
+            <Text style={styles.loadingText}>Loading politicians...</Text>
+          </View>
+        ) : (
+          <FlatList
+          data={filteredData}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <PoliticianCard
+              name={item.name}
+              party={item.party}
+              role={item.role}
+              image={typeof item.image === 'string' ? { uri: item.image } : item.image}
+              partyColor={item.partyColor}
+              fullWidth={true}
+              onPress={() => navigation.navigate("PoliticianDetails", { id: item.id })}
+            />
+          )}
+          contentContainerStyle={styles.listContent}
+        />
+        )}
+      </View>
     </View>
   );
 };
@@ -205,23 +198,11 @@ const DirectoryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 12,
     backgroundColor: "#F9FAFB",
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    paddingVertical: 8,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginLeft: 12,
+  content: {
     flex: 1,
+    padding: 12,
   },
   listContent: {
     paddingBottom: 20,

@@ -122,7 +122,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </View>
         
         {/* Admin Panel Button */}
-        <View className="px-4 py-2">
+        {/* <View className="px-4 py-2">
           <TouchableOpacity 
             className="bg-purple-600 rounded-xl p-4 shadow-sm"
             onPress={() => navigation.navigate('AdminPanel')}
@@ -132,7 +132,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <Text className="text-white font-bold text-center">Admin Panel</Text>
             </View>
           </TouchableOpacity>
-        </View>
+        </View> */}
         
         {/* Featured Issues Section */}
         <View className="px-4 mt-4">

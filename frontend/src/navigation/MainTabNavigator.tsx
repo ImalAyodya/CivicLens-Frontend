@@ -17,7 +17,7 @@ export type RootTabParamList = {
   Profile: undefined;
   Home: undefined;
   NewsFeed: undefined;
-  PoliticianProfile: { id: string };
+  PoliticianDetails: { id: string };
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -47,7 +47,7 @@ const MainTabNavigator = () => (
     <Tab.Screen name="Admin" component={AdminScreen} />
     {/* Hidden profile screen */}
     <Tab.Screen
-      name="PoliticianProfile"
+      name="PoliticianDetails"
       component={ProfileScreen}
       options={{
         tabBarButton: () => null,

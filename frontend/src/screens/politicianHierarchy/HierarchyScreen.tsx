@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import HierarchyCard from "../../components/politicianHierarchy/HierarchyCard";
+import BlueHeader from "../../components/BlueHeader";
 import type { RootStackParamList } from '../../navigation/types';
 import axios from "axios";
 
@@ -169,102 +170,93 @@ const HierarchyScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => navigation.navigate("Home")}
-          style={styles.backButton}
-        >
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Political Hierarchy</Text>
-        <Ionicons name="ellipsis-vertical" size={22} color="#555" />
-      </View>
+      <BlueHeader title="Political Hierarchy" onBack={() => navigation.navigate("Home")} />
 
-      {/* Backend Status Indicator */}
-      {backendStatus === 'disconnected' && __DEV__ && (
-        <View style={styles.statusBanner}>
-          <Ionicons name="warning" size={16} color="#ff6b35" />
-          <Text style={styles.statusText}>
-            Backend disconnected - Using sample data
-          </Text>
+      <View style={styles.content}>
+        {/* Backend Status Indicator */}
+        {backendStatus === 'disconnected' && __DEV__ && (
+          <View style={styles.statusBanner}>
+            <Ionicons name="warning" size={16} color="#ff6b35" />
+            <Text style={styles.statusText}>
+              Backend disconnected - Using sample data
+            </Text>
+          </View>
+        )}
+
+        {/* Search bar */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={18} color="#888" />
+          <TextInput
+            placeholder="Search levels..."
+            placeholderTextColor="#aaa"
+            style={styles.searchInput}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
         </View>
-      )}
 
-      {/* Search bar */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={18} color="#888" />
-        <TextInput
-          placeholder="Search levels..."
-          placeholderTextColor="#aaa"
-          style={styles.searchInput}
-          value={searchText}
-          onChangeText={setSearchText}
-        />
-      </View>
-
-      {/* Filter Tabs */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
-        {["All Levels", "By Party", "By Region", "Nation"].map((tab, index) => (
-          <TouchableOpacity 
-            key={index} 
-            style={[styles.filterChip, index === activeFilter && styles.activeFilter]}
-            onPress={() => setActiveFilter(index)}
-          >
-            <Text style={[styles.filterText, index === activeFilter && styles.activeFilterText]}>{tab}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-
-      {/* Hierarchy List */}
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0056FF" />
-          <Text style={styles.loadingText}>Loading hierarchy levels...</Text>
-        </View>
-      ) : (
-        <ScrollView contentContainerStyle={styles.listContainer}>
-          {filteredLevels.length > 0 ? (
-            filteredLevels.map((level, index) => {
-              console.log("🔵 RENDER: Rendering level card:", level.name, "ID:", level._id, "Index:", index);
-              return (
-                <TouchableOpacity 
-                  key={level._id}
-                  activeOpacity={0.8}
-                  onPress={() => {
-                    console.log("🟠 TOUCH: Level card pressed:", level.name, level._id);
-                    handleLevelPress(level);
-                  }}
-                  style={styles.cardTouchable}
-                >
-                  <HierarchyCard
-                    title={level.name}
-                    name={level.count ? `${level.count} ${level.count === 1 ? 'Position' : 'Positions'}` : level.description || 'No description'}
-                    icon={getLevelIcon(level.name)}
-                    color={getLevelColor(level.name, index)}
-                    highlight={index === 0}
-                  />
-                </TouchableOpacity>
-              );
-            })
-          ) : (
-            <View style={styles.emptyContainer}>
-              <Ionicons name="folder-open-outline" size={50} color="#ccc" />
-              <Text style={styles.emptyText}>No levels found</Text>
-              <Text style={styles.emptySubText}>Try adjusting your search terms</Text>
-            </View>
-          )}
+        {/* Filter Tabs */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
+          {["All Levels", "By Party", "By Region", "Nation"].map((tab, index) => (
+            <TouchableOpacity 
+              key={index} 
+              style={[styles.filterChip, index === activeFilter && styles.activeFilter]}
+              onPress={() => setActiveFilter(index)}
+            >
+              <Text style={[styles.filterText, index === activeFilter && styles.activeFilterText]}>{tab}</Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
-      )}
 
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        {(["home", "git-network", "list", "person-circle"] as const).map((icon, index) => (
-          <TouchableOpacity key={index} style={styles.navItem}>
-            <Ionicons name={icon} size={24} color={index === 1 ? "#0056FF" : "#aaa"} />
-          </TouchableOpacity>
-        ))}
+        {/* Hierarchy List */}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0056FF" />
+            <Text style={styles.loadingText}>Loading hierarchy levels...</Text>
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={styles.listContainer}>
+            {filteredLevels.length > 0 ? (
+              filteredLevels.map((level, index) => {
+                console.log("🔵 RENDER: Rendering level card:", level.name, "ID:", level._id, "Index:", index);
+                return (
+                  <TouchableOpacity 
+                    key={level._id}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      console.log("🟠 TOUCH: Level card pressed:", level.name, level._id);
+                      handleLevelPress(level);
+                    }}
+                    style={styles.cardTouchable}
+                  >
+                    <HierarchyCard
+                      title={level.name}
+                      name={level.count ? `${level.count} ${level.count === 1 ? 'Position' : 'Positions'}` : level.description || 'No description'}
+                      icon={getLevelIcon(level.name)}
+                      color={getLevelColor(level.name, index)}
+                      highlight={index === 0}
+                    />
+                  </TouchableOpacity>
+                );
+              })
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="folder-open-outline" size={50} color="#ccc" />
+                <Text style={styles.emptyText}>No levels found</Text>
+                <Text style={styles.emptySubText}>Try adjusting your search terms</Text>
+              </View>
+            )}
+          </ScrollView>
+        )}
+
+        {/* Bottom Navigation */}
+        <View style={styles.bottomNav}>
+          {(["home", "git-network", "list", "person-circle"] as const).map((icon, index) => (
+            <TouchableOpacity key={index} style={styles.navItem}>
+              <Ionicons name={icon} size={24} color={index === 1 ? "#0056FF" : "#aaa"} />
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -273,25 +265,10 @@ const HierarchyScreen = () => {
 export default HierarchyScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingTop: 50 },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 10,
-  },
-  backButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: "#f5f5f5",
-  },
-  title: { 
-    fontSize: 20, 
-    fontWeight: "600",
+  container: { flex: 1, backgroundColor: "#fff" },
+  content: {
     flex: 1,
-    textAlign: "center",
-    marginHorizontal: 10,
+    paddingTop: 10,
   },
   searchContainer: {
     flexDirection: "row",

@@ -26,10 +26,6 @@ const PromisesIcon = ({ active }: { active: boolean }) => (
   <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>📜</Text>
 );
 
-const HierarchyIcon = ({ active }: { active: boolean }) => (
-  <Text style={{ fontSize: 20, color: active ? '#2563EB' : '#6B7280' }}>🏛️</Text>
-);
-
 const AnalyticsIcon = ({ active }: { active: boolean }) => (
   <Ionicons name="stats-chart-outline" size={22} color={active ? '#2563EB' : '#6B7280'} />
 );
@@ -106,15 +102,9 @@ const BottomNavBar: React.FC<BottomNavBarProps> = ({
 
       <TouchableOpacity
         className="items-center"
-        onPress={() => onTabPress('Hierarchy')}
+        onPress={() => onTabPress('PoliticianPromises')}
         activeOpacity={0.7}
       >
-        <HierarchyIcon active={activeTab === 'Hierarchy'} />
-        <Text className={`text-xs mt-1 ${activeTab === 'Hierarchy' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
-          Hierarchy
-        {/* onPress={() => onTabPress('PoliticianPromises')} */}
-        activeOpacity={0.7}
-      / </Text>
         <PromisesIcon active={activeTab === 'PoliticianPromises'} />
         <Text className={`text-xs mt-1 ${activeTab === 'PoliticianPromises' ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
           Promises

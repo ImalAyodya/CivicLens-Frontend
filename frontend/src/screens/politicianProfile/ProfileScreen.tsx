@@ -14,7 +14,7 @@ import axios from "axios";
 // Import RootStackParamList as a type from "../../../App"
 //import type { RootStackParamList } from "../../../App";
 
-type ProfileScreenRouteProp = RouteProp<RootStackParamList, "PoliticianProfile">;
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, "PoliticianDetails">;
 
 const API_BASE_URL = "http://localhost:5000";
 
