@@ -49,7 +49,8 @@ interface PoliticianDashboard {
   };
   trends: {
     quarterly: Array<{ quarter: string; rating: number }>;
-    approval: Array<{ month: string; rating: number }>; // New field for approval trend
+    approval: Array<{ month: string; rating: number }>;
+    categories: Array<{ category: string; score: number }>;
   };
   keyPromises: Array<{
     id: string;
@@ -135,21 +136,13 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
   }, [selectedPolitician]);
 
   const handleTabPress = (tabName: string) => {
-    setActiveTab(tabName);
-    if (
-      [
-        'Home',
-        'Dashboard',
-        'Explore',
-        'NewsFeed',
-        'Report',
-        'Analytics',
-        'Performance'
-      ].includes(tabName)
-    ) {
-      navigation.navigate(tabName as any);
-    }
-  };
+  setActiveTab(tabName);
+  if (
+    ['Home', 'Dashboard', 'NewsFeed', 'PoliticianPromises'].includes(tabName)
+  ) {
+    navigation.navigate(tabName as never);
+  }
+};
 
   const handleBackPress = () => {
     setShowList(true);
@@ -159,7 +152,10 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 
   // Format quarterly data for the BarChart
   const getBarChartData = () => {
-    if (!dashboardData) return null;
+    if (!dashboardData || !dashboardData.trends.quarterly) return {
+      labels: [],
+      datasets: [{ data: [] }]
+    };
     
     return {
       labels: dashboardData.trends.quarterly.map(item => item.quarter),
@@ -173,24 +169,10 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 
   // Format approval data for the LineChart
   const getApprovalData = () => {
-    if (!dashboardData?.trends?.approval) {
-      // Mock data if approval data is not available
+    if (!dashboardData || !dashboardData.trends.approval) {
       return {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-        datasets: [
-          {
-            data: [
-              Math.round(dashboardData?.performance.publicApproval || 60) - 15,
-              Math.round(dashboardData?.performance.publicApproval || 65) - 5,
-              Math.round(dashboardData?.performance.publicApproval || 70) - 10,
-              Math.round(dashboardData?.performance.publicApproval || 75) + 5,
-              Math.round(dashboardData?.performance.publicApproval || 72),
-              Math.round(dashboardData?.performance.publicApproval || 78),
-            ],
-            color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`, // emerald-500
-            strokeWidth: 2
-          }
-        ],
+        labels: [],
+        datasets: [{ data: [], color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`, strokeWidth: 2 }],
         legend: ["Public Approval"]
       };
     }
@@ -200,11 +182,26 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
       datasets: [
         {
           data: dashboardData.trends.approval.map(item => item.rating),
-          color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`, // emerald-500
+          color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
           strokeWidth: 2
         }
       ],
       legend: ["Public Approval"]
+    };
+  };
+
+  // Get data for Performance Categories
+  const getPerformanceCategoriesData = () => {
+    if (!dashboardData || !dashboardData.trends.categories) {
+      return {
+        labels: [],
+        data: []
+      };
+    }
+    
+    return {
+      labels: dashboardData.trends.categories.map(item => item.category),
+      data: dashboardData.trends.categories.map(item => Math.min(item.score, 100) / 100)
     };
   };
 
@@ -309,7 +306,7 @@ const getPieChartData = () => {
   };
 
   // Add this helper function to get radar chart data
-  const getPerformanceCategoriesData = () => {
+  const getPerformanceCategoriesDataOld = () => {
     if (!dashboardData) return null;
     
     // Either use actual data from API if available or mock data
