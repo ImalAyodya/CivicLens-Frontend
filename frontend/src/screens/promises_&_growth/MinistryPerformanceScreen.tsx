@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import jsPDF from 'jspdf';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 import BottomNavBar from '../../components/BottomNavBar';
@@ -23,6 +24,132 @@ export default function MinistryPerformanceScreen({ navigation }: { navigation: 
   const [loading, setLoading] = useState(true);
   const [performanceData, setPerformanceData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // PDF Export
+  const handleExportReport = async () => {
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0];
+    const fileName = `Ministry Performance ${dateStr}.pdf`;
+
+    // Prepare beautiful PDF for web
+    const doc = new jsPDF();
+    // Header
+    doc.setFillColor(37, 99, 235); // #2563EB
+    doc.rect(0, 0, 210, 25, 'F');
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Ministry Performance Report', 105, 15, { align: 'center' });
+
+    // Date
+    doc.setFontSize(11);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Date: ${dateStr}`, 10, 32);
+
+    // Section: Annual Financial Overview
+    let y = 42;
+    doc.setFillColor(229, 231, 235); // #E5E7EB
+    doc.rect(0, y - 7, 210, 10, 'F');
+    doc.setFontSize(14);
+    doc.setTextColor(37, 99, 235);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Annual Financial Overview', 10, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont('helvetica', 'normal');
+    // Table header
+    doc.setFont('helvetica', 'bold');
+    doc.text('Year', 15, y);
+    doc.text('Profit', 45, y);
+    doc.text('Loss', 80, y);
+    doc.setFont('helvetica', 'normal');
+    y += 6;
+    if (performanceData?.annualFinancialOverview) {
+      performanceData.annualFinancialOverview.forEach((item: any) => {
+        doc.text(String(item.year), 15, y);
+        doc.text(String(item.profit), 45, y);
+        doc.text(String(item.loss), 80, y);
+        y += 6;
+      });
+    }
+
+    // Section: Key Performance Indicators
+    y += 6;
+    doc.setFillColor(229, 231, 235); // #E5E7EB
+    doc.rect(0, y - 7, 210, 10, 'F');
+    doc.setFontSize(14);
+    doc.setTextColor(37, 99, 235);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Key Performance Indicators', 10, y);
+    y += 8;
+    doc.setFontSize(11);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Ministry', 15, y);
+    doc.text('Budget', 65, y);
+    doc.text('Utilization', 100, y);
+    doc.text('Status', 145, y);
+    doc.setFont('helvetica', 'normal');
+    y += 6;
+    if (performanceData?.keyPerformanceIndicators) {
+      performanceData.keyPerformanceIndicators.forEach((row: any) => {
+        doc.text(String(row.ministry), 15, y);
+        doc.text(String(row.budget), 65, y);
+        doc.text(String(row.utilization), 100, y);
+        // Status color
+        let statusColor = '#222';
+        if (row.status === 'On Track') statusColor = '#059669';
+        else if (row.status === 'At Risk') statusColor = '#B45309';
+        else if (row.status === 'Needs Improvement') statusColor = '#B91C1C';
+        doc.setTextColor(statusColor);
+        doc.text(String(row.status), 145, y);
+        doc.setTextColor(60, 60, 60);
+        y += 6;
+      });
+    }
+
+    try {
+      if (typeof window !== 'undefined' && window.document) {
+        // Web: Use jsPDF (beautiful design)
+        doc.save(fileName);
+      } else {
+        // Mobile: Use expo-print and expo-sharing (HTML)
+        let html = `<h1 style='background:#2563EB;color:#fff;padding:16px;text-align:center;'>Ministry Performance Report</h1>`;
+        html += `<h2 style='color:#2563EB;'>Date: ${dateStr}</h2>`;
+        html += `<h3 style='background:#E5E7EB;color:#2563EB;padding:8px;'>Annual Financial Overview</h3>`;
+        if (performanceData?.annualFinancialOverview) {
+          html += `<table border='1' cellpadding='4' style='border-collapse:collapse;width:100%;margin-bottom:12px;'>`;
+          html += `<tr style='background:#F3F4F6;'><th>Year</th><th>Profit</th><th>Loss</th></tr>`;
+          performanceData.annualFinancialOverview.forEach((item: any) => {
+            html += `<tr><td>${item.year}</td><td>${item.profit}</td><td>${item.loss}</td></tr>`;
+          });
+          html += `</table>`;
+        }
+        html += `<h3 style='background:#E5E7EB;color:#2563EB;padding:8px;'>Key Performance Indicators</h3>`;
+        if (performanceData?.keyPerformanceIndicators) {
+          html += `<table border='1' cellpadding='4' style='border-collapse:collapse;width:100%;'>`;
+          html += `<tr style='background:#F3F4F6;'><th>Ministry</th><th>Budget</th><th>Utilization</th><th>Status</th></tr>`;
+          performanceData.keyPerformanceIndicators.forEach((row: any) => {
+            let statusColor = '#222';
+            if (row.status === 'On Track') statusColor = '#059669';
+            else if (row.status === 'At Risk') statusColor = '#B45309';
+            else if (row.status === 'Needs Improvement') statusColor = '#B91C1C';
+            html += `<tr><td>${row.ministry}</td><td>${row.budget}</td><td>${row.utilization}</td><td style='color:${statusColor};font-weight:bold;'>${row.status}</td></tr>`;
+          });
+          html += `</table>`;
+        }
+        const { printToFileAsync } = await import('expo-print');
+        const { shareAsync } = await import('expo-sharing');
+        const { uri } = await printToFileAsync({ html, base64: false });
+        await shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: fileName });
+      }
+    } catch (err) {
+      alert('Failed to export PDF report.');
+      console.log('PDF export error:', err);
+    }
+  };
 
   useEffect(() => {
     fetchPerformanceData();
@@ -197,7 +324,7 @@ export default function MinistryPerformanceScreen({ navigation }: { navigation: 
           )}
         </View>
         {/* Export/Share Button */}
-        <TouchableOpacity style={styles.exportBtn}>
+        <TouchableOpacity style={styles.exportBtn} onPress={handleExportReport}>
           <Text style={styles.exportBtnText}>Export/Share Report</Text>
         </TouchableOpacity>
       </ScrollView>

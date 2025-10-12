@@ -334,6 +334,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E8F0',
     borderRadius: 20,
     marginHorizontal: 16,
+    marginTop: 16,
     overflow: 'hidden',
   },
   categoryTab: {

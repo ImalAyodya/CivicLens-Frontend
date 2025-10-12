@@ -48,8 +48,8 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
     }
     
     const initializeData = async () => {
-      await fetchPromise();
       await getCurrentUser(); // Wait for user to be fetched first
+      await fetchPromise();
       await fetchComments(); // Then fetch comments
     };
     
