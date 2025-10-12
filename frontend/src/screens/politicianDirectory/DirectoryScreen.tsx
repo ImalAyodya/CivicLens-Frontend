@@ -52,34 +52,75 @@ const DirectoryScreen: React.FC = () => {
     checkBackendConnection();
   }, []);
 
-  // Fetch politicians from backend when backend status changes
+  // Fetch politicians and parties from backend when backend status changes
   useEffect(() => {
     const fetchPoliticians = async () => {
       if (backendStatus === 'connected') {
         try {
-          console.log("Fetching politicians from:", `${API_BASE_URL}/api/politicians`);
-          const response = await axios.get(`${API_BASE_URL}/api/politicians`);
-          console.log("Politicians response:", response.data);
+          console.log("Fetching politicians and parties from backend...");
+          
+          // Fetch politicians and parties concurrently
+          const [politiciansResponse, partiesResponse] = await Promise.all([
+            axios.get(`${API_BASE_URL}/api/politicians`),
+            axios.get(`${API_BASE_URL}/api/parties`).catch(error => {
+              console.log("Parties endpoint failed, using fallback colors:", error);
+              return { data: [] };
+            })
+          ]);
+          
+          console.log("Politicians response:", politiciansResponse.data);
+          console.log("Parties response:", partiesResponse.data);
+          
+          const politiciansData = politiciansResponse.data;
+          const partiesData = partiesResponse.data || [];
           
           // Transform backend data to match frontend format
-          const transformedPoliticians = response.data.map((politician: any) => ({
-            id: politician._id,
-            name: politician.name,
-            party: politician.party?.fullName || politician.party || "Unknown Party",
-            role: politician.currentRole?.title || politician.currentRole || "Unknown Role",
-            image: politician.image || require("../../assets/images/politician1.jpeg"), // Default image
-            partyColor: getPartyColor(politician.party?.fullName || politician.party),
-          }));
+          const transformedPoliticians = politiciansData.map((politician: any) => {
+            const politicianPartyId = politician.party?._id || politician.party;
+            
+            // Find the full party details from the parties list
+            const fullPartyData = partiesData.find((party: any) => 
+              party._id === politicianPartyId || 
+              party.fullName === politician.party?.fullName ||
+              party.abbreviation === politician.party?.abbreviation
+            );
+            
+            const partyName = fullPartyData?.fullName || politician.party?.fullName || politician.party || "Unknown Party";
+            const partyColor = fullPartyData?.color || getPartyColor(partyName);
+            
+            return {
+              id: politician._id,
+              name: politician.name,
+              party: partyName,
+              role: politician.currentRole?.title || politician.currentRole || "Unknown Role",
+              image: politician.image || 'https://via.placeholder.com/100x100/cccccc/666666?text=No+Image',
+              partyColor: partyColor,
+              partyLogo: fullPartyData?.logo || null,
+              partyAbbreviation: fullPartyData?.abbreviation || politician.party?.abbreviation || partyName.substring(0, 3).toUpperCase(),
+            };
+          });
           
           setPoliticians(transformedPoliticians);
         } catch (error) {
           console.log("Error fetching politicians:", error);
-          // Fallback to dummy data if API fails
-          setPoliticians(dummyPoliticians);
+          // Fallback to dummy data if API fails - transform to match new structure
+          const transformedDummyData = dummyPoliticians.map((politician: any) => ({
+            ...politician,
+            partyColor: getPartyColor(politician.party),
+            partyLogo: null,
+            partyAbbreviation: politician.party.substring(0, 3).toUpperCase(),
+          }));
+          setPoliticians(transformedDummyData);
         }
       } else if (backendStatus === 'disconnected') {
-        // Use dummy data when backend is disconnected
-        setPoliticians(dummyPoliticians);
+        // Use dummy data when backend is disconnected - transform to match new structure
+        const transformedDummyData = dummyPoliticians.map((politician: any) => ({
+          ...politician,
+          partyColor: getPartyColor(politician.party),
+          partyLogo: null,
+          partyAbbreviation: politician.party.substring(0, 3).toUpperCase(),
+        }));
+        setPoliticians(transformedDummyData);
       }
       setLoading(false);
     };
@@ -148,7 +189,7 @@ const DirectoryScreen: React.FC = () => {
             name={item.name}
             party={item.party}
             role={item.role}
-            image={item.image}
+            image={typeof item.image === 'string' ? { uri: item.image } : item.image}
             partyColor={item.partyColor}
             fullWidth={true}
             onPress={() => navigation.navigate("PoliticianProfile", { id: item.id })}

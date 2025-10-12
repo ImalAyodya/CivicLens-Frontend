@@ -29,6 +29,43 @@ const ProfileScreen: React.FC = () => {
   // Get politician ID from route params
   const politicianId = route.params?.id;
 
+  // Helper function to get party colors
+  const getPartyColor = (partyName: string) => {
+    const partyColors: { [key: string]: string } = {
+      'United National Party': '#008000', // Green
+      'UNP': '#008000',
+      'Sri Lanka Podujana Peramuna': '#8B0000', // Dark Red
+      'SLPP': '#8B0000',
+      'Podujana Peramuna': '#8B0000',
+      'Samagi Jana Balawegaya': '#FF6B35', // Orange
+      'SJB': '#FF6B35',
+      'Janatha Vimukthi Peramuna': '#DC143C', // Crimson
+      'JVP': '#DC143C',
+      'Tamil National Alliance': '#FFD700', // Gold
+      'TNA': '#FFD700',
+      'All Ceylon Tamil Congress': '#4169E1', // Royal Blue
+      'ACTC': '#4169E1',
+      'Sri Lanka Freedom Party': '#0000FF', // Blue
+      'SLFP': '#0000FF',
+      'Independent': '#6B7280', // Gray
+    };
+    
+    // Check for exact match first
+    if (partyColors[partyName]) {
+      return partyColors[partyName];
+    }
+    
+    // Check for partial matches
+    for (const [key, color] of Object.entries(partyColors)) {
+      if (partyName.toLowerCase().includes(key.toLowerCase()) || 
+          key.toLowerCase().includes(partyName.toLowerCase())) {
+        return color;
+      }
+    }
+    
+    return '#3B82F6'; // Default blue
+  };
+
   // Check backend connection on component mount
   useEffect(() => {
     const checkBackendConnection = async () => {
@@ -65,43 +102,80 @@ const ProfileScreen: React.FC = () => {
       if (backendStatus === 'connected' && politicianId) {
         try {
           console.log("Fetching politician profile from:", `${API_BASE_URL}/api/politicians/${politicianId}`);
-          const response = await axios.get(`${API_BASE_URL}/api/politicians/${politicianId}`);
-          console.log("Politician profile response:", response.data);
-          console.log("Current role data:", response.data.currentRole);
-          console.log("Level data:", response.data.level);
-          console.log("Roles array:", response.data.roles);
+          
+          // Fetch politician data, roles, and parties concurrently
+          const [politicianResponse, rolesResponse, partiesResponse] = await Promise.all([
+            axios.get(`${API_BASE_URL}/api/politicians/${politicianId}`),
+            axios.get(`${API_BASE_URL}/api/politicians/${politicianId}/roles`).catch(error => {
+              console.log("Roles endpoint failed, using fallback:", error);
+              return { data: [] };
+            }),
+            axios.get(`${API_BASE_URL}/api/parties`).catch(error => {
+              console.log("Parties endpoint failed, using fallback:", error);
+              return { data: [] };
+            })
+          ]);
+          
+          console.log("Politician profile response:", politicianResponse.data);
+          console.log("Politician roles response:", rolesResponse.data);
+          console.log("Parties response:", partiesResponse.data);
+          
+          const politicianData = politicianResponse.data;
+          const rolesData = rolesResponse.data || [];
+          const partiesData = partiesResponse.data || [];
           
           // Transform backend data to match frontend format
+          const politicianPartyId = politicianData.party?._id || politicianData.party;
+          
+          // Find the full party details from the parties list
+          const fullPartyData = partiesData.find((party: any) => 
+            party._id === politicianPartyId || 
+            party.fullName === politicianData.party?.fullName ||
+            party.abbreviation === politicianData.party?.abbreviation
+          );
+          
+          const partyName = fullPartyData?.fullName || politicianData.party?.fullName || politicianData.party || "Unknown Party";
+          const partyColor = fullPartyData?.color || getPartyColor(partyName);
+          
           const transformedPolitician = {
-            name: response.data.name,
+            name: politicianData.name,
             // Enhanced role handling - try multiple possible data structures
-            role: response.data.currentRole?.title || 
-                  response.data.currentRole?.name || 
-                  response.data.currentRole || 
-                  response.data.level?.name ||
-                  response.data.position?.title ||
-                  response.data.position ||
+            role: politicianData.currentRole?.title || 
+                  politicianData.currentRole?.name || 
+                  politicianData.currentRole || 
+                  politicianData.level?.name ||
+                  politicianData.position?.title ||
+                  politicianData.position ||
                   "Unknown Role",
-            dob: response.data.dateOfBirth || "Unknown",
-            region: response.data.region || "Unknown",
-            serviceYears: response.data.yearsOfService || "Unknown",
-            education: response.data.education || "Unknown",
-            image: response.data.image || require('../../../assets/images/politician2.jpg'),
+            dob: politicianData.dateOfBirth || "Unknown",
+            region: politicianData.region || "Unknown",
+            serviceYears: politicianData.yearsOfService || "Unknown",
+            education: politicianData.education || "Unknown",
+            image: politicianData.image || 'https://via.placeholder.com/400x224/cccccc/666666?text=No+Image',
             party: {
-              name: response.data.party?.fullName || response.data.party || "Unknown Party",
-              short: response.data.party?.abbreviation || response.data.party?.short || "UNK",
-              founded: response.data.party?.founded || "Unknown",
-              ideology: response.data.party?.ideology || "Unknown",
+              name: partyName,
+              short: fullPartyData?.abbreviation || politicianData.party?.abbreviation || politicianData.party?.short || partyName.substring(0, 3).toUpperCase(),
+              founded: fullPartyData?.createdAt ? new Date(fullPartyData.createdAt).getFullYear().toString() : "Unknown",
+              ideology: politicianData.party?.ideology || "Unknown",
+              color: partyColor,
+              logo: fullPartyData?.logo || null,
+              founder: fullPartyData?.founder || "Unknown",
             },
-            // Enhanced roles array handling
-            roles: response.data.roles || 
-                   (response.data.currentRole ? [{
-                     title: response.data.currentRole?.title || response.data.currentRole?.name || response.data.currentRole,
-                     years: response.data.yearsInService || response.data.yearsOfService || "Current",
-                     active: true
-                   }] : []),
-            achievements: response.data.achievements || [],
-            elections: response.data.elections || [],
+            // Use roles from dedicated endpoint
+            roles: rolesData.length > 0 ? rolesData.map((role: any) => ({
+              title: role.role?.name || role.title || role.name || "Unknown Role",
+              years: role.yearsInService || role.years || "Unknown",
+              active: role.isActive !== undefined ? role.isActive : true,
+              level: role.level?.name || role.level || undefined,
+              startDate: role.startDate || undefined,
+              endDate: role.endDate || undefined
+            })) : (politicianData.currentRole ? [{
+              title: politicianData.currentRole?.title || politicianData.currentRole?.name || politicianData.currentRole,
+              years: politicianData.yearsInService || politicianData.yearsOfService || "Current",
+              active: true
+            }] : []),
+            achievements: politicianData.achievements || [],
+            elections: politicianData.elections || [],
           };
           
           setPolitician(transformedPolitician);
@@ -114,6 +188,7 @@ const ProfileScreen: React.FC = () => {
           
           if (fallbackPolitician) {
             // Transform dummy data to match expected format
+            const partyName = fallbackPolitician.party;
             setPolitician({
               ...fallbackPolitician,
               role: fallbackPolitician.role || "Member of Parliament",
@@ -121,10 +196,13 @@ const ProfileScreen: React.FC = () => {
               serviceYears: "Unknown", 
               education: "Unknown",
               party: {
-                name: fallbackPolitician.party,
-                short: fallbackPolitician.party.substring(0, 3).toUpperCase(),
+                name: partyName,
+                short: partyName.substring(0, 3).toUpperCase(),
                 founded: "Unknown",
                 ideology: "Unknown",
+                color: getPartyColor(partyName),
+                logo: null,
+                founder: "Unknown",
               },
               roles: [{
                 title: fallbackPolitician.role || "Member of Parliament",
@@ -146,6 +224,7 @@ const ProfileScreen: React.FC = () => {
         
         if (fallbackPolitician) {
           // Transform dummy data to match expected format
+          const partyName = fallbackPolitician.party;
           setPolitician({
             ...fallbackPolitician,
             role: fallbackPolitician.role || "Member of Parliament",
@@ -153,10 +232,13 @@ const ProfileScreen: React.FC = () => {
             serviceYears: "Unknown",
             education: "Unknown", 
             party: {
-              name: fallbackPolitician.party,
-              short: fallbackPolitician.party.substring(0, 3).toUpperCase(),
+              name: partyName,
+              short: partyName.substring(0, 3).toUpperCase(),  
               founded: "Unknown",
               ideology: "Unknown",
+              color: getPartyColor(partyName),
+              logo: null,
+              founder: "Unknown",
             },
             roles: [{
               title: fallbackPolitician.role || "Member of Parliament",
@@ -211,7 +293,7 @@ const ProfileScreen: React.FC = () => {
              className="w-full h-56"
            /> */}
            <Image
-          source={politician.image || require('../../../assets/images/politician2.jpg')}
+          source={{ uri: politician.image || 'https://via.placeholder.com/400x224/cccccc/666666?text=No+Image' }}
           style={styles.profileImage}
           resizeMode="cover"
         />
@@ -232,7 +314,7 @@ const ProfileScreen: React.FC = () => {
            {/* Name + Party Badge */}
            <View className="absolute bottom-4 left-4">
              <View className="flex-row items-center space-x-2">
-               <View className="bg-blue-600 px-2 py-1 rounded-md">
+               <View style={{ backgroundColor: politician.party.color || '#3B82F6' }} className="px-2 py-1 rounded-md">
                  <Text className="text-white text-xs font-semibold">
                    {politician.party.short}
                  </Text>
@@ -261,22 +343,50 @@ const ProfileScreen: React.FC = () => {
            <InfoRow label="Date of Birth" value={politician.dob} />
            <InfoRow label="Region" value={politician.region} />
            <InfoRow label="Years of Service" value={politician.serviceYears} />
-           <InfoRow label="Education" value={politician.education} />
+           {/* <InfoRow label="Education" value={politician.education} /> */}
          </View>
    
          {/* Party Details */}
          <View className="bg-white rounded-2xl shadow p-4 m-4">
            <Text className="text-lg font-semibold mb-3">Party Details</Text>
-           <View className="flex-row items-center space-x-3">
-             <View className="bg-blue-600 px-3 py-2 rounded-md">
-               <Text className="text-white font-semibold">{politician.party.short}</Text>
-             </View>
-             <View>
-               <Text className="font-semibold">{politician.party.name}</Text>
-               <Text className="text-gray-500 text-sm">Founded: {politician.party.founded}</Text>
-               <Text className="text-gray-500 text-sm">{politician.party.ideology}</Text>
+           <View className="flex-row items-center space-x-3 mb-3">
+             {politician.party.logo ? (
+               <Image 
+                 source={{ uri: politician.party.logo }} 
+                 className="w-12 h-12 rounded-lg"
+                 resizeMode="contain"
+               />
+             ) : (
+               <View style={{ backgroundColor: politician.party.color || '#3B82F6' }} className="w-12 h-12 px-3 py-2 rounded-lg items-center justify-center">
+                 <Text className="text-white font-bold text-sm">{politician.party.short}</Text>
+               </View>
+             )}
+             <View className="flex-1">
+               <Text className="font-semibold text-lg">{politician.party.name}</Text>
+               <Text className="text-gray-600 text-sm">({politician.party.short})</Text>
              </View>
            </View>
+           
+           {/* <View className="space-y-2">
+             <View className="flex-row items-center">
+               <Ionicons name="person-outline" size={16} color="#6B7280" />
+               <Text className="text-gray-500 text-sm ml-2">Founder: {politician.party.founder}</Text>
+             </View>
+             <View className="flex-row items-center">
+               <Ionicons name="calendar-outline" size={16} color="#6B7280" />
+               <Text className="text-gray-500 text-sm ml-2">Founded: {politician.party.founded}</Text>
+             </View>
+             <View className="flex-row items-center">
+               <Ionicons name="color-palette-outline" size={16} color="#6B7280" />
+               <Text className="text-gray-500 text-sm ml-2">Party Color: {politician.party.color}</Text>
+             </View>
+             {politician.party.ideology !== "Unknown" && (
+               <View className="flex-row items-center">
+                 <Ionicons name="library-outline" size={16} color="#6B7280" />
+                 <Text className="text-gray-500 text-sm ml-2">Ideology: {politician.party.ideology}</Text>
+               </View>
+             )}
+           </View> */}
          </View>
    
          {/* Political Roles */}
@@ -284,7 +394,23 @@ const ProfileScreen: React.FC = () => {
            <Text className="text-lg font-semibold mb-3">Political Roles</Text>
            {politician.roles && politician.roles.length > 0 ? (
              politician.roles.map((role: any, idx: number) => (
-               <RoleRow key={idx} title={role.title} years={role.years} active={role.active} />
+               <View key={idx} className="mb-3 last:mb-0">
+                 <RoleRow 
+                   title={role.title} 
+                   years={role.years} 
+                   active={role.active} 
+                 />
+                 {role.level && (
+                   <Text className="text-xs text-gray-500 mt-1 ml-2">Level: {role.level}</Text>
+                 )}
+                 {(role.startDate || role.endDate) && (
+                   <Text className="text-xs text-gray-500 mt-1 ml-2">
+                     {role.startDate && `Started: ${new Date(role.startDate).toLocaleDateString()}`}
+                     {role.startDate && role.endDate && ' • '}
+                     {role.endDate && `Ended: ${new Date(role.endDate).toLocaleDateString()}`}
+                   </Text>
+                 )}
+               </View>
              ))
            ) : (
              <Text className="text-gray-500 text-sm">No role information available</Text>
