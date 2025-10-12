@@ -79,14 +79,12 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="ElectionCountdown" component={ElectionCountdownScreen} />
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
+        <Stack.Screen name="PastElectionDetails" component={PastElectionDetailsScreen} />
         <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
         <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
         <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
         {/* <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} /> */}
         <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
-        <Stack.Screen name="QuizHistory" component={QuizHistoryScreen} />
-        <Stack.Screen name="QuizSummary" component={QuizSummaryScreen} />
-        <Stack.Screen name="QuizDetail" component={QuizDetailScreen} />
         <Stack.Screen name="HelpAndSupport" component={HelpAndSupportScreen} />
         <Stack.Screen name="SupportHistory" component={SupportHistoryScreen} />
         <Stack.Screen name="SupportDetail" component={SupportDetailScreen} />

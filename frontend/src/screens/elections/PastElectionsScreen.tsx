@@ -93,7 +93,7 @@ const PastElectionsScreen: React.FC<Props> = ({ navigation }) => {
       });
       
       // Remove duplicates and sort in descending order
-      const uniqueYears = [...new Set(extractedYears)].sort((a, b) => b - a) as number[];
+      const uniqueYears = Array.from(new Set(extractedYears)).sort((a, b) => b - a) as number[];
       
       setYears(uniqueYears);
       
