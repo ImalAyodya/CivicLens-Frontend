@@ -20,11 +20,11 @@ import NewsHeader from '../../components/news/NewsHeader';
 import { NewsCategory, NewsItem } from '../../types/news';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
-import NewsSidebar from '~/components/news/NewsSidebar';
-import BottomNavBar from '../../components/BottomNavBar';
+import NewsSidebar from '../../components/news/NewsSidebar';
 import { useAppNavigation } from '../../hooks/useAppNavigation';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import BottomNavBar from '../../components/BottomNavBar';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NewsFeed'>;
 
