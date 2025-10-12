@@ -111,7 +111,6 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             </View>
             <Text className="text-gray-800 ml-3 font-medium">News Feed</Text>
           </TouchableOpacity>
-
           {/* Election Countdown */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"

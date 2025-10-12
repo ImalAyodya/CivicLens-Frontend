@@ -36,15 +36,16 @@ const Header: React.FC<HeaderProps> = ({
   const menuItems: MenuItem[] = [
     { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
     // { id: '2', title: 'Profile', icon: <Ionicons name="person-outline" size={22} color="#2563EB" />, screen: 'Profile' },
-    { id: '3', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
-    { id: '4', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
-    { id: '5', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
-    { id: '6', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-    // { id: '7', title: 'Reports', icon: <Ionicons name="document-text-outline" size={22} color="#2563EB" />, screen: 'Reports' },
-    // { id: '8', title: 'Issues', icon: <Ionicons name="alert-circle-outline" size={22} color="#2563EB" />, screen: 'Issues' },
-    // { id: '9', title: 'Settings', icon: <Ionicons name="settings-outline" size={22} color="#2563EB" />, screen: 'Settings' },
-    { id: '10', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
-    { id: '11', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+    { id: '3', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
+    { id: '4', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
+    { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
+    { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
+    { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
+    // { id: '8', title: 'Reports', icon: <Ionicons name="document-text-outline" size={22} color="#2563EB" />, screen: 'Reports' },
+    // { id: '9', title: 'Issues', icon: <Ionicons name="alert-circle-outline" size={22} color="#2563EB" />, screen: 'Issues' },
+    // { id: '10', title: 'Settings', icon: <Ionicons name="settings-outline" size={22} color="#2563EB" />, screen: 'Settings' },
+    { id: '11', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+    { id: '12', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
@@ -91,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({
           <TouchableOpacity
             onPress={() => {
               if (navigation) {
-                navigation.navigate('Profile');
+                navigation.navigate('UserProfile');
               }
               if (onProfilePress) {
                 onProfilePress();
@@ -110,6 +111,8 @@ const Header: React.FC<HeaderProps> = ({
         transparent={true}
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
+        accessibilityViewIsModal={true}
+        supportedOrientations={['portrait', 'landscape']}
       >
         <View style={styles.modalOverlay}>
           <TouchableOpacity
@@ -139,10 +142,11 @@ const Header: React.FC<HeaderProps> = ({
                         'Home',
                         'Login',
                         'Dashboard',
+                        'Hierarchy',
                         'Comparison',
                         'PoliticalQuiz',
                         'PoliBot',
-                        'QuizHistory', // <-- add this
+                        'QuizHistory',
                         'HelpAndSupport',
                       ].includes(item.screen)
                     ) {

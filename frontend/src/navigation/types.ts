@@ -5,6 +5,7 @@ export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
   Home: undefined;
+  MainTabs: undefined; // <-- Add this line
   Dashboard: undefined;
   Comparison: undefined;
   ComparisonResult: {
@@ -43,6 +44,20 @@ export type RootStackParamList = {
     electionId: string;
   };
   ElectionMap: undefined;
+  PoliticianDetails: { id: string }; 
+  DirectoryScreen: undefined;
+  AdminPanel: undefined;
+  AddParty: undefined;
+  PartyList: undefined;
+  PoliticianList: undefined;
+  AddPoliticianForm: undefined;
+  RoleList: undefined;
+  AddRole: undefined;
+  LevelList: undefined;
+  AddLevel: undefined;
+  Hierarchy: undefined;
+  HierarchyPoliticianList: { levelId?: string; levelName?: string };
+
   PoliticianPromises: undefined;
   GrowthNews: undefined;
   MinistryPerformance: undefined;
@@ -58,6 +73,7 @@ export type RootStackParamList = {
   AdminUserManagement: undefined;
   AdminReports: undefined;
   AdminSettings: undefined;
-  Profile: undefined;
+  UserProfile: undefined;
 };
+  
 

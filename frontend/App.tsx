@@ -20,9 +20,17 @@ import NewsDetailScreen from './src/screens/news/NewsDetailScreen';
 import NotificationsScreen from './src/screens/notifications/NotificationsScreen';
 import ElectionCountdownScreen from './src/screens/elections/ElectionCountdownScreen';
 import PastElectionsScreen from './src/screens/elections/PastElectionsScreen';
+import DirectoryScreen from './src/screens/politicianDirectory/DirectoryScreen';
+import AdminPanelScreen from './src/screens/adminPanel/AdminPanelScreen';
+import HierarchyScreen from './src/screens/politicianHierarchy/HierarchyScreen';
+import HierarchyPoliticianList from './src/screens/politicianHierarchy/HierarchyPoliticianList';
+import AddPartyScreen from './src/screens/adminPanel/AddPartyScreen';
+import PartyListScreen from './src/screens/adminPanel/PartyListScreen';
+import PoliticianListScreen from './src/screens/adminPanel/PoliticianListScreen';
+import AddPoliticianForm from './src/screens/adminPanel/AddPoliticianForm';
 import PoliticianPromisesScreen from './src/screens/promises_&_growth/PoliticianPromisesScreen';
 import GrowthNewsScreen from './src/screens/promises_&_growth/GrowthNewsScreen';
-import MinistryPerformanceScreen from '~/screens/promises_&_growth/MinistryPerformanceScreen';
+//import MinistryPerformanceScreen from '~/screens/promises_&_growth/MinistryPerformanceScreen';
 // import PromiseDetailScreen from './src/screens/promises_&_growth/PromiseDetailScreen';
 import GrowthNewsDetailScreen from './src/screens/promises_&_growth/GrowthNewsDetailScreen';
 import QuizHistoryScreen from './src/screens/politicalQuiz/QuizHistoryScreen';
@@ -38,9 +46,13 @@ import AdminDashboardScreen from './src/screens/admin/AdminDashboardScreen';
 import AdminSupportTicketsScreen from './src/screens/admin/AdminSupportTicketsScreen';
 import AdminTicketDetailScreen from './src/screens/admin/AdminTicketDetailScreen';
 
-import ProfileScreen from './src/screens/ProfileScreen';
-import PastElectionDetailsScreen from './src/screens/elections/PastElectionDetailsScreen';
+import UserProfileScreen from './src/screens/ProfileScreen';
+import PoliticianProfileScreen from './src/screens/politicianProfile/ProfileScreen';
 import type { RootStackParamList } from './src/navigation/types';
+import RoleListScreen from './src/screens/adminPanel/RoleListScreen';
+import AddRoleScreen from './src/screens/adminPanel/AddRoleScreen';
+import LevelListScreen from './src/screens/adminPanel/LevelListScreen';
+import AddLevelScreen from './src/screens/adminPanel/AddLevelScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -79,10 +91,25 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="ElectionCountdown" component={ElectionCountdownScreen} />
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
-        <Stack.Screen name="PastElectionDetails" component={PastElectionDetailsScreen} />
+        {/* <Stack.Screen name="PastElectionDetails" component={PastElectionDetailsScreen} /> */}
+        <Stack.Screen name="DirectoryScreen" component={DirectoryScreen} />
+        <Stack.Screen name="PoliticianDetails" component={PoliticianProfileScreen} />
+        <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
+        <Stack.Screen name="AddParty" component={AddPartyScreen} />
+        <Stack.Screen name="PartyList" component={PartyListScreen} />
+        <Stack.Screen name="PoliticianList" component={PoliticianListScreen} />
+        <Stack.Screen name="AddPoliticianForm" component={AddPoliticianForm} />
+        <Stack.Screen name="RoleList" component={RoleListScreen} />
+        <Stack.Screen name="AddRole" component={AddRoleScreen} />
+        <Stack.Screen name="Hierarchy" component={HierarchyScreen} />
+        <Stack.Screen name="HierarchyPoliticianList" component={HierarchyPoliticianList} />
+        <Stack.Screen name="LevelList" component={LevelListScreen} />
+        <Stack.Screen name="AddLevel" component={AddLevelScreen} />
+
+      
         <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
         <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
-        <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
+        {/* <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} /> */}
         {/* <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} /> */}
         <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
         <Stack.Screen name="HelpAndSupport" component={HelpAndSupportScreen} />
@@ -93,7 +120,7 @@ export default function App() {
         <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
         <Stack.Screen name="AdminSupportTickets" component={AdminSupportTicketsScreen} />
         <Stack.Screen name="AdminTicketDetail" component={AdminTicketDetailScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="UserProfile" component={UserProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </UserProvider>

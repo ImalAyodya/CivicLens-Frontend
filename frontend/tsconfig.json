@@ -7,10 +7,10 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ]
-    }
+      "~/*": ["src/*"],
+      "~/components/*": ["./components/*"]
+    },
+    "skipLibCheck": true
   },
   "extends": "expo/tsconfig.base"
 }
