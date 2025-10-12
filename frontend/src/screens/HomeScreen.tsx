@@ -21,6 +21,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { handleTabPress: navHandler } = useAppNavigation();
 
   const handleTabPress = (tabName: string) => {
+    setActiveTab(tabName);
+    // Only navigate to screens that exist
+    if (['Home', 'Dashboard'].includes(tabName)) {
+      navigation.navigate(tabName as any);
+    }
     setActiveTab(navHandler(tabName, 'Home'));
   };
 

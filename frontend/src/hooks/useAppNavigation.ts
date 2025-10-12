@@ -22,13 +22,14 @@ export function useAppNavigation() {
           break;
         case 'Hierarchy':
           navigation.navigate('Hierarchy');
+        case 'PoliticianPromises': // <-- Add this case!
+          // navigation.navigate('PoliticianPromises');
           break;
         // Add other cases as screens are implemented
         default:
           console.log(`Screen ${tabName} not implemented yet`);
       }
     }
-    
     return tabName; // Return the tab name for setting activeTab
   };
   
