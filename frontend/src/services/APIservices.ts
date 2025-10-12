@@ -1,8 +1,8 @@
 import { QuizResponse, QuizAnalysisResponse, UserAnswer } from './types';
 
 // Change the BASE_URL from production to localhost
-const BASE_URL = 'http://localhost:5000/api';
-// const BASE_URL = 'https://civiclens-backend-production.up.railway.app/api';
+// const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/api';
 
 /**
  * Fetch dashboard data for a specific politician
