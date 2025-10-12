@@ -65,16 +65,17 @@ const HierarchyScreen = () => {
           const response = await axios.get(`${API_BASE_URL}/api/levels`);
           console.log("Levels response:", response.data);
           
-          // Optionally fetch politician count for each level
+          // Fetch politician count for each level using the count endpoint
           const levelsWithCounts = await Promise.all(
             response.data.map(async (level: any) => {
               try {
-                const politiciansResponse = await axios.get(`${API_BASE_URL}/api/politicians?level=${level._id}`);
+                const countResponse = await axios.get(`${API_BASE_URL}/api/politicians/level/${level._id}/count`);
                 return {
                   ...level,
-                  count: politiciansResponse.data.length
+                  count: countResponse.data.count || 0
                 };
               } catch (error) {
+                console.log(`Failed to fetch count for level ${level.name}:`, error);
                 return {
                   ...level,
                   count: 0

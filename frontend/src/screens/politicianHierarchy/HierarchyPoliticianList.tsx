@@ -57,7 +57,7 @@ const HierarchyPoliticianList: React.FC = () => {
       const transformedPoliticians = politiciansData.map((politician: any) => ({
         id: politician._id,
         name: politician.name,
-        image: politician.image || '../../../assets/images/default-politician.jpg',
+        image: politician.image || 'https://via.placeholder.com/100x100/cccccc/666666?text=No+Image',
         currentRole: { title: politician.currentRole?.title || politician.level?.name || 'N/A' },
         party: { fullName: politician.party?.fullName || politician.party || 'Independent' },
         region: politician.region || 'N/A',
@@ -95,7 +95,7 @@ const HierarchyPoliticianList: React.FC = () => {
       {
         id: "1",
         name: "Ranil Wickremesinghe",
-        image: "../../../assets/images/politician2.jpg",
+        image: "https://via.placeholder.com/100x100/0056FF/FFFFFF?text=RW",
         currentRole: { title: "President" },
         party: { fullName: "United National Party" },
         region: "Colombo District",
@@ -104,7 +104,7 @@ const HierarchyPoliticianList: React.FC = () => {
       {
         id: "2",
         name: "Dinesh Gunawardena",
-        image: "../../../assets/images/politician3.jpg",
+        image: "https://via.placeholder.com/100x100/7C3AED/FFFFFF?text=DG",
         currentRole: { title: "Prime Minister" },
         party: { fullName: "Podujana Peramuna" },
         region: "Colombo District",
@@ -113,7 +113,7 @@ const HierarchyPoliticianList: React.FC = () => {
       {
         id: "3",
         name: "Mahinda Rajapaksa",
-        image: "../../../assets/images/politician1.jpeg",
+        image: "https://via.placeholder.com/100x100/DC2626/FFFFFF?text=MR",
         currentRole: { title: "Member of Parliament" },
         party: { fullName: "Podujana Peramuna" },
         region: "Kurunegala District",
@@ -277,29 +277,12 @@ const HierarchyPoliticianList: React.FC = () => {
           data={filteredPoliticians}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handlePoliticianPress(item)}>
-              <View className="bg-white rounded-xl p-4 mb-3 shadow-sm">
-                <View className="flex-row items-center">
-                  <View className="w-12 h-12 bg-blue-100 rounded-full items-center justify-center mr-3">
-                    <Ionicons name="person" size={24} color="#3b82f6" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-lg font-semibold text-gray-800">{item.name}</Text>
-                    <Text className="text-sm text-gray-600">{item.currentRole.title}</Text>
-                    <Text className="text-sm text-blue-600">{item.party.fullName}</Text>
-                    <Text className="text-xs text-gray-500">{item.region}</Text>
-                  </View>
-                  <View className="items-center">
-                    <View className={`px-2 py-1 rounded-full ${item.status === 'Active' ? 'bg-green-100' : 'bg-gray-100'}`}>
-                      <Text className={`text-xs font-medium ${item.status === 'Active' ? 'text-green-800' : 'text-gray-800'}`}>
-                        {item.status}
-                      </Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#9ca3af" className="mt-1" />
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
+            <PoliticianCard
+              politician={item}
+              onEdit={() => console.log("Edit politician:", item.id)}
+              onDelete={() => console.log("Delete politician:", item.id)}
+              onPress={() => handlePoliticianPress(item)}
+            />
           )}
           refreshControl={
             <RefreshControl

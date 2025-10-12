@@ -86,7 +86,7 @@ const ProfileScreen: React.FC = () => {
             region: response.data.region || "Unknown",
             serviceYears: response.data.yearsOfService || "Unknown",
             education: response.data.education || "Unknown",
-            image: response.data.image || require('../../../assets/images/politician2.jpg'),
+            image: response.data.image || 'https://via.placeholder.com/400x224/cccccc/666666?text=No+Image',
             party: {
               name: response.data.party?.fullName || response.data.party || "Unknown Party",
               short: response.data.party?.abbreviation || response.data.party?.short || "UNK",
@@ -211,7 +211,7 @@ const ProfileScreen: React.FC = () => {
              className="w-full h-56"
            /> */}
            <Image
-          source={politician.image || require('../../../assets/images/politician2.jpg')}
+          source={{ uri: politician.image || 'https://via.placeholder.com/400x224/cccccc/666666?text=No+Image' }}
           style={styles.profileImage}
           resizeMode="cover"
         />

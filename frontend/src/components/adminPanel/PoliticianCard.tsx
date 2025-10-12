@@ -7,9 +7,10 @@ interface Props {
   politician: Politician;
   onEdit: () => void;
   onDelete: () => void;
+  onPress?: () => void;
 }
 
-const PoliticianCard: React.FC<Props> = ({ politician, onEdit, onDelete }) => {
+const PoliticianCard: React.FC<Props> = ({ politician, onEdit, onDelete, onPress }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -30,8 +31,8 @@ const PoliticianCard: React.FC<Props> = ({ politician, onEdit, onDelete }) => {
     return { uri: politician.image };
   };
 
-  return (
-    <View className="bg-white rounded-2xl shadow p-4 mb-3 flex-row items-center">
+  const CardContent = () => (
+    <>
       {/* Profile Image */}
       <View className="w-12 h-12 rounded-full mr-4 bg-gray-200 justify-center items-center overflow-hidden">
         {imageLoading && !imageError && (
@@ -78,6 +79,20 @@ const PoliticianCard: React.FC<Props> = ({ politician, onEdit, onDelete }) => {
           <Ionicons name="trash-outline" size={20} color="#ef4444" />
         </TouchableOpacity>
       </View>
+    </>
+  );
+
+  return (
+    <View className="bg-white rounded-2xl shadow mb-3">
+      {onPress ? (
+        <TouchableOpacity onPress={onPress} className="p-4 flex-row items-center">
+          <CardContent />
+        </TouchableOpacity>
+      ) : (
+        <View className="p-4 flex-row items-center">
+          <CardContent />
+        </View>
+      )}
     </View>
   );
 };
