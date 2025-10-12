@@ -10,7 +10,7 @@ interface ApiResponse {
   error?: string;
 }
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://civiclens-backend-production-2c6d.up.railway.app/api';
 
 export const newsService = {
   // Helper to extract data from responses

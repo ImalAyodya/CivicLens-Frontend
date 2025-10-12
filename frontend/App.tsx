@@ -30,7 +30,7 @@ import PoliticianListScreen from './src/screens/adminPanel/PoliticianListScreen'
 import AddPoliticianForm from './src/screens/adminPanel/AddPoliticianForm';
 import PoliticianPromisesScreen from './src/screens/promises_&_growth/PoliticianPromisesScreen';
 import GrowthNewsScreen from './src/screens/promises_&_growth/GrowthNewsScreen';
-//import MinistryPerformanceScreen from '~/screens/promises_&_growth/MinistryPerformanceScreen';
+import MinistryPerformanceScreen from '~/screens/promises_&_growth/MinistryPerformanceScreen';
 // import PromiseDetailScreen from './src/screens/promises_&_growth/PromiseDetailScreen';
 import GrowthNewsDetailScreen from './src/screens/promises_&_growth/GrowthNewsDetailScreen';
 import QuizHistoryScreen from './src/screens/politicalQuiz/QuizHistoryScreen';
@@ -53,6 +53,7 @@ import RoleListScreen from './src/screens/adminPanel/RoleListScreen';
 import AddRoleScreen from './src/screens/adminPanel/AddRoleScreen';
 import LevelListScreen from './src/screens/adminPanel/LevelListScreen';
 import AddLevelScreen from './src/screens/adminPanel/AddLevelScreen';
+import PastElectionDetailsScreen from '~/screens/elections/PastElectionDetailsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -91,7 +92,7 @@ export default function App() {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="ElectionCountdown" component={ElectionCountdownScreen} />
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
-        {/* <Stack.Screen name="PastElectionDetails" component={PastElectionDetailsScreen} /> */}
+        <Stack.Screen name="PastElectionDetails" component={PastElectionDetailsScreen} />
         <Stack.Screen name="DirectoryScreen" component={DirectoryScreen} />
         <Stack.Screen name="PoliticianDetails" component={PoliticianProfileScreen} />
         <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
@@ -109,7 +110,7 @@ export default function App() {
       
         <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
         <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
-        {/* <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} /> */}
+        <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
         {/* <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} /> */}
         <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
         <Stack.Screen name="HelpAndSupport" component={HelpAndSupportScreen} />
