@@ -1,75 +1,29 @@
 import { QuizResponse, QuizAnalysisResponse, UserAnswer } from './types';
 
-// Define a base URL that can be easily changed
-// You can also use environment variables here with process.env.EXPO_PUBLIC_API_URL
-const BASE_URL = 'https://civiclens-backend-production.up.railway.app/api';
-
-export const fetchRandomQuestions = async (count = 15): Promise<any[]> => {
-  try {
-    const response = await fetch(`${BASE_URL}/questions/random?count=${count}`);
-    if (!response.ok) throw new Error('Failed to fetch questions');
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching random questions:', error);
-    return [];
-  }
-};
-
-// Performance Dashboard API Services
+// Change the BASE_URL from production to localhost
+const BASE_URL = 'http://localhost:5000/api';
+// const BASE_URL = 'https://civiclens-backend-production.up.railway.app/api';
 
 /**
  * Fetch dashboard data for a specific politician
  */
 export const fetchPoliticianDashboard = async (politicianId: string): Promise<any> => {
   try {
+    console.log('[API] Fetching dashboard data for politician:', politicianId);
     const response = await fetch(`${BASE_URL}/performance/dashboard/${politicianId}`);
-    if (!response.ok) throw new Error('Failed to fetch dashboard data');
+    
+    if (!response.ok) {
+      console.error('[API] Error response status:', response.status);
+      throw new Error('Failed to fetch dashboard data');
+    }
     
     const data = await response.json();
+    console.log('[API] Dashboard data received:', data);
     
-    // Ensure all required trend data exists, add fallbacks if missing
-    if (!data.trends) data.trends = {};
-    
-    // Add fallback for quarterly data if missing
-    if (!data.trends.quarterly) {
-      console.warn('Missing quarterly data, using fallback');
-      data.trends.quarterly = [
-        { quarter: 'Q1', rating: Math.round(data.performance.score * 0.8) },
-        { quarter: 'Q2', rating: Math.round(data.performance.score * 0.9) },
-        { quarter: 'Q3', rating: Math.round(data.performance.score * 1.1) },
-        { quarter: 'Q4', rating: Math.round(data.performance.score * 1.2) },
-        { quarter: 'Now', rating: data.performance.score },
-      ];
-    }
-    
-    // Add fallback for approval data if missing
-    if (!data.trends.approval) {
-      console.warn('Missing approval data, using fallback');
-      data.trends.approval = [
-        { month: 'Jan', rating: Math.round(data.performance.publicApproval * 0.9) },
-        { month: 'Feb', rating: Math.round(data.performance.publicApproval * 0.95) },
-        { month: 'Mar', rating: Math.round(data.performance.publicApproval * 1.05) },
-        { month: 'Apr', rating: Math.round(data.performance.publicApproval * 1.0) },
-        { month: 'May', rating: Math.round(data.performance.publicApproval * 0.98) },
-        { month: 'Jun', rating: data.performance.publicApproval },
-      ];
-    }
-    
-    // Add fallback for category data if missing
-    if (!data.trends.categories) {
-      console.warn('Missing category data, using fallback');
-      data.trends.categories = [
-        { category: 'Economy', score: Math.round(data.performance.score * 0.9) },
-        { category: 'Healthcare', score: Math.round(data.performance.score * 1.1) },
-        { category: 'Education', score: Math.round(data.performance.score * 0.85) },
-        { category: 'Infrastructure', score: Math.round(data.performance.score * 1.2) },
-        { category: 'Environment', score: Math.round(data.performance.score * 0.95) }
-      ];
-    }
-    
+    // No more fallbacks - use the exact data from API
     return data;
   } catch (error) {
-    console.error('Error fetching politician dashboard:', error);
+    console.error('[API] Error fetching politician dashboard:', error);
     throw error;
   }
 };
@@ -79,11 +33,19 @@ export const fetchPoliticianDashboard = async (politicianId: string): Promise<an
  */
 export const fetchAllPoliticianPerformance = async (): Promise<any[]> => {
   try {
+    console.log('[API] Fetching all politician performance data');
     const response = await fetch(`${BASE_URL}/performance/politicians`);
-    if (!response.ok) throw new Error('Failed to fetch politicians performance');
-    return await response.json();
+    
+    if (!response.ok) {
+      console.error('[API] Error response status:', response.status);
+      throw new Error('Failed to fetch politicians performance');
+    }
+    
+    const data = await response.json();
+    console.log('[API] Received data for', data.length, 'politicians');
+    return data;
   } catch (error) {
-    console.error('Error fetching politicians performance:', error);
+    console.error('[API] Error fetching politicians performance:', error);
     throw error;
   }
 };
