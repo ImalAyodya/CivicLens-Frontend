@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-const API_BASE_URL = 'http://localhost:5000/promise/api/login';
+const API_BASE_URL = 'https://civiclens-backend-production.up.railway.app/promise/api/login';
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -67,6 +67,8 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           {/* Header Section */}
           <View className="items-center mb-8">
             <AppIcon />
+            <Text className="text-white text-2xl font-bold mb-1">CivicLens</Text>
+            <Text className="text-blue-100 text-sm">Tracking Political Priorities</Text>
           </View>
 
           {/* Login Card */}

@@ -99,11 +99,7 @@ const NewsDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     <View className="flex-1 bg-white">
       {/* Hero Image with Overlay and Back Button */}
       <View className="h-72 w-full relative">
-        <Image
-          source={require('../../../assets/parliament.png')}
-          className="h-full w-full"
-          resizeMode="cover"
-        />
+        
         <View className="absolute inset-0 bg-black bg-opacity-40" />
         
         {/* Top Bar */}
@@ -188,11 +184,7 @@ const NewsDetailScreen: React.FC<Props> = ({ route, navigation }) => {
               The ambitious plan includes infrastructure development projects such as road renovations, water supply schemes, and electricity grid extensions. The initiative is expected to create thousands of jobs and improve the quality of life for residents in the area.
             </Text>
             
-            <Image 
-              source={require('../../../assets/parliament.png')}
-              className="h-48 w-full rounded-xl mb-3"
-              resizeMode="cover"
-            />
+            
             <Text className="text-gray-500 text-xs italic mb-5 text-center">
               President addressing the media at the Presidential Secretariat
             </Text>

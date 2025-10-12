@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // For web image upload
 const isWeb = Platform.OS === 'web';
 
-const API_BASE_URL = 'http://localhost:5000/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production.up.railway.app/promise/api';
 
 const ProfileScreen = ({ navigation }: any) => {
   const [user, setUser] = useState<any>(null);
