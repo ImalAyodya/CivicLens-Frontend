@@ -54,6 +54,7 @@ import AddRoleScreen from './src/screens/adminPanel/AddRoleScreen';
 import LevelListScreen from './src/screens/adminPanel/LevelListScreen';
 import AddLevelScreen from './src/screens/adminPanel/AddLevelScreen';
 import PastElectionDetailsScreen from '~/screens/elections/PastElectionDetailsScreen';
+import ElectionPredictionsScreen from './src/screens/elections/ElectionPredictionsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -125,6 +126,7 @@ export default function App() {
         <Stack.Screen name="AdminSupportTickets" component={AdminSupportTicketsScreen} />
         <Stack.Screen name="AdminTicketDetail" component={AdminTicketDetailScreen} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+        <Stack.Screen name="ElectionPredictions" component={ElectionPredictionsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </UserProvider>

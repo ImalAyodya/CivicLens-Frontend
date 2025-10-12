@@ -177,6 +177,23 @@ const ElectionCountdownScreen: React.FC<Props> = ({ navigation }) => {
         <Animated.View entering={FadeIn.delay(700).duration(600)}>
           <VoteDistributionChart data={electionData.voteDistribution} />
         </Animated.View>
+        
+        {/* AI Election Trends Button */}
+        <TouchableOpacity 
+          className="bg-blue-100 rounded-lg p-4 mb-4 flex-row items-center"
+          onPress={() => {
+            const id = electionData.id;
+            if (!id) return;
+            navigation.navigate('ElectionPredictions', { electionId: id });
+          }}
+        >
+          <Ionicons name="analytics-outline" size={24} color="#2563EB" />
+          <View className="ml-3">
+            <Text className="text-blue-800 font-bold">AI Election Trends</Text>
+            <Text className="text-blue-600 text-xs">See voting predictions and analysis</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color="#2563EB" style={{ marginLeft: 'auto' }} />
+        </TouchableOpacity>
       </ScrollView>
       
       {/* Floating Action Button */}

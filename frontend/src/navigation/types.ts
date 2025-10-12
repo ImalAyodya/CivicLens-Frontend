@@ -46,6 +46,7 @@ QuizQuestion: {
     electionId: string;
   };
   ElectionMap: undefined;
+  ElectionLaws: undefined;
   PoliticianDetails: { id: string }; 
   DirectoryScreen: undefined;
   AdminPanel: undefined;
@@ -85,6 +86,7 @@ QuizQuestion: {
     quizId: string;
     // other params
   };
+  ElectionPredictions: { electionId: string };
 };
 
 
