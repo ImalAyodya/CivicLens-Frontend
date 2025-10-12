@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet, ScrollView, Alert, RefreshControl, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet, ScrollView, Alert, RefreshControl, ActivityIndicator, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 import axios from "axios";
@@ -19,6 +19,41 @@ type Party = {
 };
 
 const API_URL = "http://localhost:5000/api/parties";
+
+// Component to handle party logo display with fallback
+const PartyLogo = ({ party }: { party: Party }) => {
+  const [imageError, setImageError] = useState(false);
+  
+  // Reset error state when party changes
+  React.useEffect(() => {
+    setImageError(false);
+  }, [party.logo]);
+
+  return (
+    <View style={[styles.logo, { backgroundColor: (party.logo && !imageError) ? 'transparent' : party.color }]}>
+      {party.logo && !imageError ? (
+        <Image 
+          source={{ uri: party.logo }}
+          style={styles.logoImage}
+          resizeMode="contain"
+          onError={(error) => {
+            if (__DEV__) {
+              console.log('Failed to load party logo:', party.fullName, party.logo, error.nativeEvent?.error);
+            }
+            setImageError(true);
+          }}
+          onLoad={() => {
+            if (__DEV__) {
+              console.log('Successfully loaded party logo:', party.fullName);
+            }
+          }}
+        />
+      ) : (
+        <Text style={styles.logoText}>{party.abbreviation}</Text>
+      )}
+    </View>
+  );
+};
 
 const PartyListScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -165,13 +200,7 @@ const PartyListScreen = () => {
 
   const renderParty = ({ item }: { item: Party }) => (
     <View style={styles.partyCard}>
-      <View style={[styles.logo, { backgroundColor: item.color }]}>
-        {item.logo ? (
-          <Text style={styles.logoText}>📷</Text>
-        ) : (
-          <Text style={styles.logoText}>{item.abbreviation}</Text>
-        )}
-      </View>
+      <PartyLogo party={item} />
       <View style={styles.info}>
         <Text style={styles.name}>{item.fullName}</Text>
         <Text style={styles.sub}>Founded {item.founded || "N/A"}</Text>
@@ -404,6 +433,11 @@ const styles = StyleSheet.create({
     color: "white", 
     fontWeight: "bold",
     fontSize: 14,
+  },
+  logoImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   info: { 
     flex: 1 

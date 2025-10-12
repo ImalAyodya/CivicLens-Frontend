@@ -15,6 +15,7 @@ import DirectoryScreen from './src/screens/politicianDirectory/DirectoryScreen';
 import ProfileScreen from './src/screens/politicianProfile/ProfileScreen';
 import AdminPanelScreen from './src/screens/adminPanel/AdminPanelScreen';
 import HierarchyScreen from './src/screens/politicianHierarchy/HierarchyScreen';
+import HierarchyPoliticianList from './src/screens/politicianHierarchy/HierarchyPoliticianList';
 import AddPartyScreen from './src/screens/adminPanel/AddPartyScreen';
 import PartyListScreen from './src/screens/adminPanel/PartyListScreen';
 import PoliticianListScreen from './src/screens/adminPanel/PoliticianListScreen';
@@ -63,6 +64,7 @@ export default function App() {
         <Stack.Screen name="RoleList" component={RoleListScreen} />
         <Stack.Screen name="AddRole" component={AddRoleScreen} />
         <Stack.Screen name="Hierarchy" component={HierarchyScreen} />
+        <Stack.Screen name="HierarchyPoliticianList" component={HierarchyPoliticianList} />
         <Stack.Screen name="LevelList" component={LevelListScreen} />
         <Stack.Screen name="AddLevel" component={AddLevelScreen} />
 

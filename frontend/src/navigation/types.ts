@@ -25,4 +25,5 @@ export type RootStackParamList = {
   LevelList: undefined;
   AddLevel: undefined;
   Hierarchy: undefined;
+  HierarchyPoliticianList: { levelId?: string; levelName?: string };
 };

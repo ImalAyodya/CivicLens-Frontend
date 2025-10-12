@@ -92,8 +92,60 @@ const RoleListScreen = () => {
 
       if (connected) {
         const response = await axios.get(`${API_BASE_URL}/api/roles`);
+        if (__DEV__) {
+          console.log('Raw role data from backend:', response.data);
+        }
         if (response.data && Array.isArray(response.data)) {
-          setRoles(response.data);
+          // Fetch level names for each role that has a level ObjectId
+          const sanitizedRoles = await Promise.all(
+            response.data.map(async (role: any) => {
+              let levelName = 'Unknown Level';
+              
+              if (__DEV__) {
+                console.log('Processing role:', role.title, 'Level ID:', role.level);
+              }
+              
+              // If level is an ObjectId string, fetch the level details
+              if (role.level && typeof role.level === 'string') {
+                const isObjectId = /^[0-9a-f]{24}$/i.test(role.level);
+                
+                if (isObjectId) {
+                  try {
+                    // Fetch level details from the levels endpoint
+                    const levelResponse = await axios.get(`${API_BASE_URL}/api/levels/${role.level}`);
+                    levelName = levelResponse.data?.name || 'Political Role';
+                    
+                    if (__DEV__) {
+                      console.log('Fetched level name for', role.title, ':', levelName);
+                    }
+                  } catch (levelError) {
+                    console.error('Error fetching level details for role:', role.title, levelError);
+                    levelName = 'Political Role';
+                  }
+                } else {
+                  // If it's not an ObjectId, use it directly
+                  levelName = role.level;
+                }
+              } else if (typeof role.level === 'object' && role.level?.name) {
+                // Handle if level is already populated as an object
+                levelName = role.level.name;
+              }
+              
+              return {
+                _id: role._id, // Keep for internal operations only
+                title: role.title || 'Unknown Role',
+                level: levelName,
+                startDate: role.startDate || new Date().toISOString(),
+                endDate: role.endDate || '',
+                region: role.region || ''
+              };
+            })
+          );
+          
+          if (__DEV__) {
+            console.log('Sanitized role data:', sanitizedRoles);
+          }
+          setRoles(sanitizedRoles);
         } else {
           console.log('Invalid backend response, using dummy data');
           setRoles(dummyRoles);
@@ -130,12 +182,54 @@ const RoleListScreen = () => {
     }
 
     try {
-      await axios.delete(`${API_BASE_URL}/api/roles/${roleId}`);
+      if (__DEV__) {
+        console.log('Deleting role with ID:', roleId);
+        console.log('DELETE URL:', `${API_BASE_URL}/api/roles/${roleId}`);
+      }
+      
+      const response = await axios.delete(`${API_BASE_URL}/api/roles/${roleId}`);
+      
+      if (__DEV__) {
+        console.log('Delete response:', response.status, response.data);
+      }
+      
+      // Remove the deleted role from local state
       setRoles(prevRoles => prevRoles.filter(role => role._id !== roleId));
-      Alert.alert('Success', 'Role deleted successfully');
-    } catch (error) {
+      
+      Alert.alert(
+        'Success', 
+        'Role deleted successfully',
+        [{ text: 'OK' }]
+      );
+    } catch (error: any) {
       console.error('Error deleting role:', error);
-      Alert.alert('Error', 'Failed to delete role. Please try again.');
+      
+      // Enhanced error handling
+      let errorMessage = 'Failed to delete role. Please try again.';
+      
+      if (error.response) {
+        // Server responded with error status
+        const status = error.response.status;
+        const data = error.response.data;
+        
+        if (status === 404) {
+          errorMessage = 'Role not found. It may have already been deleted.';
+          // Remove from local state since it doesn't exist on server
+          setRoles(prevRoles => prevRoles.filter(role => role._id !== roleId));
+        } else if (status === 403) {
+          errorMessage = 'You do not have permission to delete this role.';
+        } else if (data?.message) {
+          errorMessage = data.message;
+        }
+        
+        if (__DEV__) {
+          console.log('Delete error response:', status, data);
+        }
+      } else if (error.request) {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -173,7 +267,7 @@ const RoleListScreen = () => {
     }, [])
   );
 
-  const renderRole = ({ item }: { item: Role }) => (
+  const renderRole = ({ item, index }: { item: Role; index: number }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <Ionicons name="briefcase" size={20} color="#f39c12" />
@@ -251,7 +345,7 @@ const RoleListScreen = () => {
 
         <FlatList
           data={roles}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item, index) => `role-${index}`}
           renderItem={renderRole}
           scrollEnabled={false}
         />

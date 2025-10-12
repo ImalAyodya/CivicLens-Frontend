@@ -67,11 +67,21 @@ const ProfileScreen: React.FC = () => {
           console.log("Fetching politician profile from:", `${API_BASE_URL}/api/politicians/${politicianId}`);
           const response = await axios.get(`${API_BASE_URL}/api/politicians/${politicianId}`);
           console.log("Politician profile response:", response.data);
+          console.log("Current role data:", response.data.currentRole);
+          console.log("Level data:", response.data.level);
+          console.log("Roles array:", response.data.roles);
           
           // Transform backend data to match frontend format
           const transformedPolitician = {
             name: response.data.name,
-            role: response.data.currentRole?.title || response.data.currentRole || "Unknown Role",
+            // Enhanced role handling - try multiple possible data structures
+            role: response.data.currentRole?.title || 
+                  response.data.currentRole?.name || 
+                  response.data.currentRole || 
+                  response.data.level?.name ||
+                  response.data.position?.title ||
+                  response.data.position ||
+                  "Unknown Role",
             dob: response.data.dateOfBirth || "Unknown",
             region: response.data.region || "Unknown",
             serviceYears: response.data.yearsOfService || "Unknown",
@@ -83,7 +93,13 @@ const ProfileScreen: React.FC = () => {
               founded: response.data.party?.founded || "Unknown",
               ideology: response.data.party?.ideology || "Unknown",
             },
-            roles: response.data.roles || [],
+            // Enhanced roles array handling
+            roles: response.data.roles || 
+                   (response.data.currentRole ? [{
+                     title: response.data.currentRole?.title || response.data.currentRole?.name || response.data.currentRole,
+                     years: response.data.yearsInService || response.data.yearsOfService || "Current",
+                     active: true
+                   }] : []),
             achievements: response.data.achievements || [],
             elections: response.data.elections || [],
           };
@@ -99,8 +115,8 @@ const ProfileScreen: React.FC = () => {
           if (fallbackPolitician) {
             // Transform dummy data to match expected format
             setPolitician({
-              ...dummyPolitician,
-              ...dummyPolitician,
+              ...fallbackPolitician,
+              role: fallbackPolitician.role || "Member of Parliament",
               dob: "Unknown",
               serviceYears: "Unknown", 
               education: "Unknown",
@@ -110,7 +126,11 @@ const ProfileScreen: React.FC = () => {
                 founded: "Unknown",
                 ideology: "Unknown",
               },
-              roles: [],
+              roles: [{
+                title: fallbackPolitician.role || "Member of Parliament",
+                years: "2020-Present",
+                active: true
+              }],
               achievements: [],
               elections: [],
             });
@@ -128,6 +148,7 @@ const ProfileScreen: React.FC = () => {
           // Transform dummy data to match expected format
           setPolitician({
             ...fallbackPolitician,
+            role: fallbackPolitician.role || "Member of Parliament",
             dob: "Unknown",
             serviceYears: "Unknown",
             education: "Unknown", 
@@ -137,7 +158,11 @@ const ProfileScreen: React.FC = () => {
               founded: "Unknown",
               ideology: "Unknown",
             },
-            roles: [],
+            roles: [{
+              title: fallbackPolitician.role || "Member of Parliament",
+              years: "2020-Present",
+              active: true
+            }],
             achievements: [],
             elections: [],
           });
@@ -196,7 +221,7 @@ const ProfileScreen: React.FC = () => {
            />
              <TouchableOpacity 
           className="absolute top-5 left-4 bg-black/40 p-2 rounded-full"
-          onPress={() => navigation.navigate("DirectoryScreen")}
+          onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={20} color="white" />
         </TouchableOpacity>

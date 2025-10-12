@@ -136,9 +136,7 @@ const LevelListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Hierarchy Levels</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("AddLevel")} style={styles.addButton}>
-          <Ionicons name="add-circle" size={24} color="#007bff" />
-        </TouchableOpacity>
+        <View style={styles.headerSpacer} />
       </View>
 
       <View style={styles.statusContainer}>
@@ -168,7 +166,7 @@ const LevelListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               <Ionicons name="layers-outline" size={64} color="#ccc" />
               <Text style={styles.emptyText}>No hierarchy levels found</Text>
               <Text style={styles.emptySubtext}>
-                Add your first level using the + button above
+                Add your first level using the + button
               </Text>
             </View>
           }
@@ -195,6 +193,14 @@ const LevelListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           )}
         />
       )}
+
+      {/* Floating Action Button */}
+      <TouchableOpacity 
+        onPress={() => navigation.navigate("AddLevel")} 
+        style={styles.floatingAddButton}
+      >
+        <Ionicons name="add" size={32} color="#ffffff" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -225,8 +231,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-  addButton: {
-    padding: 8,
+  headerSpacer: {
+    width: 40, // Same width as backButton to center the title
+  },
+  floatingAddButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#007bff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
   },
   subtitle: {
     fontSize: 14,
