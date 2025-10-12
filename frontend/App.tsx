@@ -39,6 +39,7 @@ import AdminSupportTicketsScreen from './src/screens/admin/AdminSupportTicketsSc
 import AdminTicketDetailScreen from './src/screens/admin/AdminTicketDetailScreen';
 
 import ProfileScreen from './src/screens/ProfileScreen';
+import PastElectionDetailsScreen from './src/screens/elections/PastElectionDetailsScreen';
 import type { RootStackParamList } from './src/navigation/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

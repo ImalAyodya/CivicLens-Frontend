@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { ElectionData } from '../types/election';
+import { electionService } from '../services/electionService';
 
 export function useElectionData() {
   const [electionData, setElectionData] = useState<ElectionData | null>(null);
@@ -15,10 +16,24 @@ export function useElectionData() {
   useEffect(() => {
     const fetchElectionData = async () => {
       try {
-        // In a real app, fetch from API
-        // For now, use mock data
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Fetch real data from API instead of using mock data
+        const data = await electionService.getCurrentElection();
         
+        setElectionData(data);
+        setTimeRemaining({
+          days: data.daysRemaining,
+          hours: data.hoursRemaining,
+          minutes: data.minutesRemaining,
+          seconds: data.secondsRemaining
+        });
+        setLoading(false);
+      } catch (err) {
+        console.error('Error in useElectionData:', err);
+        setError('Failed to load election data');
+        setLoading(false);
+        
+        // Fallback to mock data in case of error
+        // This ensures the UI doesn't break if the API fails
         const mockElectionData: ElectionData = {
           electionName: 'Sri Lankan Presidential Election 2024',
           electionDate: new Date('2024-12-15T08:00:00'),
@@ -87,16 +102,12 @@ export function useElectionData() {
           minutes: mockElectionData.minutesRemaining,
           seconds: mockElectionData.secondsRemaining
         });
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load election data');
-        setLoading(false);
       }
     };
     
     fetchElectionData();
     
-    // Update countdown timer every second
+    // Update countdown timer every second - keeping existing functionality
     const timer = setInterval(() => {
       if (!electionData) return;
       

@@ -1,5 +1,5 @@
-import type { NewsItem } from '../types/news';
 import { AIQuestion, UserAnswer } from '../services/types';
+import { NewsItem } from '../types/news';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -35,24 +35,17 @@ export type RootStackParamList = {
   PoliBot: undefined;
   PoliBotChat: undefined;
   NewsFeed: undefined;
-  NewsDetail: {
-    newsItem: NewsItem;
-  };
-  QuizSummary: {
-    userAnswers: UserAnswer[];
-    language: string;
-  };
-  QuizHistory: undefined;
-  QuizDetail: {
-    quizId: string;
-  };
+  NewsDetail: { newsId: string }; // Changed to use newsId
   Notifications: undefined;
   ElectionCountdown: undefined;
   PastElections: undefined;
+  PastElectionDetails: {
+    electionId: string;
+  };
   ElectionMap: undefined;
   PoliticianPromises: undefined;
   GrowthNews: undefined;
-  MinistryPerformance: undefined; 
+  MinistryPerformance: undefined;
   PromiseDetail: { promise: any };
   GrowthNewsDetail: { news: any };
   

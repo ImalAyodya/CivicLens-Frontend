@@ -80,6 +80,9 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
           { transform: [{ translateX }] },
           styles.sidebar,
         ]}
+        accessibilityViewIsModal={true}
+        accessible={true}
+        importantForAccessibility="yes"
       >
         {/* Sidebar Header */}
         <View className="bg-blue-600 p-4 pt-12">
@@ -211,6 +214,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex: 50,
   },
 });
 

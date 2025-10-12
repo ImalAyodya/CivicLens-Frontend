@@ -12,6 +12,14 @@ interface TurnoutChartProps {
 }
 
 const TurnoutChart: React.FC<TurnoutChartProps> = ({ data }) => {
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return (
+      <View style={{ padding: 16, alignItems: 'center' }}>
+        <Text>No turnout data available</Text>
+      </View>
+    );
+  }
+
   const screenWidth = Dimensions.get('window').width - 32;
   const chartHeight = 120;
   const chartWidth = screenWidth - 40;

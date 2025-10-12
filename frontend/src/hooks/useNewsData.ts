@@ -1,72 +1,71 @@
 import { useState, useEffect } from 'react';
-import type { NewsItem } from '../types/news';
+import { NewsItem, NewsCategory } from '../types/news';
+import { newsService } from '../services/newsService';
 
-export function useNewsData() {
+export function useNewsData(category?: NewsCategory) {
   const [news, setNews] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // In a real app, fetch data from API
     const fetchNews = async () => {
       try {
-        // Simulating API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        setLoading(true);
         
-        const mockNews: NewsItem[] = [
-          {
-            id: '1',
-            title: 'President Announces New Development Plan for Northern Province',
-            subtitle: 'The plan aims to boost infrastructure and create jobs',
-            date: '1h ago',
-            source: 'Politics Daily',
-            imageUrl: 'https://example.com/president.jpg',
-            isBreaking: true,
-            category: 'Politics',
-            readTime: '3 min read'
-          },
-          {
-            id: '2',
-            title: 'Education Minister Promises Free Tablets for All Students by 2024',
-            subtitle: 'Initiative aims to bridge the digital divide in education',
-            date: '2h ago',
-            source: 'Education Times',
-            imageUrl: 'https://example.com/education.jpg',
-            category: 'Education',
-            readTime: '2 min read'
-          },
-          {
-            id: '3',
-            title: 'Supreme Court Orders Investigation into Municipal Corruption Case',
-            subtitle: 'High-profile case involves several municipal officials',
-            date: '3h ago',
-            source: 'Legal Herald',
-            imageUrl: 'https://example.com/court.jpg',
-            category: 'Legal',
-            readTime: '4 min read'
-          },
-          {
-            id: '4',
-            title: 'Central Bank Maintains Interest Rates Amid Economic Recovery',
-            subtitle: 'Decision aims to support growth while keeping inflation in check',
-            date: '4h ago',
-            source: 'Economic Review',
-            imageUrl: 'https://example.com/bank.jpg',
-            category: 'Economy',
-            readTime: '3 min read'
-          },
-        ];
-
-        setNews(mockNews);
-        setLoading(false);
+        console.log(`Fetching news with category: ${category || 'All'}`);
+        
+        let newsData: NewsItem[] = [];
+        
+        if (category && category !== 'All') {
+          newsData = await newsService.getNewsByCategory(category);
+        } else {
+          newsData = await newsService.getAllNews();
+        }
+        
+        console.log(`Received ${newsData?.length || 0} news items`);
+        setNews(newsData || []);
+        setError(null);
       } catch (err) {
-        setError('Failed to fetch news');
+        setError('Failed to fetch news data');
+        console.error('Error fetching news:', err);
+        setNews([]);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchNews();
-  }, []);
+  }, [category]);
 
   return { news, loading, error };
+}
+
+// Breaking news hook without fallback
+export function useBreakingNews() {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBreakingNews = async () => {
+      try {
+        setLoading(true);
+        const breakingNews = await newsService.getBreakingNews();
+        
+        console.log(`Received ${breakingNews?.length || 0} breaking news items`);
+        setNews(breakingNews || []);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch breaking news');
+        console.error('Error fetching breaking news:', err);
+        setNews([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBreakingNews();
+  }, []);
+
+  return { breakingNews: news, loading, error };
 }

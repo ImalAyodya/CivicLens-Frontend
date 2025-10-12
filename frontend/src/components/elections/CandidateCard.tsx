@@ -23,7 +23,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
         <View className="flex-row items-center justify-between mt-2">
           <View className="flex-1">
             <Text className="text-xs text-gray-500 mb-1">{candidate.position}</Text>
-            <PromiseFulfillmentBar percentage={candidate.promiseFulfillment} />
+            <PromiseFulfillmentBar percentage={typeof candidate.promiseFulfillment === 'number' ? candidate.promiseFulfillment : 0} />
           </View>
           <Text className="text-sm font-bold text-blue-600 ml-2">
             {candidate.promiseFulfillment}%
