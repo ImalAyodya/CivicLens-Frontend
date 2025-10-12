@@ -154,9 +154,8 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleTabPress = (tabName: string) => {
   setActiveTab(tabName);
-  if (
-    ['Home', 'Dashboard', 'NewsFeed', 'PoliticianPromises'].includes(tabName)
-  ) {
+  // Only navigate if not already on the tab
+  if (tabName !== activeTab) {
     navigation.navigate(tabName as never);
   }
 };
@@ -360,19 +359,33 @@ const getStatusStyle = (status: string) => {
           </View>
           
           {/* Search Bar */}
-         <View className="px-4 py-3">
-          <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-2">
-            <Text className="text-gray-500 mr-2">🔍</Text>
-            <TextInput
-              placeholder="Search for a politician..."
-              value={searchText}
-              onChangeText={setSearchText}
-              className="flex-1 text-base text-gray-800"
-              style={{ paddingVertical: 0 }}
-              underlineColorAndroid="transparent"
-            />
-          </View>
-        </View>
+         <View style={{
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginHorizontal: 16,
+  marginBottom: 12,
+  marginTop: 16,
+  paddingHorizontal: 12,
+  backgroundColor: '#F9FAFB',
+  borderWidth: 1,
+  borderColor: '#E2E8F0',
+  borderRadius: 20,
+}}>
+  <Ionicons name="search-outline" size={16} color="#9CA3AF" style={{ marginRight: 6 }} />
+  <TextInput
+    style={{
+      flex: 1,
+      height: 36,
+      fontSize: 14,
+      color: '#1E293B',
+    }}
+    placeholder="Search for a politician..."
+    value={searchText}
+    onChangeText={setSearchText}
+    placeholderTextColor="#9CA3AF"
+    underlineColorAndroid="transparent"
+  />
+</View>
           
           {/* Politicians List */}
           <View className="px-4 py-4">
@@ -613,20 +626,26 @@ style={{ width: `${dashboardData?.performance.publicApproval ?? 0}%` }}         
             <View className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
               <Text className="text-gray-800 font-medium mb-2">Public Approval Trend</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <LineChart
-                  data={getApprovalData()}
-                  width={Math.max(chartWidth, 400)}
-                  height={180}
-                  yAxisLabel=""
-                  yAxisSuffix="%"
-                  chartConfig={{
-                    ...chartConfig,
-                    color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
-                    strokeWidth: 2,
-                  }}
-                  bezier
-                  style={{ borderRadius: 12 }}
-                />
+                {getApprovalData() ? (
+                  <LineChart
+                    data={getApprovalData()}
+                    width={Math.max(chartWidth, 400)}
+                    height={180}
+                    yAxisLabel=""
+                    yAxisSuffix="%"
+                    chartConfig={{
+                      ...chartConfig,
+                      color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
+                      strokeWidth: 2,
+                    }}
+                    bezier
+                    style={{ borderRadius: 12 }}
+                  />
+                ) : (
+                  <View style={{ height: 180, width: Math.max(chartWidth, 400), justifyContent: 'center', alignItems: 'center' }}>
+                    <Text className="text-gray-400">No approval trend data available</Text>
+                  </View>
+                )}
               </ScrollView>
             </View>
             

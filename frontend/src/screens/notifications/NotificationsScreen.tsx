@@ -2,7 +2,7 @@ import React from 'react';
 import { View, FlatList, ActivityIndicator, Text, SafeAreaView, StatusBar } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
-import NotificationHeader from '../../components/notifications/NotificationHeader';
+import BlueHeader from '../../components/BlueHeader';
 import NotificationItem from '../../components/notifications/NotificationItem';
 import NotificationToggle from '../../components/notifications/NotificationToggle';
 import { useNotifications } from '../../hooks/useNotifications';
@@ -26,24 +26,13 @@ const NotificationsScreen: React.FC<Props> = ({ navigation }) => {
     console.log('Notification pressed:', id);
   };
 
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
-
-  const handleSettingsPress = () => {
-    // Navigate to notification settings screen
-    console.log('Settings pressed');
-  };
-
   return (
-    <SafeAreaView className="flex-1 bg-gray-100" style={{ paddingTop: StatusBar.currentHeight }}>
+    <SafeAreaView className="flex-1 bg-gray-100">
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      
-      <NotificationHeader 
-        onBackPress={handleBackPress}
-        onSettingsPress={handleSettingsPress}
+      <BlueHeader
+        title="Notifications"
+        onBack={() => navigation.goBack()}
       />
-      
       {loading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#2563EB" />

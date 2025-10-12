@@ -9,7 +9,8 @@ import * as Sharing from 'expo-sharing';
 import BottomNavBar from '../../components/BottomNavBar';
 import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 
-const API_BASE_URL = 'http://civiclens-backend-production-2c6d.up.railway.app/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
+const USER_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/api/users';
 
 const statusColors: Record<string, { bg: string; text: string }> = {
   complete: { bg: '#D1FAE5', text: '#059669' },
@@ -60,7 +61,7 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
     try {
       const token = await AsyncStorage.getItem('token');
       if (token) {
-        const response = await axios.get(`${API_BASE_URL}/me`, {
+        const response = await axios.get(`${USER_BASE_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setCurrentUserId(response.data._id);
@@ -99,21 +100,28 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
 
   const handleAddComment = async () => {
     if (!comment.trim()) return;
-    
+    if (!promiseId) {
+      Alert.alert('Error', 'No promise ID found. Cannot add comment.');
+      return;
+    }
     try {
       const token = await AsyncStorage.getItem('token');
       if (!token) {
         Alert.alert('Error', 'Please login to comment');
         return;
       }
+      // Fetch current user to get username
+      const userRes = await axios.get(`${USER_BASE_URL}/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const username = userRes.data.fullName || userRes.data.username || 'Anonymous';
 
-      const response = await axios.post(`${API_BASE_URL}/comments`, {
+      await axios.post(`${API_BASE_URL}/comments`, {
         promiseId,
-        commentText: comment
+        commentText: comment,
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
       setComment('');
       fetchComments(); // Refresh comments
     } catch (err: any) {
@@ -226,53 +234,38 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
     }
   };
 
-  // Get color for current promiseStatus
-//   const statusColor = statusColors[promise?.promiseStatus] || { bg: '#E5E7EB', text: '#6B7280' };
+  const handlePromiseReaction = async (reactionType: string) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        Alert.alert('Error', 'Please login to react');
+        return;
+      }
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <ActivityIndicator size="large" color="#2563EB" />
-        <Text style={{ marginTop: 12, color: '#64748B' }}>Loading promise details...</Text>
-      </View>
-    );
-  }
+      // Check if user already reacted with this type
+      const userReaction = promise?.reactions?.find((r: any) => r.userId._id === currentUserId);
 
-  if (error || !promise) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <Text style={{ color: '#EF4444', fontSize: 16 }}>{error || 'Promise not found.'}</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.retryButtonText}>Go Back</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+      if (userReaction && userReaction.reactionType === reactionType) {
+        // Remove reaction
+        await axios.delete(`${API_BASE_URL}/promises/${promiseId}/reactions`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } else {
+        // Add/update reaction
+        await axios.post(`${API_BASE_URL}/promises/${promiseId}/reactions`, {
+          reactionType
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
 
-  // Helper to check if evidence is a document
-//   const isDocumentType = (type: string) =>
-//     ['pdf', 'word', 'excel', 'text', 'doc', 'docx', 'xlsx', 'ppt', 'pptx'].includes(type?.toLowerCase());
+      // Refresh promise data
+      fetchPromise();
+    } catch (err: any) {
+      Alert.alert('Error', err?.response?.data?.error || 'Failed to react');
+    }
+  };
 
-//   const getDocumentIcon = (type: string) => {
-//     switch (type?.toLowerCase()) {
-//       case 'pdf':
-//         return <FontAwesome name="file-pdf-o" size={28} color="#EF4444" />;
-//       case 'word':
-//       case 'doc':
-//       case 'docx':
-//         return <FontAwesome name="file-word-o" size={28} color="#2563EB" />;
-//       case 'excel':
-//       case 'xlsx':
-//         return <FontAwesome name="file-excel-o" size={28} color="#22C55E" />;
-//       case 'ppt':
-//       case 'pptx':
-//         return <FontAwesome name="file-powerpoint-o" size={28} color="#F59E42" />;
-//       case 'text':
-//         return <FontAwesome name="file-text-o" size={28} color="#64748B" />;
-//       default:
-//         return <FontAwesome name="file-o" size={28} color="#2563EB" />;
-//     }
-//   };
 
   // Helper to get evidence label text
   const getEvidenceLabel = (evidence: any) => {
@@ -410,6 +403,7 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#222" />
         </TouchableOpacity>
+        
         {/* Card */}
         <View style={styles.card}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
@@ -436,6 +430,7 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
             style={styles.promiseImage}
           />
           <Text style={styles.desc}>{promise.promiseDetails || 'No description available.'}</Text>
+          
           {/* Progress Bar */}
           <View style={{ marginTop: 10 }}>
             <Text style={styles.progressLabel}>Progress</Text>
@@ -444,13 +439,46 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
             </View>
             <Text style={styles.progressPercent}>{promise.fulfillmentRate || 0}%</Text>
           </View>
+          
           {/* Status */}
           <View style={[styles.statusTag, { backgroundColor: statusColor.bg }]}>
             <Text style={[styles.statusTagText, { color: statusColor.text }]}>
               {promise.promiseStatus || 'pending'}
             </Text>
           </View>
+
+          {/* NEW: Promise Reactions Section */}
+          <View style={styles.promiseReactionsContainer}>
+            <Text style={styles.promiseReactionsTitle}>How do you feel about this promise?</Text>
+            
+            {/* Reaction Buttons */}
+            <View style={styles.promiseReactionButtons}>
+              {Object.entries(reactionEmojis).map(([type, emoji]) => {
+                const userReacted = promise?.reactions?.find((r: any) => r.userId._id === currentUserId && r.reactionType === type);
+                const count = promise?.reactionCounts?.[type] || 0;
+                
+                return (
+                  <TouchableOpacity
+                    key={type}
+                    style={[styles.promiseReactionBtn, userReacted && styles.promiseReactionBtnActive]}
+                    onPress={() => handlePromiseReaction(type)}
+                  >
+                    <Text style={styles.promiseReactionEmoji}>{emoji}</Text>
+                    <Text style={[styles.promiseReactionLabel, userReacted && styles.promiseReactionLabelActive]}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Text>
+                    {count > 0 && (
+                      <View style={styles.promiseReactionCountBadge}>
+                        <Text style={styles.promiseReactionCountText}>{count}</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
         </View>
+
         {/* Evidence Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Evidence</Text>
@@ -1016,5 +1044,66 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 13,
   
+  },
+  promiseReactionsContainer: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+  },
+  promiseReactionsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  promiseReactionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  promiseReactionBtn: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 16,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 2,
+    borderColor: 'transparent',
+    minWidth: 70,
+    position: 'relative',
+  },
+  promiseReactionBtnActive: {
+    backgroundColor: '#EBF4FF',
+    borderColor: '#2563EB',
+  },
+  promiseReactionEmoji: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  promiseReactionLabel: {
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '500',
+  },
+  promiseReactionLabelActive: {
+    color: '#2563EB',
+  },
+  promiseReactionCountBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#EF4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  promiseReactionCountText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });

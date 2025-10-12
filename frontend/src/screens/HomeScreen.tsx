@@ -18,15 +18,13 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Home');
-  const { handleTabPress: navHandler } = useAppNavigation();
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
-    // Only navigate to screens that exist
-    if (['Home', 'Dashboard'].includes(tabName)) {
-      navigation.navigate(tabName as any);
+    // Only navigate if not already on the tab
+    if (tabName !== activeTab) {
+      navigation.navigate(tabName as never);
     }
-    setActiveTab(navHandler(tabName, 'Home'));
   };
 
   // Dummy data for featured issues

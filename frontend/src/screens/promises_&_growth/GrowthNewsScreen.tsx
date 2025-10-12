@@ -14,7 +14,7 @@ const categoryColors: Record<string, string> = {
   Environment: '#10B981',
 };
 
-const API_BASE_URL = 'http://civiclens-backend-production-2c6d.up.railway.app/promise';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise';
 
 export default function GrowthNewsScreen({ navigation }: { navigation: any }) {
   const [selectedType, setSelectedType] = useState('All');
@@ -132,13 +132,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#2563EB',
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 11,
     color: '#2563EB',
     fontWeight: '500',
   },
   tabTextActive: {
+    fontSize: 11,
     color: '#fff',
-    fontWeight: '700',
+    fontWeight: '600',
   },
   scrollArea: {
     flex: 1,

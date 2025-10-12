@@ -15,7 +15,7 @@ type Level = {
   count?: number;
 };
 
-const API_BASE_URL = "http://civiclens-backend-production-2c6d.up.railway.app";
+const API_BASE_URL = "https://civiclens-backend-production-2c6d.up.railway.app";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

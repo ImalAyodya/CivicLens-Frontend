@@ -1,11 +1,29 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Image } from 'react-native';
 
 const AppIcon = () => (
-  <View className="bg-white rounded-2xl w-16 h-16 items-center justify-center shadow-lg mb-4">
-    <View className="bg-blue-600 rounded-lg w-10 h-10 items-center justify-center">
-      <Text className="text-white text-lg font-bold">📊</Text>
-    </View>
+  <View style={{
+    borderRadius: 18,
+    width: 200,
+    height: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.0,
+    shadowRadius: 8,
+    marginBottom: 16,
+    elevation: 4,
+    backgroundColor: 'transparent', // transparent background
+  }}>
+    <Image
+      source={require('../../../assets/logo.png')}
+      style={{
+        width: 200,
+        height: 200,
+        borderRadius: 12,
+        resizeMode: 'contain',
+      }}
+    />
   </View>
 );
 

@@ -17,29 +17,42 @@ const AppLogo = () => (
   </View>
 );
 
-// Combined sidebar items from both headers
-const sidebarItems = [
-  // Core navigation items from main header
-  { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
-  { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
-  { id: '3', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
-  { id: '4', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
-  { id: '5', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
-  { id: '6', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-  
-  // Performance features from politician promises header
-  { id: '7', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
-  { id: '8', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
-  { id: '9', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
-  { id: '10', title: 'WatchList', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'WatchList' },
-  
-  // Supporting features
-  { id: '11', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
-  { id: '12', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+interface MenuItem {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  screen: string;
+}
+
+// Use the same menuItems as Header for consistency
+const menuItems: MenuItem[] = [
+  // { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
+  // { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
+  { id: '3', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
+  { id: '4', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
+  { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
+  { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
+  { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
+  // { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
+  { id: '9', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
+  { id: '10', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
+  // { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
+  { id: '13', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
+  { id: '14', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
+  { id: '15', title: 'Civic Insight Score', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'PublicEngagementScore' },
+  { id: '16', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+  { id: '17', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
 ];
 
 export default function PoliticianPromisesHeader({ navigation, pageTitle = "Politicians Promises" }: PoliticianPromisesHeaderProps) {
   const [menuVisible, setMenuVisible] = useState(false);
+
+  const allowedScreens = [
+    'Home', 'Login', 'Dashboard', 'Hierarchy', 'Comparison',
+    'PoliticalQuiz', 'PoliBot', 'QuizHistory', 'HelpAndSupport',
+    'Notifications', 'Profile', 'PublicEngagementScore', 'MinistryPerformance',
+    'GrowthNews', 'NewsFeed', 'ElectionCountdown', 'PastElections', 'PoliticianPromises'
+  ];
 
   return (
     <>
@@ -58,7 +71,6 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
               <Text className="text-white text-xl font-bold ml-2">{pageTitle}</Text>
             </View>
           </View>
-          
           <View className="flex-row items-center">
             <TouchableOpacity
               onPress={() => navigation.navigate('Notifications')}
@@ -68,7 +80,7 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
               <NotificationIcon />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate('Profile')}
+              onPress={() => navigation.navigate('UserProfile')}
               activeOpacity={0.7}
             >
               <ProfileIcon />
@@ -83,6 +95,8 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
         transparent={true}
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
+        accessibilityViewIsModal={true}
+        supportedOrientations={['portrait', 'landscape']}
       >
         <View style={styles.modalOverlay}>
           <TouchableOpacity
@@ -99,14 +113,18 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
               <Text className="text-blue-100 mt-2">Tracking Political Priorities</Text>
             </View>
             <FlatList
-              data={sidebarItems}
+              data={menuItems}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
                   onPress={() => {
                     setMenuVisible(false);
-                    navigation.navigate(item.screen);
+                    if (allowedScreens.includes(item.screen)) {
+                      navigation.navigate(item.screen);
+                    } else {
+                      console.log(`Screen ${item.screen} not implemented yet`);
+                    }
                   }}
                 >
                   <View style={{ marginRight: 12 }}>{item.icon}</View>
@@ -115,6 +133,21 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
               )}
             />
             <View className="mt-auto p-4">
+              {/* Election Status Section */}
+              <View className="bg-gray-50 p-4 mb-2 rounded-lg">
+                <Text className="text-sm text-gray-500 mb-1">Next General Election</Text>
+                <Text className="text-base text-gray-900 font-medium mb-2">Presidential Election 2024</Text>
+                <View className="bg-blue-50 rounded-lg p-3">
+                  <View className="flex-row justify-between">
+                    <Text className="text-blue-800 font-medium">Countdown</Text>
+                    <Text className="text-blue-800 font-bold">42 days</Text>
+                  </View>
+                  <View className="h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+                    <View className="h-full bg-blue-600 rounded-full" style={{ width: '60%' }} />
+                  </View>
+                </View>
+              </View>
+              {/* Version */}
               <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
             </View>
           </View>

@@ -51,3 +51,20 @@ export interface ElectionData {
   voteDistribution: VoteDistributionData[];
   provinces?: Province[]; // Add this line
 }
+
+export interface PartyTrendData {
+  party: string;
+  currentSupport: number;
+  predictedSupport: number;
+  trendDirection: number; // -1 for down, 0 for stable, 1 for up
+  confidence: string;
+  color: string;
+}
+
+export interface ElectionTrendPrediction {
+  electionId: string;
+  electionName: string;
+  predictionDate: Date;
+  partyTrends: PartyTrendData[];
+  possibleOutcomes: string[];
+}

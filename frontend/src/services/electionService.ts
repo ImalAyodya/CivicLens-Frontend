@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ElectionData } from '../types/election';
 import Config from '../config';
 
-const API_BASE_URL = Config.API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = Config.API_URL || 'https://civiclens-backend-production-2c6d.up.railway.app/api';
 
 // Helper function to transform backend data to match frontend ElectionData structure
 const mapToElectionData = (backendData: any): ElectionData => {

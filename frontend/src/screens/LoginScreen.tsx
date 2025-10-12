@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Alert, Image } from "react-native";
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -32,7 +32,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     try {
       if (isAdminMode) {
         if (email === 'admin@gmail.com' && password === 'admin') {
-          // navigation.navigate('AdminDashboard');
+          navigation.navigate('AdminDashboard');
         } else {
           setErrorMsg('Invalid Credentials, please try again');
         }
@@ -58,17 +58,60 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <ScrollView
-      className="flex-1 bg-blue-100"
+      style={{ flex: 1, backgroundColor: '#2563EB' }}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 flex-1 items-center justify-center p-4">
+      <View style={{
+        minHeight: '100%',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+        backgroundColor: '#2563EB'
+      }}>
         <View className="w-full max-w-sm">
           {/* Header Section */}
           <View className="items-center mb-8">
-            <AppIcon />
-            <Text className="text-white text-2xl font-bold mb-1">CivicLens</Text>
-            <Text className="text-blue-100 text-sm">Tracking Political Priorities</Text>
+            <View style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.18,
+              shadowRadius: 16,
+              elevation: 12,
+              backgroundColor: 'rgba(255,255,255,0.05)',
+              borderRadius: 100,
+              padding: 16,
+              marginBottom: 18,
+            }}>
+              <Image
+                source={require('../../assets/logo.png')}
+                style={{ width: 120, height: 120, resizeMode: 'contain' }}
+              />
+            </View>
+            <Text style={{
+              color: '#fff',
+              fontSize: 36,
+              fontWeight: 'bold',
+              letterSpacing: 2,
+              marginBottom: 8,
+              textAlign: 'center',
+              textShadowColor: 'rgba(0,0,0,0.3)',
+              textShadowOffset: { width: 0, height: 2 },
+              textShadowRadius: 4,
+            }}>
+              CIVICLENS
+            </Text>
+            <Text style={{
+              color: '#dbeafe',
+              fontSize: 16,
+              letterSpacing: 1,
+              textAlign: 'center',
+              marginBottom: 2,
+              fontWeight: '500',
+            }}>
+              Your Lens on Politics
+            </Text>
           </View>
 
           {/* Login Card */}

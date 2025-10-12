@@ -9,7 +9,7 @@ import * as IntentLauncher from 'expo-intent-launcher';
 import * as Sharing from 'expo-sharing';
 // import { FileSystemDirectory, FileSystemFile } from 'expo-file-system';
 
-const API_BASE_URL = 'http://civiclens-backend-production-2c6d.up.railway.app/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
 
 const evidenceIcon = (type: string) => {
   switch (type?.toLowerCase()) {

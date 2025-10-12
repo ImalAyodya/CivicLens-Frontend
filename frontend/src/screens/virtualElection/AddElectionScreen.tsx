@@ -8,8 +8,8 @@ import type { RootStackParamList } from "../../navigation/types";
 
 // Use a local top-level API_URL constant (HTTPS) so this screen doesn't rely on external Config
 // Change to your local backend for development if needed: 'http://localhost:5000/api'
-//const API_URL = "https://civiclens-backend-production-2c6d.up.railway.app/api";
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://civiclens-backend-production-2c6d.up.railway.app/api";
+//const API_URL = "http://localhost:5000/api";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface Party {

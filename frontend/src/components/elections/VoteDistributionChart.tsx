@@ -1,129 +1,147 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
-import type { VoteDistributionData } from '../../types/election';
+import { View, Text, StyleSheet } from 'react-native';
+import { PieChart } from 'react-native-chart-kit';
+import { Dimensions } from 'react-native';
+
+const { width } = Dimensions.get('window');
+const chartConfig = {
+  backgroundGradientFrom: "#FFFFFF",
+  backgroundGradientTo: "#FFFFFF",
+  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+};
+
+// Colors for different political parties
+const partyColors = {
+  'UNP': '#0066CC',
+  'SLPP': '#E51C23',
+  'SJB': '#00CC66',
+  'NPP': '#CC0000',
+  'UPFA': '#1B75BB',
+  'JVP': '#FF9800',
+  'SLFP': '#0000CC',
+  'TNA': '#FFCC00',
+  'NDF': '#4CAF50'
+};
+
+// Default colors for other parties
+const defaultColors = [
+  '#3B82F6',
+  '#EF4444',
+  '#10B981',
+  '#F59E0B',
+  '#8B5CF6',
+  '#EC4899',
+  '#6366F1',
+  '#14B8A6',
+  '#F97316',
+];
+
+interface VoteDistributionData {
+  party: string;
+  votes: number;
+  percentage: number;
+}
 
 interface VoteDistributionChartProps {
   data: VoteDistributionData[];
 }
 
 const VoteDistributionChart: React.FC<VoteDistributionChartProps> = ({ data }) => {
-  // Handle empty data case
-  if (!data || data.length === 0) {
-    return (
-      <View className="bg-white rounded-lg p-4 mb-4">
-        <Text className="font-bold text-gray-800 mb-2">Vote Distribution</Text>
-        <View className="h-32 justify-center items-center">
-          <Text className="text-gray-500">No vote distribution data available</Text>
-        </View>
-      </View>
-    );
-  }
+  // Sort data by percentage in descending order
+  const sortedData = [...data].sort((a, b) => b.percentage - a.percentage);
   
-  const size = 140;
-  const radius = size / 2;
-  const centerX = size / 2;
-  const centerY = size / 2;
-  
-  // Filter valid data
-  const validData = data.filter(item => 
-    typeof item.percentage === 'number' && 
-    !isNaN(item.percentage) && 
-    item.percentage > 0
-  );
-  
-  // Handle all invalid data
-  if (validData.length === 0) {
-    return (
-      <View className="bg-white rounded-lg p-4 mb-4">
-        <Text className="font-bold text-gray-800 mb-2">Vote Distribution</Text>
-        <View className="h-32 justify-center items-center">
-          <Text className="text-gray-500">Invalid vote distribution data</Text>
-        </View>
-      </View>
-    );
-  }
-  
-  // Calculate total for percentages
-  const total = validData.reduce((sum, item) => sum + item.percentage, 0);
-  
-  // Generate pie chart paths with safety checks
-  const createPieChart = () => {
-    let startAngle = 0;
-    const result = [];
-    
-    for (const item of validData) {
-      const percentage = item.percentage / total;
-      
-      // Skip invalid percentages
-      if (isNaN(percentage) || percentage <= 0) continue;
-      
-      const angle = percentage * 360;
-      const endAngle = startAngle + angle;
-      
-      // Calculate path with safeguards
-      const x1 = centerX + radius * Math.cos((startAngle * Math.PI) / 180);
-      const y1 = centerY + radius * Math.sin((startAngle * Math.PI) / 180);
-      const x2 = centerX + radius * Math.cos((endAngle * Math.PI) / 180);
-      const y2 = centerY + radius * Math.sin((endAngle * Math.PI) / 180);
-      
-      // Ensure values are valid
-      if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2)) continue;
-      
-      // Create arc path
-      const largeArc = angle > 180 ? 1 : 0;
-      const path = `M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-      
-      result.push({ 
-        path, 
-        color: item.color || '#CCCCCC', 
-        percentage: item.percentage,
-        party: item.party,
-        startAngle, 
-        endAngle 
-      });
-      
-      startAngle = endAngle;
-    }
-    
-    return result;
-  };
-  
-  const paths = createPieChart();
-  
+  // Map data to the format required by PieChart
+  const chartData = sortedData.map((item, index) => ({
+    name: item.party,
+    votes: item.votes,
+    percentage: item.percentage,
+    color: partyColors[item.party as keyof typeof partyColors] || defaultColors[index % defaultColors.length],
+    legendFontColor: '#7F7F7F',
+    legendFontSize: 12,
+  }));
+
   return (
-    <View className="bg-white rounded-lg p-4 mb-4">
-      <Text className="font-bold text-gray-800 mb-2">Vote Distribution</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Vote Distribution</Text>
+      <View style={styles.chartContainer}>
+        <PieChart
+          data={chartData}
+          width={width - 64}
+          height={180}
+          chartConfig={chartConfig}
+          accessor="percentage"
+          backgroundColor="transparent"
+          paddingLeft="0"
+          absolute={false}
+          hasLegend={false}
+        />
+      </View>
       
-      <View className="flex-row">
-        <Svg height={size} width={size}>
-          {paths.map((pathItem, index) => (
-            <Path
-              key={index}
-              d={pathItem.path}
-              fill={pathItem.color}
-              stroke="white"
-              strokeWidth="1"
-            />
-          ))}
-        </Svg>
-        
-        <View className="flex-1 justify-center ml-4">
-          {validData.map((item, index) => (
-            <View key={index} className="flex-row items-center mb-2">
-              <View
-                style={{ width: 12, height: 12, backgroundColor: item.color || '#CCCCCC' }}
-                className="rounded-full mr-2"
-              />
-              <Text className="text-xs">
-                {item.party}: {item.percentage.toFixed(1)}%
-              </Text>
+      {/* Custom Legend */}
+      <View style={styles.legendContainer}>
+        {chartData.map((item, index) => (
+          <View key={index} style={styles.legendItem}>
+            <View style={[styles.legendColor, { backgroundColor: item.color }]} />
+            <View style={styles.legendTextContainer}>
+              <Text style={styles.legendParty}>{item.name}</Text>
+              <Text style={styles.legendPercentage}>{item.percentage.toFixed(1)}%</Text>
             </View>
-          ))}
-        </View>
+          </View>
+        ))}
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1E293B',
+    marginBottom: 16,
+  },
+  chartContainer: {
+    alignItems: 'center',
+  },
+  legendContainer: {
+    marginTop: 16,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 8,
+  },
+  legendTextContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  legendParty: {
+    fontSize: 14,
+    color: '#4A5568',
+  },
+  legendPercentage: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#2D3748',
+  },
+});
 
 export default VoteDistributionChart;

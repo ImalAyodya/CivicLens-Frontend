@@ -3,24 +3,26 @@ import { View, FlatList, StyleSheet, TouchableOpacity, Text, ActivityIndicator, 
 import { Ionicons } from "@expo/vector-icons";
 import PoliticianCard from "../../components/politicianDirectory/PoliticianCard";
 import SearchBar from "../../components/politicianDirectory/SearchBar";
-import BlueHeader from "../../components/BlueHeader";
+import Header from "../../components/Header";
 import { politicians as dummyPoliticians } from "../../constants/dummyData";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/types";
 import axios from "axios";
 import type { Politician } from "../../types/Politician";
+import BottomNavBar from "../../components/BottomNavBar";
 
 // Use the correct navigation type with access to the PoliticianDetails route
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const API_BASE_URL = "http://civiclens-backend-production-2c6d.up.railway.app";
+const API_BASE_URL = "https://civiclens-backend-production-2c6d.up.railway.app";
 
 const DirectoryScreen: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [politicians, setPoliticians] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [backendStatus, setBackendStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+  const [activeTab, setActiveTab] = useState("DirectoryScreen");
   const navigation = useNavigation<NavigationProp>();
 
   // Check backend connection on component mount
@@ -150,9 +152,18 @@ const DirectoryScreen: React.FC = () => {
       item.role.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  // Handler for bottom nav tab press
+  const handleTabPress = (tabName: string) => {
+    setActiveTab(tabName);
+    // Only navigate if not already on the tab
+    if (tabName !== activeTab) {
+      navigation.navigate(tabName as never);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <BlueHeader title="Politicians Directory" onBack={() => navigation.navigate("Home")} />
+      <Header navigation={navigation} />
       
       <View style={styles.content}>
         {/* Backend Status Indicator */}
@@ -174,23 +185,25 @@ const DirectoryScreen: React.FC = () => {
           </View>
         ) : (
           <FlatList
-          data={filteredData}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <PoliticianCard
-              name={item.name}
-              party={item.party}
-              role={item.role}
-              image={typeof item.image === 'string' ? { uri: item.image } : item.image}
-              partyColor={item.partyColor}
-              fullWidth={true}
-              onPress={() => navigation.navigate("PoliticianDetails", { id: item.id })}
-            />
-          )}
-          contentContainerStyle={styles.listContent}
-        />
+            data={filteredData}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <PoliticianCard
+                name={item.name}
+                party={item.party}
+                role={item.role}
+                image={typeof item.image === 'string' ? { uri: item.image } : item.image}
+                partyColor={item.partyColor}
+                fullWidth={true}
+                onPress={() => navigation.navigate("PoliticianDetails", { id: item.id })}
+              />
+            )}
+            contentContainerStyle={styles.listContent}
+          />
         )}
       </View>
+      {/* Add BottomNavBar here */}
+      <BottomNavBar activeTab={activeTab} onTabPress={handleTabPress} />
     </View>
   );
 };

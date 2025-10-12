@@ -18,8 +18,9 @@ type Party = {
   founder?: string;
   status: string;
 };
+const API_URL = "https://civiclens-backend-production-2c6d.up.railway.app/api";
 
-const API_URL = "http://localhost:5000/api/parties";
+//const API_URL = "http://localhost:5000/api/parties";
 
 const PartyLogo = ({ party }: { party: Party }) => {
   const [imageError, setImageError] = useState(false);
@@ -52,7 +53,7 @@ const PoliticalPartyListScreen = () => {
   const fetchParties = async (showLoader = false) => {
     if (showLoader) setLoading(true);
     try {
-      const res = await axios.get(API_URL);
+  const res = await axios.get(`${API_URL}/parties`);
       setParties(res.data);
       setBackendStatus('connected');
     } catch (err: any) {

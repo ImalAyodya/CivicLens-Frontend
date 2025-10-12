@@ -51,12 +51,25 @@ import AdminTicketDetailScreen from './src/screens/admin/AdminTicketDetailScreen
 
 import UserProfileScreen from './src/screens/ProfileScreen';
 import PoliticianProfileScreen from './src/screens/politicianProfile/ProfileScreen';
+import PublicEngagementScoreScreen from './src/screens/promises_&_growth/PublicEngagementScoreScreen';
 import type { RootStackParamList } from './src/navigation/types';
 import RoleListScreen from './src/screens/adminPanel/RoleListScreen';
 import AddRoleScreen from './src/screens/adminPanel/AddRoleScreen';
 import LevelListScreen from './src/screens/adminPanel/LevelListScreen';
 import AddLevelScreen from './src/screens/adminPanel/AddLevelScreen';
 import PastElectionDetailsScreen from '~/screens/elections/PastElectionDetailsScreen';
+import ElectionPredictionsScreen from './src/screens/elections/ElectionPredictionsScreen';
+import SplashScreen from './src/screens/common/SplashScreen';
+
+
+// Import the new screens
+import NewsListScreen from './src/screens/adminPanel/NewsListScreen';
+import AddNewsScreen from './src/screens/adminPanel/AddNewsScreen';
+import EditNewsScreen from './src/screens/adminPanel/EditNewsScreen';
+import ElectionListScreen from './src/screens/adminPanel/ElectionListScreen';
+import AdminAddElectionScreen from './src/screens/adminPanel/AddElectionScreen';
+import EditElectionScreen from './src/screens/adminPanel/EditElectionScreen';
+import ElectionResult   from './src/screens/virtualElection/ElectionResultScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -65,13 +78,14 @@ export default function App() {
     <UserProvider>
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName="Login"
+        initialRouteName="Splash"
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: 'transparent' },
           animation: 'slide_from_right'
         }}
       >
+        <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
@@ -113,21 +127,33 @@ export default function App() {
         <Stack.Screen name="AddLevel" component={AddLevelScreen} />
 
       
-  <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
-  <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
-  <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
+        <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
+        <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
+        <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
   <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} />
   <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
+  <Stack.Screen name="QuizHistory" component={QuizHistoryScreen} />
+  <Stack.Screen name="QuizSummary" component={QuizSummaryScreen} />
+  <Stack.Screen name="QuizDetail" component={QuizDetailScreen} />
+  <Stack.Screen name="PoliticalPartyList" component={PoliticalPartyListScreen} />
+  <Stack.Screen name="ElectionResultScreen" component={ElectionResult} />
   <Stack.Screen name="HelpAndSupport" component={HelpAndSupportScreen} />
   <Stack.Screen name="SupportHistory" component={SupportHistoryScreen} />
   <Stack.Screen name="SupportDetail" component={SupportDetailScreen} />
-  <Stack.Screen name="PoliticalPartyList" component={PoliticalPartyListScreen} />
         
         {/* Admin Screens */}
         <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
         <Stack.Screen name="AdminSupportTickets" component={AdminSupportTicketsScreen} />
         <Stack.Screen name="AdminTicketDetail" component={AdminTicketDetailScreen} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+        <Stack.Screen name="ElectionPredictions" component={ElectionPredictionsScreen} />
+        <Stack.Screen name="PublicEngagementScore" component={PublicEngagementScoreScreen} />
+        <Stack.Screen name="NewsList" component={NewsListScreen} />
+        <Stack.Screen name="AddNews" component={AddNewsScreen} />
+        <Stack.Screen name="EditNews" component={EditNewsScreen} />
+        <Stack.Screen name="ElectionList" component={ElectionListScreen} />
+        <Stack.Screen name="AddElection" component={AdminAddElectionScreen} />
+        <Stack.Screen name="EditElection" component={EditElectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </UserProvider>

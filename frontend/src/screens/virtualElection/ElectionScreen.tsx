@@ -7,7 +7,9 @@ import type { RootStackParamList } from "../../navigation/types";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Use local API_URL constant - matches AddElectionScreen
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://civiclens-backend-production-2c6d.up.railway.app/api";
+
+//const API_URL = "http://localhost:5000/api";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 // Backend schema interfaces
@@ -55,6 +57,8 @@ export default function ElectionScreen() {
   const [authToken, setAuthToken] = useState<string | null>(null);
   // Store party details for each candidate by politicianId
   const [candidateParties, setCandidateParties] = useState<{ [politicianId: string]: PartyDetails }>({});
+  // Track if the user has voted in the current election (persisted)
+  const [hasVoted, setHasVoted] = useState(false);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -64,13 +68,26 @@ export default function ElectionScreen() {
     initializeData();
   }, []);
 
+  // Check if user has voted in this election (persisted)
+  useEffect(() => {
+    const checkVoted = async () => {
+      if (activeElection && currentUserId) {
+        const key = `voted_${activeElection._id}_${currentUserId}`;
+        const voted = await AsyncStorage.getItem(key);
+        setHasVoted(!!voted);
+      }
+    };
+    checkVoted();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeElection, currentUserId]);
+
   const getCurrentUser = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
       if (token) {
         setAuthToken(token);
         // Fetch current user details from backend using token
-        const response = await fetch(`${API_URL}/me`, {
+        const response = await fetch(`${API_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -168,12 +185,12 @@ export default function ElectionScreen() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${authToken}`,  // Add Authorization header with token from AsyncStorage
+          "Authorization": `Bearer ${authToken}`,
         },
         body: JSON.stringify({
-          election: activeElection._id,    // Backend expects 'election' not 'electionId'
-          candidate: candidateId,          // Backend expects 'candidate' not 'candidateId'
-          voterId: currentUserId,          // Backend expects 'voterId' - using real user ID from token
+          electionId: activeElection._id,   // Use correct backend key
+          politicianId: candidateId,       // Use correct backend key
+          voterId: currentUserId,
         }),
       });
 
@@ -183,6 +200,12 @@ export default function ElectionScreen() {
 
       if (response.ok) {
         Alert.alert("Success", "Your vote has been recorded!");
+        setHasVoted(true);
+        // Persist vote state for this election and user
+        if (activeElection && currentUserId) {
+          const key = `voted_${activeElection._id}_${currentUserId}`;
+          await AsyncStorage.setItem(key, 'true');
+        }
         // Refresh elections to get updated vote counts
         fetchElections();
       } else {
@@ -258,7 +281,6 @@ export default function ElectionScreen() {
   return (
     <View style={styles.container}>
       <BlueHeader title="Virtual Election" onBack={() => navigation.goBack()} />
-      
       <ScrollView style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
@@ -272,56 +294,75 @@ export default function ElectionScreen() {
           </View>
         </View>
 
-      {/* Candidate List */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Choose Your Candidate</Text>
-        {activeElection.candidates.map((candidate) => {
-          const stats = calculateVoteStats(candidate);
-          const party = candidateParties[candidate.politician._id];
-          const partyAbbr = party?.abbreviation || "IND";
-          const partyColor = getPartyColor(party);
-          const isVoting = votingLoading === candidate.politician._id;
-          return (
-            <View key={candidate.politician._id} style={styles.card}>
-              <View style={styles.row}>
-                <Image 
-                  source={{ 
-                    uri: candidate.politician.image || "https://randomuser.me/api/portraits/men/32.jpg" 
-                  }} 
-                  style={styles.avatar} 
-                />
-                <View style={styles.info}>
-                  <View style={styles.row}>
-                    <Text style={styles.name}>{candidate.politician.name}</Text>
-                    <Text style={[styles.partyBadge, { backgroundColor: partyColor }]}> 
-                      {partyAbbr}
+        {/* Candidate List */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Choose Your Candidate</Text>
+          {activeElection.candidates.map((candidate) => {
+            const stats = calculateVoteStats(candidate);
+            const party = candidateParties[candidate.politician._id];
+            const partyAbbr = party?.abbreviation || "IND";
+            const partyColor = getPartyColor(party);
+            const isVoting = votingLoading === candidate.politician._id;
+            return (
+              <View key={candidate.politician._id} style={styles.card}>
+                <View style={styles.row}>
+                  <Image 
+                    source={{ 
+                      uri: candidate.politician.image || "https://randomuser.me/api/portraits/men/32.jpg" 
+                    }} 
+                    style={styles.avatar} 
+                  />
+                  <View style={styles.info}>
+                    <View style={styles.row}>
+                      <Text style={styles.name}>{candidate.politician.name}</Text>
+                      <Text style={[styles.partyBadge, { backgroundColor: partyColor }]}> 
+                        {partyAbbr}
+                      </Text>
+                    </View>
+                    <Text style={styles.voteCount}>
+                      {stats.count.toLocaleString()} votes • {stats.percent}%
                     </Text>
                   </View>
-                  <Text style={styles.voteCount}>
-                    {stats.count.toLocaleString()} votes • {stats.percent}%
-                  </Text>
+                  {party?.logo && (
+                    <Image source={{ uri: party.logo }} style={{ width: 32, height: 32, marginLeft: 8, borderRadius: 6 }} />
+                  )}
                 </View>
-                {party?.logo && (
-                  <Image source={{ uri: party.logo }} style={{ width: 32, height: 32, marginLeft: 8, borderRadius: 6 }} />
-                )}
+                <TouchableOpacity 
+                  style={[styles.voteBtn, { backgroundColor: partyColor }]}
+                  onPress={() => handleVote(candidate.politician._id)}
+                  disabled={isVoting || hasVoted}
+                >
+                  {isVoting ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.voteBtnText}>
+                      Vote for {candidate.politician.name.split(" ")[0]}
+                    </Text>
+                  )}
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity 
-                style={[styles.voteBtn, { backgroundColor: partyColor }]}
-                onPress={() => handleVote(candidate.politician._id)}
-                disabled={isVoting}
-              >
-                {isVoting ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text style={styles.voteBtnText}>
-                    Vote for {candidate.politician.name.split(" ")[0]}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-      </View>
+            );
+          })}
+        </View>
+
+        {/* Show Election Results button after voting */}
+        {hasVoted && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#2563EB',
+              paddingVertical: 14,
+              borderRadius: 10,
+              alignItems: 'center',
+              marginTop: 24,
+              marginBottom: 8,
+            }}
+            onPress={() => navigation.navigate('ElectionResultScreen', { electionId: activeElection._id })}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>
+              View Election Results
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {/* Footer Stats */}
         <View style={styles.statsBox}>
