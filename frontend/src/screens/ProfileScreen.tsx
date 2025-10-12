@@ -227,7 +227,7 @@ const ProfileScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2563EB',
+    backgroundColor: '#F3F4F6', // Changed from blue to light gray
   },
   scrollContent: {
     alignItems: 'center',
@@ -246,6 +246,8 @@ const styles = StyleSheet.create({
     elevation: 2,
     width: '100%',
     maxWidth: 350,
+    borderWidth: 1,
+    borderColor: '#E5E7EB', // subtle border for card, matches Dashboard
   },
   avatarContainer: {
     backgroundColor: '#E5E7EB',
@@ -262,7 +264,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2563EB',
+    color: '#2563EB', // Blue accent for name
     marginBottom: 4,
   },
   email: {
@@ -271,17 +273,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoSection: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#fff', // White card for info section
     borderRadius: 12,
     padding: 18,
     width: '100%',
     maxWidth: 350,
     marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#2563EB',
+    color: '#2563EB', // Blue for section titles
     marginBottom: 12,
   },
   infoRow: {
@@ -328,6 +332,8 @@ const styles = StyleSheet.create({
     width: '90%',
     maxWidth: 350,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   modalTitle: {
     fontSize: 18,
@@ -343,6 +349,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 15,
     color: '#222',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   backIcon: {
     position: 'absolute',

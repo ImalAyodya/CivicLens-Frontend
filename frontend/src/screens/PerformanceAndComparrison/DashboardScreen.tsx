@@ -49,7 +49,8 @@ interface PoliticianDashboard {
   };
   trends: {
     quarterly: Array<{ quarter: string; rating: number }>;
-    approval: Array<{ month: string; rating: number }>; // New field for approval trend
+    approval: Array<{ month: string; rating: number }>;
+    categories: Array<{ category: string; score: number }>;
   };
   keyPromises: Array<{
     id: string;
@@ -75,7 +76,7 @@ const isSmallScreen = chartWidth < 350; // Detect small screens
 const chartConfig = {
   backgroundGradientFrom: "#fff",
   backgroundGradientTo: "#fff",
-  color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`, // blue-600
+  color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`, // blue-600 for bars/lines
   labelColor: (opacity = 1) => `rgba(55, 65, 81, ${opacity})`, // gray-700
   barPercentage: 0.6,
   decimalPlaces: 0,
@@ -84,7 +85,9 @@ const chartConfig = {
   },
   formatYLabel: (label: string) => Math.round(Number(label)).toString(),
   formatXLabel: (label: string) => label.substring(0, 2),
-  useShadowColorFromDataset: false
+  useShadowColorFromDataset: false,
+  fillShadowGradient: "#2563eb", // blue-600
+  fillShadowGradientOpacity: 1,  // fully opaque
 };
 
 const DashboardScreen: React.FC<Props> = ({ navigation }) => {
@@ -121,11 +124,26 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
     const loadDashboardData = async () => {
       try {
         setLoading(true);
+        console.log('[DASHBOARD] Fetching data for politician:', selectedPolitician);
+        
         const data = await fetchPoliticianDashboard(selectedPolitician);
+        console.log('[DASHBOARD] Data received:', data);
+        
+        // Check if data has all required properties before setting state
+        if (!data.politician) {
+          console.error('[DASHBOARD] Missing politician data in response');
+        }
+        if (!data.performance) {
+          console.error('[DASHBOARD] Missing performance data in response');
+        }
+        if (!data.trends) {
+          console.error('[DASHBOARD] Missing trends data in response');
+        }
+        
         setDashboardData(data as PoliticianDashboard);
         setShowList(false); // Show the details view
       } catch (error) {
-        console.error("Failed to load dashboard data:", error);
+        console.error("[DASHBOARD] Failed to load dashboard data:", error);
       } finally {
         setLoading(false);
       }
@@ -135,21 +153,13 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
   }, [selectedPolitician]);
 
   const handleTabPress = (tabName: string) => {
-    setActiveTab(tabName);
-    if (
-      [
-        'Home',
-        'Dashboard',
-        'Explore',
-        'NewsFeed',
-        'Report',
-        'Analytics',
-        'Performance'
-      ].includes(tabName)
-    ) {
-      navigation.navigate(tabName as any);
-    }
-  };
+  setActiveTab(tabName);
+  if (
+    ['Home', 'Dashboard', 'NewsFeed', 'PoliticianPromises'].includes(tabName)
+  ) {
+    navigation.navigate(tabName as never);
+  }
+};
 
   const handleBackPress = () => {
     setShowList(true);
@@ -159,8 +169,15 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 
   // Format quarterly data for the BarChart
   const getBarChartData = () => {
-    if (!dashboardData) return null;
+    if (!dashboardData || !dashboardData.trends || !dashboardData.trends.quarterly) {
+      console.log('[CHART] Missing quarterly data');
+      return {
+        labels: [],
+        datasets: [{ data: [] }]
+      };
+    }
     
+    console.log('[CHART] Rendering quarterly data:', dashboardData.trends.quarterly);
     return {
       labels: dashboardData.trends.quarterly.map(item => item.quarter),
       datasets: [
@@ -173,34 +190,22 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
 
   // Format approval data for the LineChart
   const getApprovalData = () => {
-    if (!dashboardData?.trends?.approval) {
-      // Mock data if approval data is not available
+    if (!dashboardData || !dashboardData.trends || !dashboardData.trends.approval) {
+      console.log('[CHART] Missing approval data');
       return {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-        datasets: [
-          {
-            data: [
-              Math.round(dashboardData?.performance.publicApproval || 60) - 15,
-              Math.round(dashboardData?.performance.publicApproval || 65) - 5,
-              Math.round(dashboardData?.performance.publicApproval || 70) - 10,
-              Math.round(dashboardData?.performance.publicApproval || 75) + 5,
-              Math.round(dashboardData?.performance.publicApproval || 72),
-              Math.round(dashboardData?.performance.publicApproval || 78),
-            ],
-            color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`, // emerald-500
-            strokeWidth: 2
-          }
-        ],
+        labels: [],
+        datasets: [{ data: [], color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`, strokeWidth: 2 }],
         legend: ["Public Approval"]
       };
     }
     
+    console.log('[CHART] Rendering approval data:', dashboardData.trends.approval);
     return {
       labels: dashboardData.trends.approval.map(item => item.month),
       datasets: [
         {
           data: dashboardData.trends.approval.map(item => item.rating),
-          color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`, // emerald-500
+          color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
           strokeWidth: 2
         }
       ],
@@ -208,91 +213,63 @@ const DashboardScreen: React.FC<Props> = ({ navigation }) => {
     };
   };
 
-const getPieChartData = () => {
-  if (!dashboardData) return [];
-
-  const { fulfilledPromises, brokenPromises, pendingPromises } = dashboardData.performance;
-  const total = fulfilledPromises + pendingPromises + brokenPromises;
-
-  const segments = [
-    {
-      name: "Done",
-      population: fulfilledPromises,
-      percentage: total > 0 ? Math.round((fulfilledPromises / total) * 100) : 0,
-      color: "#22c55e",
-      legendFontColor: "#374151",
-      legendFontSize: 10
-    },
-    {
-      name: "Pending",
-      population: pendingPromises,
-      percentage: total > 0 ? Math.round((pendingPromises / total) * 100) : 0,
-      color: "#eab308",
-      legendFontColor: "#374151",
-      legendFontSize: 10
-    },
-    {
-      name: "Not Met",
-      population: brokenPromises,
-      percentage: total > 0 ? Math.round((brokenPromises / total) * 100) : 0,
-      color: "#ef4444",
-      legendFontColor: "#374151",
-      legendFontSize: 10
+  // Get data for Performance Categories
+  const getPerformanceCategoriesData = () => {
+    if (!dashboardData || !dashboardData.trends || !dashboardData.trends.categories || dashboardData.trends.categories.length === 0) {
+      console.log('[CHART] Missing categories data');
+      return {
+        labels: [],
+        data: []
+      };
     }
-  ];
+    
+    console.log('[CHART] Rendering categories data:', dashboardData.trends.categories);
+    return {
+      labels: dashboardData.trends.categories.map(item => item.category),
+      data: dashboardData.trends.categories.map(item => Math.min(item.score, 100) / 100)
+    };
+  };
 
-  // Only pass non-zero segments to the chart
-  const nonZeroSegments = segments.filter(s => s.population > 0);
-
-  // Calculate the sum of populations
-  const sum = nonZeroSegments.reduce((acc, s) => acc + s.population, 0);
-
-  // If the sum is less than total, add a transparent filler (do NOT show in legend)
-  if (sum < total) {
-    nonZeroSegments.push({
-      name: "__filler__",
-      population: total - sum,
-      percentage: 0,
-      color: "transparent",
-      legendFontColor: "transparent",
-      legendFontSize: 10
-    });
-  }
-
-  return nonZeroSegments;
-};
-
-  // Helper function to determine status style
-  const getStatusStyle = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'complete':
-      case 'completed':
-        return {
-          container: "bg-green-100",
-          text: "text-green-700",
-          label: "Completed"
-        };
-      case 'pending':
-      case 'in progress':
-        return {
-          container: "bg-yellow-100",
-          text: "text-yellow-700",
-          label: "In Progress"
-        };
-      case 'planned':
-      case 'broken':
-        return {
-          container: "bg-blue-100",
-          text: "text-blue-700",
-          label: "Planned"
-        };
-      default:
-        return {
-          container: "bg-gray-100",
-          text: "text-gray-700",
-          label: status
-        };
+  // Update the getPieChartData function to handle potentially missing data
+  const getPieChartData = () => {
+    if (!dashboardData || !dashboardData.performance) {
+      console.log('[CHART] Missing performance data for pie chart');
+      return [];
     }
+
+    console.log('[CHART] Creating pie chart data from:', dashboardData.performance);
+    const { fulfilledPromises, brokenPromises, pendingPromises } = dashboardData.performance;
+    const total = fulfilledPromises + pendingPromises + brokenPromises;
+
+    const segments = [
+      {
+        name: "Done",
+        population: fulfilledPromises,
+        percentage: total > 0 ? Math.round((fulfilledPromises / total) * 100) : 0,
+        color: "#22c55e",
+        legendFontColor: "#374151",
+        legendFontSize: 10
+      },
+      {
+        name: "Pending",
+        population: pendingPromises,
+        percentage: total > 0 ? Math.round((pendingPromises / total) * 100) : 0,
+        color: "#eab308",
+        legendFontColor: "#374151",
+        legendFontSize: 10
+      },
+      {
+        name: "Not Met",
+        population: brokenPromises,
+        percentage: total > 0 ? Math.round((brokenPromises / total) * 100) : 0,
+        color: "#ef4444",
+        legendFontColor: "#374151",
+        legendFontSize: 10
+      }
+    ];
+
+    // Only pass non-zero segments to the chart
+    return segments.filter(s => s.population > 0);
   };
 
   // Format date for display
@@ -309,7 +286,7 @@ const getPieChartData = () => {
   };
 
   // Add this helper function to get radar chart data
-  const getPerformanceCategoriesData = () => {
+  const getPerformanceCategoriesDataOld = () => {
     if (!dashboardData) return null;
     
     // Either use actual data from API if available or mock data
@@ -338,6 +315,20 @@ const getPieChartData = () => {
     // If invalid URL or placeholder text, return default image
 return null;
   };
+
+  // Add this helper function for status styles
+const getStatusStyle = (status: string) => {
+  switch (status) {
+    case 'complete':
+      return { container: 'bg-green-100', text: 'text-green-700', label: 'Completed' };
+    case 'pending':
+      return { container: 'bg-yellow-100', text: 'text-yellow-700', label: 'Pending' };
+    case 'broken':
+      return { container: 'bg-red-100', text: 'text-red-700', label: 'Not Met' };
+    default:
+      return { container: 'bg-blue-100', text: 'text-blue-700', label: status };
+  }
+};
 
   // Render loading state
   if (loading) {

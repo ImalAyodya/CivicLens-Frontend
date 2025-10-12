@@ -335,13 +335,7 @@ const ComparisonResultScreen: React.FC<Props> = ({ navigation, route }) => {
           >
             <Text className="text-white font-medium">Submit Feedback</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
-            className="bg-blue-600 rounded-md py-3 items-center flex-row justify-center mb-4"
-            onPress={handleDownloadReport}
-          >
-            <Text className="text-white mr-2">↓</Text>
-            <Text className="text-white font-medium">Download Comparison Report</Text>
-          </TouchableOpacity>
+          
           <TouchableOpacity 
             className="bg-gray-100 rounded-md py-3 items-center flex-row justify-center border border-gray-200"
             onPress={handleShareComparison}

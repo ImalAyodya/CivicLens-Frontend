@@ -48,10 +48,14 @@ const NewsFeedScreen: React.FC<Props> = ({ navigation }) => {
   const categories = ['All', 'Politics', 'Economy', 'Education', 'Healthcare', 'Infrastructure'];
   const [activeCategory, setActiveCategory] = useState('All');
   
-  // Update the handleTabPress function
   const handleTabPress = (tabName: string) => {
-    setActiveTab(navHandler(tabName, 'NewsFeed'));
-  };
+  setActiveTab(tabName);
+  if (
+    ['Home', 'Dashboard', 'NewsFeed', 'PoliticianPromises'].includes(tabName)
+  ) {
+    navigation.navigate(tabName as never);
+  }
+};
   
   // Get breaking news - filter from both sources
   const breakingNewsItems = React.useMemo(() => {

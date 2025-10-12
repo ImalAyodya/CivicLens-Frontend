@@ -104,7 +104,8 @@ export default function PoliticianPromisesScreen() {
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
-    if (tabName !== 'PoliticianPromises') {
+    // Only navigate if not already on the tab
+    if (tabName !== activeTab) {
       navigation.navigate(tabName as never);
     }
   };
