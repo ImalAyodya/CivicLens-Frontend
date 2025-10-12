@@ -31,7 +31,7 @@ import AddPoliticianForm from './src/screens/adminPanel/AddPoliticianForm';
 import PoliticianPromisesScreen from './src/screens/promises_&_growth/PoliticianPromisesScreen';
 import GrowthNewsScreen from './src/screens/promises_&_growth/GrowthNewsScreen';
 import MinistryPerformanceScreen from '~/screens/promises_&_growth/MinistryPerformanceScreen';
-// import PromiseDetailScreen from './src/screens/promises_&_growth/PromiseDetailScreen';
+import PromiseDetailScreen from './src/screens/promises_&_growth/PromiseDetailScreen';
 import GrowthNewsDetailScreen from './src/screens/promises_&_growth/GrowthNewsDetailScreen';
 import QuizHistoryScreen from './src/screens/politicalQuiz/QuizHistoryScreen';
 import QuizSummaryScreen from './src/screens/politicalQuiz/QuizSummaryScreen';
@@ -111,7 +111,7 @@ export default function App() {
         <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
         <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
         <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
-        {/* <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} /> */}
+        <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} />
         <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
         <Stack.Screen name="HelpAndSupport" component={HelpAndSupportScreen} />
         <Stack.Screen name="SupportHistory" component={SupportHistoryScreen} />

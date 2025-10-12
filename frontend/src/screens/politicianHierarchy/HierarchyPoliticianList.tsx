@@ -9,7 +9,7 @@ import BlueHeader from "../../components/BlueHeader";
 import { Politician } from "../../types/Politician";
 import type { RootStackParamList } from '../../navigation/types';
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "http://civiclens-backend-production-2c6d.up.railway.app";
 
 type HierarchyPoliticianListRouteProp = RouteProp<RootStackParamList, "HierarchyPoliticianList">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

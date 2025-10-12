@@ -16,7 +16,7 @@ import axios from "axios";
 
 type ProfileScreenRouteProp = RouteProp<RootStackParamList, "PoliticianDetails">;
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "http://civiclens-backend-production-2c6d.up.railway.app";
 
 const ProfileScreen: React.FC = () => {
   const route = useRoute<ProfileScreenRouteProp>();

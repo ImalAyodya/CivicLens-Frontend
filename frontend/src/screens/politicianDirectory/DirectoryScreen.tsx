@@ -14,7 +14,7 @@ import type { Politician } from "../../types/Politician";
 // Use the correct navigation type with access to the PoliticianDetails route
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = "http://civiclens-backend-production-2c6d.up.railway.app";
 
 const DirectoryScreen: React.FC = () => {
   const [searchText, setSearchText] = useState("");
