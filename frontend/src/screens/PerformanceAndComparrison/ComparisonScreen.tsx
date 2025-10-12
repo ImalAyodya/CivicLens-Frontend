@@ -232,21 +232,24 @@ const ComparisonScreen: React.FC<Props> = ({ navigation }) => {
       {/* Next Button */}
       <View className="px-4 py-4 border-t border-gray-200">
         <TouchableOpacity 
-          className={`rounded-md py-3 ${
-            selectedPoliticians.length === 2 ? 'bg-blue-600' : 'bg-gray-300'
-          } flex-row justify-center items-center`}
-          onPress={handleNext}
-          disabled={selectedPoliticians.length !== 2}
-        >
-          <Text className={`${
-            selectedPoliticians.length === 2 ? 'text-white' : 'text-gray-500'
-          } font-medium`}>
-            Compare
-          </Text>
-          <Text className={`${
-            selectedPoliticians.length === 2 ? 'text-white' : 'text-gray-500'
-          } ml-1`}>→</Text>
-        </TouchableOpacity>
+            className={`rounded-md py-3 ${
+              selectedPoliticians.length === 2 ? 'bg-blue-600' : 'bg-gray-300'
+            } flex-row justify-center items-center`}
+            onPress={handleNext}
+            disabled={selectedPoliticians.length !== 2}
+          >
+            <Text className={`${
+              selectedPoliticians.length === 2 ? 'text-white' : 'text-gray-500'
+            } font-medium`}>
+              Compare
+            </Text>
+            <Ionicons
+              name="arrow-forward"
+              size={20}
+              color={selectedPoliticians.length === 2 ? "#fff" : "#6b7280"}
+              style={{ marginLeft: 6 }}
+            />
+          </TouchableOpacity>
       </View>
     </View>
   );

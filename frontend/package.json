@@ -2,8 +2,9 @@
   "name": "frontend",
   "version": "1.0.0",
   "scripts": {
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "preinstall": "corepack disable || true",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "start": "expo start",
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
@@ -11,17 +12,18 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@babel/runtime": "^7.28.4",
     "@expo/metro-runtime": "~5.0.4",
-    "@react-native-picker/picker": "^2.11.2",
-    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "@react-native-picker/picker": "2.11.1",
     "@react-navigation/bottom-tabs": "^7.4.7",
     "@react-navigation/native": "^7.1.17",
     "@react-navigation/native-stack": "^7.3.26",
     "axios": "^1.12.2",
-    "expo": "53.0.22",
-    "expo-file-system": "^19.0.16",
-    "expo-intent-launcher": "^13.0.7",
-    "expo-sharing": "^14.0.7",
+    "expo": "~53.0.23",
+    "expo-file-system": "~18.1.11",
+    "expo-intent-launcher": "~12.1.5",
+    "expo-sharing": "~13.1.5",
     "expo-status-bar": "~2.2.3",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
@@ -32,7 +34,7 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
-    "react-native-svg": "^15.13.0",
+    "react-native-svg": "15.11.2",
     "react-native-svg-charts": "^5.4.0",
     "react-native-web": "^0.20.0"
   },
@@ -40,15 +42,24 @@
     "@babel/core": "^7.20.0",
     "@react-native-community/cli": "^20.0.0",
     "@types/react": "~19.0.10",
-    "@types/react-native": "^0.73.0",
     "eslint": "^9.25.1",
     "eslint-config-expo": "^9.2.0",
     "eslint-config-prettier": "^10.1.2",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
+    "react-native-worklets": "^0.6.1",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.8.3"
   },
   "main": "node_modules/expo/AppEntry.js",
-  "private": true
+  "private": true,
+  "engines": {
+    "node": ">=20.19.4",
+    "npm": ">=10.5.0"
+  },
+  "overrides": {
+    "metro": "^0.82.0",
+    "metro-resolver": "^0.82.0",
+    "metro-config": "^0.82.0"
+  }
 }

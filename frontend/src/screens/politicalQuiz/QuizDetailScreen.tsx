@@ -166,10 +166,10 @@ const QuizDetailScreen: React.FC<Props> = ({ navigation, route }) => {
       {/* Header */}
       <View className="bg-blue-600 px-4 py-3">
         <View className="flex-row items-center">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3">
-            <Text className="text-white text-xl">←</Text>
-          </TouchableOpacity>
-          <Text className="text-white text-lg font-medium">Quiz Details</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="arrow-back" size={24} color="white" />
+                      </TouchableOpacity>
+          <Text className="text-white text-lg font-medium ml-2">Quiz Details</Text>
         </View>
         <Text className="text-blue-100 text-sm">{formatDate(quizDetail.date)}</Text>
       </View>

@@ -1,8 +1,12 @@
 import { QuizResponse, QuizAnalysisResponse, UserAnswer } from './types';
 
+// Define a base URL that can be easily changed
+// You can also use environment variables here with process.env.EXPO_PUBLIC_API_URL
+const BASE_URL = 'https://civiclens-backend-production.up.railway.app/api';
+
 export const fetchRandomQuestions = async (count = 15): Promise<any[]> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/questions/random?count=${count}`);
+    const response = await fetch(`${BASE_URL}/questions/random?count=${count}`);
     if (!response.ok) throw new Error('Failed to fetch questions');
     return await response.json();
   } catch (error) {
@@ -18,7 +22,7 @@ export const fetchRandomQuestions = async (count = 15): Promise<any[]> => {
  */
 export const fetchPoliticianDashboard = async (politicianId: string): Promise<any> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/performance/dashboard/${politicianId}`);
+    const response = await fetch(`${BASE_URL}/performance/dashboard/${politicianId}`);
     if (!response.ok) throw new Error('Failed to fetch dashboard data');
     return await response.json();
   } catch (error) {
@@ -32,7 +36,7 @@ export const fetchPoliticianDashboard = async (politicianId: string): Promise<an
  */
 export const fetchAllPoliticianPerformance = async (): Promise<any[]> => {
   try {
-    const response = await fetch('http://localhost:5000/api/performance/politicians');
+    const response = await fetch(`${BASE_URL}/performance/politicians`);
     if (!response.ok) throw new Error('Failed to fetch politicians performance');
     return await response.json();
   } catch (error) {
@@ -46,7 +50,7 @@ export const fetchAllPoliticianPerformance = async (): Promise<any[]> => {
  */
 export const fetchMinistryPerformance = async (): Promise<any[]> => {
   try {
-    const response = await fetch('http://localhost:5000/api/performance/ministries');
+    const response = await fetch(`${BASE_URL}/performance/ministries`);
     if (!response.ok) throw new Error('Failed to fetch ministry performance');
     return await response.json();
   } catch (error) {
@@ -60,7 +64,7 @@ export const fetchMinistryPerformance = async (): Promise<any[]> => {
  */
 export const comparePromises = async (politicianIds: string[]): Promise<any> => {
   try {
-    const response = await fetch('http://localhost:5000/api/performance/compare', {
+    const response = await fetch(`${BASE_URL}/performance/compare`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -80,7 +84,7 @@ export const comparePromises = async (politicianIds: string[]): Promise<any> => 
  */
 export const fetchPartyPerformance = async (): Promise<any[]> => {
   try {
-    const response = await fetch('http://localhost:5000/api/performance/parties');
+    const response = await fetch(`${BASE_URL}/performance/parties`);
     if (!response.ok) throw new Error('Failed to fetch party performance');
     return await response.json();
   } catch (error) {
@@ -94,7 +98,7 @@ export const fetchPartyPerformance = async (): Promise<any[]> => {
  */
 export const fetchPoliticiansForComparison = async (): Promise<any[]> => {
   try {
-    const response = await fetch('http://localhost:5000/api/performance/politicians');
+    const response = await fetch(`${BASE_URL}/performance/politicians`);
     if (!response.ok) throw new Error('Failed to fetch politicians');
     return await response.json();
   } catch (error) {
@@ -110,7 +114,7 @@ export const fetchPoliticiansForComparison = async (): Promise<any[]> => {
  */
 export const fetchPoliBotPolitician = async (name: string): Promise<any | null> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/polibot/politician/${encodeURIComponent(name)}`);
+    const response = await fetch(`${BASE_URL}/polibot/politician/${encodeURIComponent(name)}`);
     if (!response.ok) throw new Error('Failed to fetch politician info');
     return await response.json();
   } catch (error) {
@@ -124,7 +128,7 @@ export const fetchPoliBotPolitician = async (name: string): Promise<any | null> 
  */
 export const fetchPoliBotParty = async (name: string): Promise<any | null> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/polibot/party/${encodeURIComponent(name)}`);
+    const response = await fetch(`${BASE_URL}/polibot/party/${encodeURIComponent(name)}`);
     if (!response.ok) throw new Error('Failed to fetch party info');
     return await response.json();
   } catch (error) {
@@ -138,7 +142,7 @@ export const fetchPoliBotParty = async (name: string): Promise<any | null> => {
  */
 export const fetchPoliBotComparison = async (name1: string, name2: string): Promise<any | null> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/polibot/compare/${encodeURIComponent(name1)}/${encodeURIComponent(name2)}`);
+    const response = await fetch(`${BASE_URL}/polibot/compare/${encodeURIComponent(name1)}/${encodeURIComponent(name2)}`);
     if (!response.ok) throw new Error('Failed to compare politicians');
     return await response.json();
   } catch (error) {
@@ -152,7 +156,7 @@ export const fetchPoliBotComparison = async (name1: string, name2: string): Prom
  */
 export const fetchPoliBotPolicyArea = async (area: string): Promise<any | null> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/polibot/policy/${encodeURIComponent(area)}`);
+    const response = await fetch(`${BASE_URL}/polibot/policy/${encodeURIComponent(area)}`);
     if (!response.ok) throw new Error('Failed to fetch policy area info');
     return await response.json();
   } catch (error) {
@@ -166,7 +170,7 @@ export const fetchPoliBotPolicyArea = async (area: string): Promise<any | null> 
  */
 export const searchPoliBot = async (query: string): Promise<{politicians: any[], parties: any[], policyAreas: any[]}> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/polibot/search/${encodeURIComponent(query)}`);
+    const response = await fetch(`${BASE_URL}/polibot/search/${encodeURIComponent(query)}`);
     if (!response.ok) throw new Error('Failed to search');
     return await response.json();
   } catch (error) {
@@ -180,7 +184,7 @@ export const searchPoliBot = async (query: string): Promise<{politicians: any[],
  */
 export const fetchPoliBotAIResponse = async (message: string, language: string = 'en'): Promise<string> => {
   try {
-    const response = await fetch('http://localhost:5000/api/polibot-ai', {
+    const response = await fetch(`${BASE_URL}/polibot-ai`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -206,7 +210,7 @@ export const fetchPoliBotAIResponse = async (message: string, language: string =
  */
 export const generateAIQuiz = async (language = 'English'): Promise<QuizResponse> => {
   try {
-    const response = await fetch('http://localhost:5000/api/quiz/generate', {
+    const response = await fetch(`${BASE_URL}/quiz/generate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -241,7 +245,7 @@ export const analyzeQuizAnswers = async (
   language = 'English'
 ): Promise<QuizAnalysisResponse> => {
   try {
-    const response = await fetch('http://localhost:5000/api/quiz/analyze', {
+    const response = await fetch(`${BASE_URL}/quiz/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -292,7 +296,7 @@ export const saveQuizHistory = async (
     
     console.log("Sending request to save quiz history...");
     
-    const response = await fetch('http://localhost:5000/api/quiz/history', {
+    const response = await fetch(`${BASE_URL}/quiz/history`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -327,7 +331,7 @@ export const saveQuizHistory = async (
  */
 export const getUserQuizHistory = async (userId: string): Promise<any> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/quiz/history/${userId}`);
+    const response = await fetch(`${BASE_URL}/quiz/history/${userId}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch quiz history');
@@ -345,7 +349,7 @@ export const getUserQuizHistory = async (userId: string): Promise<any> => {
  */
 export const getQuizDetail = async (quizId: string): Promise<any> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/quiz/history/detail/${quizId}`);
+    const response = await fetch(`${BASE_URL}/quiz/history/detail/${quizId}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch quiz details');
@@ -363,7 +367,7 @@ export const getQuizDetail = async (quizId: string): Promise<any> => {
  */
 export const deleteQuizHistory = async (quizId: string): Promise<any> => {
   try {
-    const url = `http://localhost:5000/api/quiz/history/history/${quizId}`;
+    const url = `${BASE_URL}/quiz/history/history/${quizId}`;
     console.log('[FRONTEND] DELETE request URL:', url); // <-- This will log the full URL
     const response = await fetch(url, {
       method: 'DELETE',
@@ -398,7 +402,7 @@ export const submitSupportRequest = async (supportData: {
   category?: string;
 }): Promise<any> => {
   try {
-    const response = await fetch('http://localhost:5000/api/support/request', {
+    const response = await fetch(`${BASE_URL}/support/request`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -423,7 +427,7 @@ export const submitSupportRequest = async (supportData: {
  */
 export const getUserSupportRequests = async (userId: string): Promise<any> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/support/user/${userId}`);
+    const response = await fetch(`${BASE_URL}/support/user/${userId}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch support requests');
@@ -441,7 +445,7 @@ export const getUserSupportRequests = async (userId: string): Promise<any> => {
  */
 export const getSupportRequestDetails = async (ticketId: string): Promise<any> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/support/request/${ticketId}`);
+    const response = await fetch(`${BASE_URL}/support/request/${ticketId}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch support request details');
@@ -459,7 +463,7 @@ export const getSupportRequestDetails = async (ticketId: string): Promise<any> =
  */
 export const addReplyToSupportRequest = async (ticketId: string, from: string, message: string): Promise<any> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/support/request/${ticketId}/reply`, {
+    const response = await fetch(`${BASE_URL}/support/request/${ticketId}/reply`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -483,7 +487,7 @@ export const addReplyToSupportRequest = async (ticketId: string, from: string, m
  */
 export const updateSupportRequestStatus = async (ticketId: string, status: string): Promise<any> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/support/request/${ticketId}/status`, {
+    const response = await fetch(`${BASE_URL}/support/request/${ticketId}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

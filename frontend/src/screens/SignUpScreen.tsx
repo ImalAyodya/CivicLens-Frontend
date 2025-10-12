@@ -11,7 +11,8 @@ import axios from 'axios';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
-const API_BASE_URL = 'http://localhost:5000/promise/api/signup';
+const API_BASE_URL = 'https://civiclens-backend-production.up.railway.app/promise/api/signup';
+
 
 const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const [name, setName] = useState('');

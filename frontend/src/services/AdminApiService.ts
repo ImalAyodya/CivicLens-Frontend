@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api/admin';
+const API_BASE = process.env.EXPO_PUBLIC_API_URL || 'https://civiclens-backend-production.up.railway.app/api/admin';
 
 export const getAdminDashboardStats = async () => {
   const res = await axios.get(`${API_BASE}/dashboard/stats`);

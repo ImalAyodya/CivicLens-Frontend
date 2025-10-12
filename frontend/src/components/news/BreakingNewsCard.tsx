@@ -30,7 +30,7 @@ const BreakingNewsCard: React.FC<BreakingNewsCardProps> = ({ item, onPress }) =>
     >
       <View className="relative rounded-xl overflow-hidden h-48 mb-1">
         <ImageBackground 
-          source={require('../../../assets/parliament.png')}
+         
           className="w-full h-full"
         >
           <View className="absolute top-0 left-0 right-0 bottom-0 bg-black/40" />
