@@ -226,6 +226,38 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
     }
   };
 
+  const handlePromiseReaction = async (reactionType: string) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        Alert.alert('Error', 'Please login to react');
+        return;
+      }
+
+      // Check if user already reacted with this type
+      const userReaction = promise?.reactions?.find((r: any) => r.userId._id === currentUserId);
+
+      if (userReaction && userReaction.reactionType === reactionType) {
+        // Remove reaction
+        await axios.delete(`${API_BASE_URL}/promises/${promiseId}/reactions`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } else {
+        // Add/update reaction
+        await axios.post(`${API_BASE_URL}/promises/${promiseId}/reactions`, {
+          reactionType
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+
+      // Refresh promise data
+      fetchPromise();
+    } catch (err: any) {
+      Alert.alert('Error', err?.response?.data?.error || 'Failed to react');
+    }
+  };
+
   // Get color for current promiseStatus
   const statusColor = statusColors[promise?.promiseStatus] || { bg: '#E5E7EB', text: '#6B7280' };
 
@@ -362,6 +394,7 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={22} color="#222" />
         </TouchableOpacity>
+        
         {/* Card */}
         <View style={styles.card}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
@@ -388,6 +421,7 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
             style={styles.promiseImage}
           />
           <Text style={styles.desc}>{promise.promiseDetails || 'No description available.'}</Text>
+          
           {/* Progress Bar */}
           <View style={{ marginTop: 10 }}>
             <Text style={styles.progressLabel}>Progress</Text>
@@ -396,13 +430,46 @@ export default function PromiseDetailScreen({ route, navigation }: any) {
             </View>
             <Text style={styles.progressPercent}>{promise.fulfillmentRate || 0}%</Text>
           </View>
+          
           {/* Status */}
           <View style={[styles.statusTag, { backgroundColor: statusColor.bg }]}>
             <Text style={[styles.statusTagText, { color: statusColor.text }]}>
               {promise.promiseStatus || 'pending'}
             </Text>
           </View>
+
+          {/* NEW: Promise Reactions Section */}
+          <View style={styles.promiseReactionsContainer}>
+            <Text style={styles.promiseReactionsTitle}>How do you feel about this promise?</Text>
+            
+            {/* Reaction Buttons */}
+            <View style={styles.promiseReactionButtons}>
+              {Object.entries(reactionEmojis).map(([type, emoji]) => {
+                const userReacted = promise?.reactions?.find((r: any) => r.userId._id === currentUserId && r.reactionType === type);
+                const count = promise?.reactionCounts?.[type] || 0;
+                
+                return (
+                  <TouchableOpacity
+                    key={type}
+                    style={[styles.promiseReactionBtn, userReacted && styles.promiseReactionBtnActive]}
+                    onPress={() => handlePromiseReaction(type)}
+                  >
+                    <Text style={styles.promiseReactionEmoji}>{emoji}</Text>
+                    <Text style={[styles.promiseReactionLabel, userReacted && styles.promiseReactionLabelActive]}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Text>
+                    {count > 0 && (
+                      <View style={styles.promiseReactionCountBadge}>
+                        <Text style={styles.promiseReactionCountText}>{count}</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
         </View>
+
         {/* Evidence Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Evidence</Text>
@@ -967,5 +1034,66 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 13,
+  },
+  promiseReactionsContainer: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+  },
+  promiseReactionsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  promiseReactionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  promiseReactionBtn: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 16,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 2,
+    borderColor: 'transparent',
+    minWidth: 70,
+    position: 'relative',
+  },
+  promiseReactionBtnActive: {
+    backgroundColor: '#EBF4FF',
+    borderColor: '#2563EB',
+  },
+  promiseReactionEmoji: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  promiseReactionLabel: {
+    fontSize: 11,
+    color: '#6B7280',
+    fontWeight: '500',
+  },
+  promiseReactionLabelActive: {
+    color: '#2563EB',
+  },
+  promiseReactionCountBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    backgroundColor: '#EF4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  promiseReactionCountText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });

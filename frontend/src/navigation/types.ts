@@ -36,4 +36,5 @@ export type RootStackParamList = {
   PromiseDetail: { promise: any };
   GrowthNewsDetail: { news: any };
   Profile: undefined;
+  PublicEngagementScore: undefined;
 };

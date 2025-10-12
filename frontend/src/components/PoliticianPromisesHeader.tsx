@@ -24,9 +24,9 @@ const sidebarItems = [
     nav: 'MinistryPerformance',
   },
   {
-    label: 'WatchList',
-    icon: <Ionicons name="eye" size={20} color="#2563EB" />,
-    nav: 'WatchList',
+    label: 'Public Engagement Insights',
+    icon: <MaterialIcons name="analytics" size={20} color="#2563EB" />,
+    nav: 'PublicEngagementScore',
   },
 ];
 

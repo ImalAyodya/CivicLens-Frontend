@@ -64,10 +64,8 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       <View className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 flex-1 items-center justify-center p-4">
         <View className="w-full max-w-sm">
           {/* Header Section */}
-          <View className="items-center mb-8">
+          <View className="items-center mb-5">
             <AppIcon />
-            <Text className="text-blue-500 text-2xl font-bold mb-1">PollTrack</Text>
-            <Text className="text-blue-100 text-sm">Tracking Political Priorities</Text>
           </View>
 
           {/* SignUp Card */}
