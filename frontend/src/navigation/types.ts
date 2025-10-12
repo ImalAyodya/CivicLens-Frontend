@@ -57,7 +57,7 @@ export type RootStackParamList = {
   AddLevel: undefined;
   Hierarchy: undefined;
   HierarchyPoliticianList: { levelId?: string; levelName?: string };
-
+  Profile: undefined;
   PoliticianPromises: undefined;
   GrowthNews: undefined;
   MinistryPerformance: undefined;
@@ -74,6 +74,15 @@ export type RootStackParamList = {
   AdminReports: undefined;
   AdminSettings: undefined;
   UserProfile: undefined;
+  QuizHistory: undefined;
+  QuizSummary: {
+    quizId: string;
+    // other params
+  };
+  QuizDetail: {
+    quizId: string;
+    // other params
+  };
 };
-  
+
 

@@ -613,20 +613,26 @@ style={{ width: `${dashboardData?.performance.publicApproval ?? 0}%` }}         
             <View className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
               <Text className="text-gray-800 font-medium mb-2">Public Approval Trend</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <LineChart
-                  data={getApprovalData()}
-                  width={Math.max(chartWidth, 400)}
-                  height={180}
-                  yAxisLabel=""
-                  yAxisSuffix="%"
-                  chartConfig={{
-                    ...chartConfig,
-                    color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
-                    strokeWidth: 2,
-                  }}
-                  bezier
-                  style={{ borderRadius: 12 }}
-                />
+                {getApprovalData() ? (
+                  <LineChart
+                    data={getApprovalData()}
+                    width={Math.max(chartWidth, 400)}
+                    height={180}
+                    yAxisLabel=""
+                    yAxisSuffix="%"
+                    chartConfig={{
+                      ...chartConfig,
+                      color: (opacity = 1) => `rgba(16, 185, 129, ${opacity})`,
+                      strokeWidth: 2,
+                    }}
+                    bezier
+                    style={{ borderRadius: 12 }}
+                  />
+                ) : (
+                  <View style={{ height: 180, width: Math.max(chartWidth, 400), justifyContent: 'center', alignItems: 'center' }}>
+                    <Text className="text-gray-400">No approval trend data available</Text>
+                  </View>
+                )}
               </ScrollView>
             </View>
             
