@@ -148,38 +148,7 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             <Text className="text-gray-800 ml-3 font-medium">Past Elections</Text>
           </TouchableOpacity>
 
-          {/* Election Maps */}
-          <TouchableOpacity 
-            className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateTo('ElectionMap')}
-          >
-            <View className="w-10 items-center">
-              <Ionicons name="map-outline" size={22} color="#2563EB" />
-            </View>
-            <Text className="text-gray-800 ml-3 font-medium">Election Maps</Text>
-          </TouchableOpacity>
-
-          {/* Voting Information */}
-          <TouchableOpacity 
-            className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateToFutureScreen('Voting Information')}
-          >
-            <View className="w-10 items-center">
-              <Ionicons name="information-circle-outline" size={22} color="#2563EB" />
-            </View>
-            <Text className="text-gray-800 ml-3 font-medium">Voting Information</Text>
-          </TouchableOpacity>
-
-          {/* Candidate Profiles */}
-          <TouchableOpacity 
-            className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateToFutureScreen('Candidate Profiles')}
-          >
-            <View className="w-10 items-center">
-              <Ionicons name="people-outline" size={22} color="#2563EB" />
-            </View>
-            <Text className="text-gray-800 ml-3 font-medium">Candidate Profiles</Text>
-          </TouchableOpacity>
+          
         </ScrollView>
 
         {/* Election Status */}
