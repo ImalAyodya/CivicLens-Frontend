@@ -76,7 +76,7 @@ const isSmallScreen = chartWidth < 350; // Detect small screens
 const chartConfig = {
   backgroundGradientFrom: "#fff",
   backgroundGradientTo: "#fff",
-  color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`, // blue-600
+  color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`, // blue-600 for bars/lines
   labelColor: (opacity = 1) => `rgba(55, 65, 81, ${opacity})`, // gray-700
   barPercentage: 0.6,
   decimalPlaces: 0,
@@ -85,7 +85,9 @@ const chartConfig = {
   },
   formatYLabel: (label: string) => Math.round(Number(label)).toString(),
   formatXLabel: (label: string) => label.substring(0, 2),
-  useShadowColorFromDataset: false
+  useShadowColorFromDataset: false,
+  fillShadowGradient: "#2563eb", // blue-600
+  fillShadowGradientOpacity: 1,  // fully opaque
 };
 
 const DashboardScreen: React.FC<Props> = ({ navigation }) => {
