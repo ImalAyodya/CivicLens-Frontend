@@ -20,6 +20,9 @@ export function useAppNavigation() {
         case 'DirectoryScreen':
           navigation.navigate('DirectoryScreen');
           break;
+        case 'Hierarchy':
+          navigation.navigate('Hierarchy');
+          break;
         // Add other cases as screens are implemented
         default:
           console.log(`Screen ${tabName} not implemented yet`);

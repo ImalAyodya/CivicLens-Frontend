@@ -116,6 +116,19 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
         
+        {/* Admin Panel Button */}
+        <View className="px-4 py-2">
+          <TouchableOpacity 
+            className="bg-purple-600 rounded-xl p-4 shadow-sm"
+            onPress={() => navigation.navigate('AdminPanel')}
+          >
+            <View className="flex-row items-center justify-center">
+              <Text style={{ fontSize: 18, marginRight: 8 }}>⚙️</Text>
+              <Text className="text-white font-bold text-center">Admin Panel</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        
         {/* Featured Issues Section */}
         <View className="px-4 mt-4">
           <View className="flex-row justify-between items-center mb-4">
