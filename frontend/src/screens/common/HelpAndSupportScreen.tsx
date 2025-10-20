@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { 
   View, 
   Text, 
@@ -38,6 +38,16 @@ const HelpAndSupportScreen: React.FC<Props> = ({ navigation }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showFAQs, setShowFAQs] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  
+  // Ref to track if component is mounted (to avoid state updates after unmount)
+  const isMounted = useRef(true);
+  
+  // Set up cleanup for the ref when component unmounts
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleSubmit = async () => {
     // Validate fields
@@ -53,14 +63,30 @@ const HelpAndSupportScreen: React.FC<Props> = ({ navigation }) => {
 
     try {
       setIsSubmitting(true);
+      
+      // Set up a timeout to reset the loading state after 5 seconds
+      const timeoutId = setTimeout(() => {
+        if (isMounted.current) {
+          setIsSubmitting(false);
+        }
+      }, 5000);
+      
       const response = await submitSupportRequest({
         userId: user?.id || 'guest',
-        username: user?.username || 'Guest User', // Change 'name' to 'username'
+        username: user?.username || 'Guest User',
         email,
         subject,
         message,
         category
       });
+      
+      // Clear the timeout if the request completes before 5 seconds
+      clearTimeout(timeoutId);
+      
+      // Only update state if component is still mounted
+      if (!isMounted.current) return;
+      
+      setIsSubmitting(false);
 
       if (response.success) {
         Alert.alert(
@@ -88,12 +114,15 @@ const HelpAndSupportScreen: React.FC<Props> = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error submitting support request:', error);
-      Alert.alert(
-        'Error',
-        'There was a problem submitting your request. Please try again later.'
-      );
-    } finally {
-      setIsSubmitting(false);
+      
+      // Only update state if component is still mounted
+      if (isMounted.current) {
+        setIsSubmitting(false);
+        Alert.alert(
+          'Error',
+          'There was a problem submitting your request. Please try again later.'
+        );
+      }
     }
   };
 
@@ -174,13 +203,6 @@ const HelpAndSupportScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', marginLeft: 16 }}>Help & Support</Text>
         </View>
-
-        {/* <View className="bg-blue-600 py-6 px-4">
-          <Text className="text-white text-2xl font-bold text-center">Help & Support</Text>
-          <Text className="text-white text-center mt-1">
-            Have questions or need assistance? We're here to help!
-          </Text>
-        </View> */}
 
         <View className="p-4">
           {/* Toggle FAQs */}

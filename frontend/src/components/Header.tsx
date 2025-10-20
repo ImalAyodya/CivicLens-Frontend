@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const MenuIcon = () => <Ionicons name="menu" size={28} color="white" />;
 const NotificationIcon = () => <Ionicons name="notifications-outline" size={24} color="white" />;
@@ -16,6 +17,7 @@ interface HeaderProps {
   onNotificationPress?: () => void;
   onProfilePress?: () => void;
   navigation?: any;
+  pageTitle?: string;
 }
 
 interface MenuItem {
@@ -30,21 +32,36 @@ const Header: React.FC<HeaderProps> = ({
   onNotificationPress,
   onProfilePress,
   navigation,
+  pageTitle = "CivicLens"
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
+  // Combined menu items from both versions
   const menuItems: MenuItem[] = [
-    { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
-    // { id: '2', title: 'Profile', icon: <Ionicons name="person-outline" size={22} color="#2563EB" />, screen: 'Profile' },
-    { id: '3', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
-    { id: '4', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
-    { id: '5', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
-    { id: '6', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-    // { id: '7', title: 'Reports', icon: <Ionicons name="document-text-outline" size={22} color="#2563EB" />, screen: 'Reports' },
-    // { id: '8', title: 'Issues', icon: <Ionicons name="alert-circle-outline" size={22} color="#2563EB" />, screen: 'Issues' },
-    // { id: '9', title: 'Settings', icon: <Ionicons name="settings-outline" size={22} color="#2563EB" />, screen: 'Settings' },
-    { id: '10', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
-    { id: '11', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+    // Core navigation items
+    // { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
+    // { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
+    { id: '3', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
+    { id: '4', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
+    { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
+    { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
+    { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
+
+    // News & Election features
+    // { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
+    { id: '9', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
+    { id: '10', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
+    // { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
+    { id: '12', title: 'Election Notifications', icon: <Ionicons name="notifications-outline" size={22} color="#2563EB" />, screen: 'Notifications' },
+
+    // Performance features
+    { id: '13', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
+    { id: '14', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
+    { id: '15', title: 'WatchList', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'WatchList' },
+
+    // Supporting features
+    { id: '16', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+    { id: '17', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
   ];
 
   const handleMenuPress = () => {
@@ -65,44 +82,47 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <View className="bg-blue-600 px-4 py-3 flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <TouchableOpacity
-            onPress={handleMenuPress}
-            className="mr-4"
-            activeOpacity={0.7}
-          >
-            <MenuIcon />
-          </TouchableOpacity>
+      <SafeAreaView edges={['top']} style={{ backgroundColor: '#2563EB' }}>
+        <View className="bg-blue-600 px-4 py-3 flex-row items-center justify-between">
           <View className="flex-row items-center">
-            <AppLogo />
-            <Text className="text-white text-xl font-bold ml-2">CivicLens</Text>
+            <TouchableOpacity
+              onPress={handleMenuPress}
+              className="mr-4"
+              activeOpacity={0.7}
+            >
+              <MenuIcon />
+            </TouchableOpacity>
+            <View className="flex-row items-center">
+              <AppLogo />
+              <Text className="text-white text-xl font-bold ml-2">{pageTitle}</Text>
+            </View>
+          </View>
+          
+          <View className="flex-row items-center">
+            <TouchableOpacity
+              onPress={handleNotificationPress}
+              className="mr-4"
+              activeOpacity={0.7}
+            >
+              <NotificationIcon />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                if (navigation) {
+                  // Support both UserProfile and Profile navigation
+                  navigation.navigate('Profile');
+                }
+                if (onProfilePress) {
+                  onProfilePress();
+                }
+              }}
+              activeOpacity={0.7}
+            >
+              <ProfileIcon />
+            </TouchableOpacity>
           </View>
         </View>
-        
-        <View className="flex-row items-center">
-          <TouchableOpacity
-            onPress={handleNotificationPress}
-            className="mr-4"
-            activeOpacity={0.7}
-          >
-            <NotificationIcon />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              if (navigation) {
-                navigation.navigate('Profile');
-              }
-              if (onProfilePress) {
-                onProfilePress();
-              }
-            }}
-            activeOpacity={0.7}
-          >
-            <ProfileIcon />
-          </TouchableOpacity>
-        </View>
-      </View>
+      </SafeAreaView>
 
       {/* Menu Modal */}
       <Modal
@@ -110,6 +130,8 @@ const Header: React.FC<HeaderProps> = ({
         transparent={true}
         animationType="fade"
         onRequestClose={() => setMenuVisible(false)}
+        accessibilityViewIsModal={true}
+        supportedOrientations={['portrait', 'landscape']}
       >
         <View style={styles.modalOverlay}>
           <TouchableOpacity
@@ -136,14 +158,11 @@ const Header: React.FC<HeaderProps> = ({
                     if (
                       navigation &&
                       [
-                        'Home',
-                        'Login',
-                        'Dashboard',
-                        'Comparison',
-                        'PoliticalQuiz',
-                        'PoliBot',
-                        'QuizHistory', // <-- add this
-                        'HelpAndSupport',
+                        'Home', 'Login', 'Dashboard', 'Hierarchy', 'Comparison', 
+                        'PoliticalQuiz', 'PoliBot', 'QuizHistory', 'HelpAndSupport', 
+                        'Notifications', 'Profile',
+                        'WatchList', 'MinistryPerformance', 'GrowthNews',
+                        'PastElections', 'ElectionCountdown' // <-- Add these!
                       ].includes(item.screen)
                     ) {
                       navigation.navigate(item.screen);
@@ -158,6 +177,21 @@ const Header: React.FC<HeaderProps> = ({
               )}
             />
             <View className="mt-auto p-4">
+              {/* Election Status Section */}
+              <View className="bg-gray-50 p-4 mb-2 rounded-lg">
+                <Text className="text-sm text-gray-500 mb-1">Next General Election</Text>
+                <Text className="text-base text-gray-900 font-medium mb-2">Presidential Election 2024</Text>
+                <View className="bg-blue-50 rounded-lg p-3">
+                  <View className="flex-row justify-between">
+                    <Text className="text-blue-800 font-medium">Countdown</Text>
+                    <Text className="text-blue-800 font-bold">42 days</Text>
+                  </View>
+                  <View className="h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+                    <View className="h-full bg-blue-600 rounded-full" style={{ width: '60%' }} />
+                  </View>
+                </View>
+              </View>
+              {/* Version */}
               <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
             </View>
           </View>

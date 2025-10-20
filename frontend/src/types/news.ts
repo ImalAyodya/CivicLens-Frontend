@@ -1,12 +1,25 @@
+// This file should match with the backend model structure
+
+export type NewsCategory = 
+  | 'Politics' 
+  | 'Economy' 
+  | 'Education' 
+  | 'Healthcare' 
+  | 'Infrastructure'
+  | 'Environment'
+  | 'Technology'
+  | 'International'
+  | 'All';  // Add 'All' as a valid category
+
 export interface NewsItem {
-  id: string;
+  _id: string;
   title: string;
-  subtitle?: string;
-  content?: string;
+  summary: string;
+  content: string;
+  date: string | Date;
+  category: NewsCategory;
+  author: string;
   imageUrl?: string;
-  date: string;
-  source: string;
   isBreaking?: boolean;
-  readTime?: string;
-  category: string;
+  tags?: string[];
 }

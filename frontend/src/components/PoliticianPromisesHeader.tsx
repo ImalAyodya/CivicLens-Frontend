@@ -1,85 +1,157 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Pressable } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface PoliticianPromisesHeaderProps {
-  navigation: any; // Use correct navigation type if you want strict typing
+  navigation: any;
   pageTitle?: string;
 }
 
-const sidebarItems = [
-  {
-    label: 'Politician Promises',
-    icon: <MaterialIcons name="assignment" size={20} color="#2563EB" />,
-    nav: 'PoliticianPromises',
-  },
-  {
-    label: 'Growth News',
-    icon: <Ionicons name="trending-up" size={20} color="#2563EB" />,
-    nav: 'GrowthNews',
-  },
-  {
-    label: 'Ministry Performance',
-    icon: <FontAwesome5 name="chart-bar" size={18} color="#2563EB" />,
-    nav: 'MinistryPerformance',
-  },
-  {
-    label: 'Public Engagement Insights',
-    icon: <MaterialIcons name="analytics" size={20} color="#2563EB" />,
-    nav: 'PublicEngagementScore',
-  },
+const MenuIcon = () => <Ionicons name="menu" size={28} color="white" />;
+const NotificationIcon = () => <Ionicons name="notifications-outline" size={24} color="white" />;
+const ProfileIcon = () => <Ionicons name="person-circle-outline" size={28} color="white" />;
+const AppLogo = () => (
+  <View style={styles.logoContainer}>
+    <Ionicons name="stats-chart-outline" size={22} color="#2563EB" />
+  </View>
+);
+
+interface MenuItem {
+  id: string;
+  title: string;
+  icon: React.ReactNode;
+  screen: string;
+}
+
+// Use the same menuItems as Header for consistency
+const menuItems: MenuItem[] = [
+  // { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
+  // { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
+  { id: '3', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
+  { id: '4', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
+  { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
+  { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
+  { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
+  // { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
+  { id: '9', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
+  { id: '10', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
+  // { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
+  { id: '12', title: 'Election Notifications', icon: <Ionicons name="notifications-outline" size={22} color="#2563EB" />, screen: 'Notifications' },
+  { id: '13', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
+  { id: '14', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
+  { id: '15', title: 'WatchList', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'WatchList' },
+  { id: '16', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+  { id: '17', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
 ];
 
 export default function PoliticianPromisesHeader({ navigation, pageTitle = "Politicians Promises" }: PoliticianPromisesHeaderProps) {
-  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const allowedScreens = [
+    'Home', 'Login', 'Dashboard', 'Hierarchy', 'Comparison',
+    'PoliticalQuiz', 'PoliBot', 'QuizHistory', 'HelpAndSupport',
+    'Notifications', 'Profile', 'WatchList', 'MinistryPerformance',
+    'GrowthNews', 'NewsFeed', 'ElectionCountdown', 'PastElections', 'PoliticianPromises'
+  ];
 
   return (
     <>
-      {/* Header Bar */}
-      <View style={styles.headerBar}>
-        <TouchableOpacity
-          onPress={() => setSidebarVisible(true)}
-          style={styles.menuBtn}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} // <-- Add this line
-        >
-          <Ionicons name="menu" size={28} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{pageTitle}</Text>
-        <View style={styles.headerIcons}>
-          <Ionicons name="notifications-outline" size={22} color="#fff" style={{ marginRight: 16 }} />
-          <Ionicons name="person-circle-outline" size={26} color="#fff" />
-        </View>
-      </View>
-
-      {/* Sidebar Modal */}
-      <Modal
-        visible={sidebarVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setSidebarVisible(false)}
-      >
-        <Pressable style={styles.overlay} onPress={() => setSidebarVisible(false)} />
-        <View style={styles.sidebar}>
-          <View style={styles.sidebarHeader}>
-            <MaterialIcons name="menu-book" size={22} color="#fff" />
-            <Text style={styles.sidebarTitle}>CivicLens</Text>
-            <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-              <Ionicons name="close" size={26} color="#fff" />
+      <SafeAreaView edges={['top']} style={{ backgroundColor: '#2563EB' }}>
+        <View className="bg-blue-600 px-4 py-3 flex-row items-center justify-between">
+          <View className="flex-row items-center">
+            <TouchableOpacity
+              onPress={() => setMenuVisible(true)}
+              className="mr-4"
+              activeOpacity={0.7}
+            >
+              <MenuIcon />
+            </TouchableOpacity>
+            <View className="flex-row items-center">
+              <AppLogo />
+              <Text className="text-white text-xl font-bold ml-2">{pageTitle}</Text>
+            </View>
+          </View>
+          <View className="flex-row items-center">
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Notifications')}
+              className="mr-4"
+              activeOpacity={0.7}
+            >
+              <NotificationIcon />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Profile')}
+              activeOpacity={0.7}
+            >
+              <ProfileIcon />
             </TouchableOpacity>
           </View>
-          {sidebarItems.map(item => (
-            <TouchableOpacity
-              key={item.label}
-              style={styles.sidebarItem}
-              onPress={() => {
-                setSidebarVisible(false);
-                navigation.navigate(item.nav);
-              }}
-            >
-              {item.icon}
-              <Text style={styles.sidebarItemText}>{item.label}</Text>
-            </TouchableOpacity>
-          ))}
+        </View>
+      </SafeAreaView>
+
+      {/* Menu Modal */}
+      <Modal
+        visible={menuVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+        accessibilityViewIsModal={true}
+        supportedOrientations={['portrait', 'landscape']}
+      >
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity
+            style={{ flex: 1 }}
+            activeOpacity={1}
+            onPress={() => setMenuVisible(false)}
+          />
+          <View className="bg-white w-64 h-full shadow-lg absolute left-0 top-0 bottom-0">
+            <View className="bg-blue-600 p-4">
+              <View className="flex-row items-center">
+                <AppLogo />
+                <Text className="text-white text-xl font-bold ml-2">CivicLens</Text>
+              </View>
+              <Text className="text-blue-100 mt-2">Tracking Political Priorities</Text>
+            </View>
+            <FlatList
+              data={menuItems}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  className="flex-row items-center px-4 py-3 border-b border-gray-200"
+                  onPress={() => {
+                    setMenuVisible(false);
+                    if (allowedScreens.includes(item.screen)) {
+                      navigation.navigate(item.screen);
+                    } else {
+                      console.log(`Screen ${item.screen} not implemented yet`);
+                    }
+                  }}
+                >
+                  <View style={{ marginRight: 12 }}>{item.icon}</View>
+                  <Text className="text-gray-800 text-base">{item.title}</Text>
+                </TouchableOpacity>
+              )}
+            />
+            <View className="mt-auto p-4">
+              {/* Election Status Section */}
+              <View className="bg-gray-50 p-4 mb-2 rounded-lg">
+                <Text className="text-sm text-gray-500 mb-1">Next General Election</Text>
+                <Text className="text-base text-gray-900 font-medium mb-2">Presidential Election 2024</Text>
+                <View className="bg-blue-50 rounded-lg p-3">
+                  <View className="flex-row justify-between">
+                    <Text className="text-blue-800 font-medium">Countdown</Text>
+                    <Text className="text-blue-800 font-bold">42 days</Text>
+                  </View>
+                  <View className="h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+                    <View className="h-full bg-blue-600 rounded-full" style={{ width: '60%' }} />
+                  </View>
+                </View>
+              </View>
+              {/* Version */}
+              <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
+            </View>
+          </View>
         </View>
       </Modal>
     </>
@@ -87,71 +159,16 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
 }
 
 const styles = StyleSheet.create({
-  headerBar: {
-    flexDirection: 'row',
+  logoContainer: {
+    backgroundColor: 'white',
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2563EB',
-    paddingHorizontal: 12,
-    paddingTop: 18,
-    paddingBottom: 12,
-    justifyContent: 'space-between',
-    borderBottomLeftRadius: 18,
-    borderBottomRightRadius: 18,
   },
-  menuBtn: {
-    padding: 4,
-  },
-  headerTitle: {
+  modalOverlay: {
     flex: 1,
-    textAlign: 'center',
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 18,
-    marginLeft: -28, // visually center with icons
-  },
-  headerIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.18)',
-  },
-  sidebar: {
-    position: 'absolute',
-    top: 0, left: 0, bottom: 0,
-    width: 260,
-    backgroundColor: '#2563EB',
-    paddingTop: 32,
-    paddingHorizontal: 18,
-    zIndex: 10,
-    elevation: 10,
-  },
-  sidebarHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 28,
-    justifyContent: 'space-between',
-  },
-  sidebarTitle: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 17,
-    marginLeft: 8,
-    flex: 1,
-  },
-  sidebarItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.08)',
-  },
-  sidebarItemText: {
-    color: '#fff',
-    fontSize: 15,
-    marginLeft: 14,
-    fontWeight: '500',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });

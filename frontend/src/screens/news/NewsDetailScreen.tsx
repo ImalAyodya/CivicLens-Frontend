@@ -1,272 +1,416 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
-  ScrollView, 
   Image, 
+  ScrollView, 
+  ActivityIndicator, 
+  StyleSheet, 
   TouchableOpacity, 
-  StatusBar, 
+  SafeAreaView,
   Share,
+  StatusBar,
   Dimensions
 } from 'react-native';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../navigation/types';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../../navigation/types';
+import { newsService } from '../../services/newsService';
 import { NewsItem } from '../../types/news';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withTiming, 
-  FadeIn,
-  SlideInRight,
-  FadeInDown
-} from 'react-native-reanimated';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'NewsDetail'>;
+type NewsDetailScreenRouteProp = RouteProp<RootStackParamList, 'NewsDetail'>;
+
 const { width } = Dimensions.get('window');
 
-const NewsDetailScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { newsItem } = route.params;
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(50);
+export default function NewsDetailScreen() {
+  const route = useRoute<NewsDetailScreenRouteProp>();
+  const navigation = useNavigation();
+  const { newsId } = route.params;
   
-  useEffect(() => {
-    opacity.value = withTiming(1, { duration: 600 });
-    translateY.value = withTiming(0, { duration: 700 });
-    
-    // Hide status bar for immersive experience
-    StatusBar.setBarStyle('light-content');
-    return () => {
-      StatusBar.setBarStyle('dark-content');
-    };
-  }, []);
+  const [news, setNews] = useState<NewsItem | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const animatedContentStyle = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-      transform: [{ translateY: translateY.value }]
+  useEffect(() => {
+    const fetchNewsDetail = async () => {
+      try {
+        setLoading(true);
+        
+        // Check if ID is in a valid MongoDB ObjectId format
+        const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(newsId);
+        
+        if (!isValidObjectId) {
+          console.warn(`Invalid news ID format: ${newsId}`);
+          setError('Invalid news ID format');
+          setLoading(false);
+          return;
+        }
+        
+        const newsItem = await newsService.getNewsById(newsId);
+        
+        if (!newsItem) {
+          setError('News not found');
+        } else {
+          setNews(newsItem);
+          console.log('News detail loaded:', newsItem.title);
+          setError(null);
+        }
+      } catch (err) {
+        console.error('Error fetching news details:', err);
+        setError('Failed to load news details');
+      } finally {
+        setLoading(false);
+      }
     };
-  });
+
+    fetchNewsDetail();
+  }, [newsId]);
 
   const handleShare = async () => {
+    if (!news) return;
+    
     try {
       await Share.share({
-        message: `${newsItem.title} - Read more on PollTrack!`,
-        title: newsItem.title,
+        message: `${news.title}\n\n${news.summary}\n\nRead more on CivicLens`,
+        title: news.title,
       });
     } catch (error) {
-      console.error(error);
+      console.error('Error sharing article:', error);
     }
   };
 
-  const handleRelatedNewsPress = (item: NewsItem) => {
-    console.log('Navigate to related news', item.id);
-    // In a real app, you would navigate to the same screen with different params
-    navigation.navigate('NewsDetail', { newsItem: item });
+  const handleGoBack = () => {
+    navigation.goBack();
   };
 
-  // Dummy related news
-  const relatedNews: NewsItem[] = [
-    {
-      id: 'related1',
-      title: 'Government Plans Infrastructure Projects Worth $2 Billion',
-      subtitle: 'Focus on roads, bridges, and public transportation',
-      date: '3h ago',
-      source: 'Infrastructure Today',
-      category: newsItem.category,
-      readTime: '4 min read'
-    },
-    {
-      id: 'related2',
-      title: 'Opposition Criticizes New Development Plan',
-      subtitle: 'Claims budget allocation is insufficient',
-      date: '5h ago',
-      source: 'Political Watch',
-      category: newsItem.category,
-      readTime: '3 min read'
-    }
-  ];
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0066cc" />
+          <Text style={styles.loadingText}>Loading article...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
-  // Dummy author info
-  const authorInfo = {
-    name: 'Sarah Johnson',
-    title: 'Political Correspondent',
-    avatar: 'https://i.pravatar.cc/100',
-    bio: 'Covering politics and policy for over a decade.'
-  };
+  if (error || !news) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={handleGoBack}
+          >
+            <Ionicons name="chevron-back" size={24} color="#0066cc" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>News</Text>
+          <View style={styles.headerRight} />
+        </View>
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle-outline" size={64} color="#ff3b30" />
+          <Text style={styles.errorText}>
+            {error || 'News article not found'}
+          </Text>
+          <TouchableOpacity 
+            style={styles.tryAgainButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.tryAgainText}>Return to News</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const formattedDate = isValidDate(news.date) 
+    ? new Date(news.date).toLocaleDateString('en-US', {
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric'
+      }) 
+    : 'Publication date not available';
 
   return (
-    <View className="flex-1 bg-white">
-      {/* Hero Image with Overlay and Back Button */}
-      <View className="h-72 w-full relative">
-        
-        <View className="absolute inset-0 bg-black bg-opacity-40" />
-        
-        {/* Top Bar */}
-        <View className="absolute top-0 left-0 right-0 flex-row justify-between items-center p-4 pt-12">
-          <TouchableOpacity 
-            onPress={() => navigation.goBack()}
-            className="w-10 h-10 bg-black/30 rounded-full items-center justify-center"
-          >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-          
-          <View className="flex-row">
-            <TouchableOpacity 
-              onPress={handleShare}
-              className="w-10 h-10 bg-black/30 rounded-full items-center justify-center mr-2"
-            >
-              <Ionicons name="share-outline" size={22} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              className="w-10 h-10 bg-black/30 rounded-full items-center justify-center"
-            >
-              <Ionicons name="bookmark-outline" size={22} color="white" />
-            </TouchableOpacity>
-          </View>
-        </View>
-        
-        {/* Category Tag */}
-        <Animated.View 
-          entering={FadeIn.delay(300).duration(500)} 
-          className="absolute bottom-4 left-4 bg-blue-600 px-3 py-1 rounded-full"
+
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* Header with Back Button */}
+      <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={handleGoBack}
         >
-          <Text className="text-white text-xs font-medium">{newsItem.category}</Text>
-        </Animated.View>
+          <Ionicons name="chevron-back" size={24} color="#0066cc" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>News</Text>
+        <TouchableOpacity 
+          style={styles.shareButton}
+          onPress={handleShare}
+        >
+          <Ionicons name="share-outline" size={24} color="#0066cc" />
+        </TouchableOpacity>
       </View>
       
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <Animated.View style={animatedContentStyle} className="px-4 pt-5 pb-24">
-          {/* Article Metadata */}
-          <View className="flex-row items-center mb-3">
-            <Text className="text-gray-500 text-sm">{newsItem.source}</Text>
-            <View className="w-1 h-1 bg-gray-500 rounded-full mx-2" />
-            <Text className="text-gray-500 text-sm">{newsItem.date}</Text>
-            <View className="w-1 h-1 bg-gray-500 rounded-full mx-2" />
-            <Text className="text-gray-500 text-sm">{newsItem.readTime}</Text>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        {/* Category Badge */}
+        <View style={styles.categoryBadgeContainer}>
+          <View style={styles.categoryBadge}>
+            <Text style={styles.categoryBadgeText}>{news.category}</Text>
           </View>
-          
-          {/* Title and Subtitle */}
-          <Text className="text-gray-900 text-2xl font-bold mb-3 leading-tight">
-            {newsItem.title}
-          </Text>
-          {newsItem.subtitle && (
-            <Text className="text-gray-600 text-lg mb-5 leading-relaxed">
-              {newsItem.subtitle}
-            </Text>
-          )}
-          
-          {/* Author Info */}
-          <Animated.View 
-            entering={SlideInRight.delay(400).duration(600)} 
-            className="flex-row items-center bg-gray-50 p-3 rounded-xl mb-5"
-          >
-            <Image 
-              source={{ uri: authorInfo.avatar }}
-              className="w-12 h-12 rounded-full"
-            />
-            <View className="ml-3 flex-1">
-              <Text className="font-medium text-gray-800">{authorInfo.name}</Text>
-              <Text className="text-sm text-gray-500">{authorInfo.title}</Text>
+          {news.isBreaking && (
+            <View style={styles.breakingBadge}>
+              <Text style={styles.breakingBadgeText}>BREAKING</Text>
             </View>
-            <TouchableOpacity className="bg-blue-600 px-3 py-1.5 rounded-lg">
-              <Text className="text-white text-xs font-medium">Follow</Text>
-            </TouchableOpacity>
-          </Animated.View>
-          
-          {/* Article Content */}
-          <View className="mb-8">
-            <Text className="text-gray-800 leading-relaxed text-base mb-4">
-              In a significant move aimed at boosting regional development, President Rajapaksa announced a comprehensive development plan for the Northern Province during a press conference held at the Presidential Secretariat yesterday.
-            </Text>
-            
-            <Text className="text-gray-800 leading-relaxed text-base mb-4">
-              The ambitious plan includes infrastructure development projects such as road renovations, water supply schemes, and electricity grid extensions. The initiative is expected to create thousands of jobs and improve the quality of life for residents in the area.
-            </Text>
-            
-            
-            <Text className="text-gray-500 text-xs italic mb-5 text-center">
-              President addressing the media at the Presidential Secretariat
-            </Text>
-            
-            <Text className="text-gray-800 leading-relaxed text-base mb-4">
-              "Our government is committed to ensuring equal development across all provinces," stated the President. "This comprehensive plan addresses the key needs of the Northern Province and will significantly contribute to the national economy."
-            </Text>
-            
-            <Text className="text-gray-800 leading-relaxed text-base mb-4">
-              The Minister of Finance confirmed that Rs. 50 billion has been allocated for the initial phase of the development plan. "We have secured the necessary funding, and work will commence within the next three months," he added.
-            </Text>
-            
-            <Text className="text-gray-800 leading-relaxed text-base mb-4">
-              However, opposition leaders have raised concerns about the plan's implementation timeline and questioned whether the allocated budget is sufficient to achieve the stated goals.
-            </Text>
+
+          )}
+        </View>
+        
+        {/* Title */}
+        <Text style={styles.title}>{news.title}</Text>
+        
+        {/* Author & Date */}
+        <View style={styles.metadata}>
+          {news.author && <Text style={styles.author}>By {news.author}</Text>}
+          <Text style={styles.date}>{formattedDate}</Text>
+        </View>
+        
+        {/* Main Image */}
+        {news.imageUrl ? (
+          <Image 
+            source={{ uri: news.imageUrl }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        ) : (
+          <View style={[styles.image, styles.imagePlaceholder]}>
+            <Ionicons name="image-outline" size={48} color="#999" />
+            <Text style={styles.placeholderText}>No image available</Text>
           </View>
-          
-          {/* Tags Section */}
-          <View className="mb-8">
-            <Text className="font-bold text-gray-900 text-lg mb-3">Tags</Text>
-            <View className="flex-row flex-wrap">
-              {['Development', 'Infrastructure', 'Northern Province', 'President', 'Economy'].map((tag) => (
-                <Animated.View 
-                  key={tag} 
-                  entering={FadeInDown.delay(600 + Math.random() * 400).duration(400)}
-                  className="bg-gray-100 rounded-full px-3 py-1.5 mr-2 mb-2"
-                >
-                  <Text className="text-sm text-gray-700">#{tag}</Text>
-                </Animated.View>
+        )}
+        
+        {/* Summary */}
+        <View style={styles.summaryContainer}>
+          <Text style={styles.summary}>{news.summary}</Text>
+        </View>
+        
+        {/* Content */}
+        <View style={styles.content}>
+          <Text style={styles.body}>{news.content}</Text>
+        </View>
+        
+        {/* Tags */}
+        {news.tags && news.tags.length > 0 && (
+          <View style={styles.tagsContainer}>
+            <Text style={styles.tagsTitle}>Related Topics:</Text>
+            <View style={styles.tagsList}>
+              {news.tags.map((tag, index) => (
+                <View key={index} style={styles.tagBadge}>
+                  <Text style={styles.tagText}>#{tag}</Text>
+                </View>
               ))}
             </View>
           </View>
-          
-          {/* Related News Section */}
-          <View className="mb-5">
-            <Text className="font-bold text-gray-900 text-lg mb-4">Related News</Text>
-            {relatedNews.map((item, index) => (
-              <Animated.View 
-                key={item.id}
-                entering={SlideInRight.delay(800 + index * 200).duration(500)}
-              >
-                <TouchableOpacity 
-                  onPress={() => handleRelatedNewsPress(item)}
-                  className="mb-4 bg-gray-50 p-3 rounded-xl"
-                >
-                  <Text className="text-sm text-gray-500 mb-1">{item.source} • {item.date}</Text>
-                  <Text className="text-base font-medium text-gray-800 mb-1">{item.title}</Text>
-                  {item.subtitle && (
-                    <Text className="text-sm text-gray-600" numberOfLines={2}>
-                      {item.subtitle}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              </Animated.View>
-            ))}
-          </View>
-        </Animated.View>
-      </ScrollView>
-      
-      {/* Floating Action Button */}
-      <Animated.View
-        entering={FadeIn.delay(900).duration(500)}
-        className="absolute bottom-6 right-6 left-6 flex-row justify-between"
-      >
-        <TouchableOpacity 
-          className="bg-gray-800 p-4 rounded-full flex-row items-center justify-center shadow-lg"
-          style={{ width: width * 0.45 }}
-        >
-          <Ionicons name="chatbubble-outline" size={20} color="white" />
-          <Text className="text-white ml-2 font-medium">Comment</Text>
-        </TouchableOpacity>
+        )}
         
-        <TouchableOpacity 
-          className="bg-blue-600 p-4 rounded-full flex-row items-center justify-center shadow-lg"
-          style={{ width: width * 0.45 }}
-        >
-          <Ionicons name="heart-outline" size={20} color="white" />
-          <Text className="text-white ml-2 font-medium">Like</Text>
-        </TouchableOpacity>
-      </Animated.View>
-    </View>
+        {/* Spacing at bottom */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+    </SafeAreaView>
   );
-};
+}
 
-export default NewsDetailScreen;
+// Helper function
+function isValidDate(dateString: string | Date): boolean {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  return !isNaN(date.getTime());
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    backgroundColor: '#ffffff',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  backButton: {
+    padding: 8,
+  },
+  shareButton: {
+    padding: 8,
+  },
+  headerRight: {
+    width: 40,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: '#ff3b30',
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 16,
+    marginBottom: 24,
+  },
+  tryAgainButton: {
+    backgroundColor: '#0066cc',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  tryAgainText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  categoryBadgeContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  categoryBadge: {
+    backgroundColor: '#e8f1fa',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+  },
+  categoryBadgeText: {
+    color: '#0066cc',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  breakingBadge: {
+    backgroundColor: '#ffebeb',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  breakingBadgeText: {
+    color: '#ff3b30',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    paddingHorizontal: 20,
+    marginTop: 8,
+    marginBottom: 12,
+    color: '#222',
+  },
+  metadata: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  date: {
+    color: '#666',
+    fontSize: 14,
+    marginTop: 4,
+  },
+  author: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#444',
+  },
+  image: {
+    width: width,
+    height: width * 0.6,
+  },
+  imagePlaceholder: {
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    color: '#999',
+    fontSize: 16,
+    marginTop: 8,
+  },
+  summaryContainer: {
+    backgroundColor: '#f9f9f9',
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 20,
+    marginHorizontal: 20,
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#0066cc',
+  },
+  summary: {
+    fontSize: 16,
+    fontWeight: '500',
+    fontStyle: 'italic',
+    color: '#444',
+    lineHeight: 22,
+  },
+  content: {
+    paddingHorizontal: 20,
+  },
+  body: {
+    fontSize: 17,
+    lineHeight: 26,
+    color: '#333',
+  },
+  tagsContainer: {
+    marginTop: 24,
+    paddingHorizontal: 20,
+  },
+  tagsTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  tagsList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  tagBadge: {
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  tagText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  bottomPadding: {
+    height: 40,
+  }
+});

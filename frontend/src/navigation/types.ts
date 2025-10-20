@@ -1,10 +1,11 @@
-import type { NewsItem } from '../types/news';
 import { AIQuestion, UserAnswer } from '../services/types';
+import { NewsItem } from '../types/news';
 
 export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
   Home: undefined;
+  MainTabs: undefined; // <-- Add this line
   Dashboard: undefined;
   Comparison: undefined;
   ComparisonResult: {
@@ -18,7 +19,8 @@ export type RootStackParamList = {
 
   
   PoliticalQuiz: undefined;
-  QuizQuestion: {
+  // Current definition in types.ts
+QuizQuestion: {
     questionId: number;
     totalQuestions: number;
     score: number;
@@ -32,27 +34,36 @@ export type RootStackParamList = {
     language: string;
     userAnswers: UserAnswer[];
   };
+  
   PoliBot: undefined;
   PoliBotChat: undefined;
   NewsFeed: undefined;
-  NewsDetail: {
-    newsItem: NewsItem;
-  };
-  QuizSummary: {
-    userAnswers: UserAnswer[];
-    language: string;
-  };
-  QuizHistory: undefined;
-  QuizDetail: {
-    quizId: string;
-  };
+  NewsDetail: { newsId: string }; // Changed to use newsId
   Notifications: undefined;
   ElectionCountdown: undefined;
   PastElections: undefined;
+  PastElectionDetails: {
+    electionId: string;
+  };
   ElectionMap: undefined;
+  ElectionLaws: undefined;
+  PoliticianDetails: { id: string }; 
+  DirectoryScreen: undefined;
+  AdminPanel: undefined;
+  AddParty: undefined;
+  PartyList: undefined;
+  PoliticianList: undefined;
+  AddPoliticianForm: undefined;
+  RoleList: undefined;
+  AddRole: undefined;
+  LevelList: undefined;
+  AddLevel: undefined;
+  Hierarchy: undefined;
+  HierarchyPoliticianList: { levelId?: string; levelName?: string };
+  Profile: undefined;
   PoliticianPromises: undefined;
   GrowthNews: undefined;
-  MinistryPerformance: undefined; 
+  MinistryPerformance: undefined;
   PromiseDetail: { promise: any };
   GrowthNewsDetail: { news: any };
   
@@ -65,7 +76,18 @@ export type RootStackParamList = {
   AdminUserManagement: undefined;
   AdminReports: undefined;
   AdminSettings: undefined;
-  Profile: undefined;
+  UserProfile: undefined;
+  QuizHistory: undefined;
+  QuizSummary: {
+    userAnswers: UserAnswer[];
+    language: string;
+  };
+  QuizDetail: {
+    quizId: string;
+    // other params
+  };
+  ElectionPredictions: { electionId: string };
   PublicEngagementScore: undefined;
 };
+
 

@@ -19,7 +19,7 @@ const getStatusColor = (status: string) =>
   statusColors[status] || { bg: '#E5E7EB', text: '#6B7280' };
 
 // Configure Axios base URL
-const API_BASE_URL = 'https://civiclens-backend-production.up.railway.app/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -104,7 +104,8 @@ export default function PoliticianPromisesScreen() {
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
-    if (tabName !== 'PoliticianPromises') {
+    // Only navigate if not already on the tab
+    if (tabName !== activeTab) {
       navigation.navigate(tabName as never);
     }
   };
@@ -336,6 +337,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 16,
     overflow: 'hidden',
+    marginTop: 16, // <-- Add this line for top margin
   },
   categoryTab: {
     flex: 1,

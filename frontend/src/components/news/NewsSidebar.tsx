@@ -9,7 +9,7 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
@@ -44,25 +44,21 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
   }, [visible, screenWidth, translateX]);
 
   const navigateTo = (screen: keyof RootStackParamList) => {
-    // Screens that don't require parameters
-    const screensWithoutParams: (keyof RootStackParamList)[] = [
+    // Screens that can be navigated to
+    const implementedScreens: (keyof RootStackParamList)[] = [
       'Home', 'NewsFeed', 'Login', 'SignUp', 'Notifications', 
-      'ElectionCountdown', 'PastElections', 'ElectionMap'
+      'ElectionCountdown', 'PastElections', 'ElectionMap',
+      'Dashboard', 'Hierarchy', 'Comparison', 'PoliticalQuiz',
+      'PoliBot', 'QuizHistory', 'HelpAndSupport', 'Profile',
+      'PoliticianPromises'
     ];
     
-    if (screensWithoutParams.includes(screen)) {
-      // Type assertion to make TypeScript happy
+    if (implementedScreens.includes(screen)) {
       navigation.navigate(screen as any);
     } else {
       console.log(`Screen ${screen} requires parameters or is not implemented yet`);
     }
     
-    onClose();
-  };
-
-  // Function to navigate to screens not yet implemented
-  const navigateToFutureScreen = (screenName: string) => {
-    console.log(`Navigate to ${screenName} - not implemented yet`);
     onClose();
   };
 
@@ -80,24 +76,110 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
           { transform: [{ translateX }] },
           styles.sidebar,
         ]}
+        accessibilityViewIsModal={true}
+        accessible={true}
+        importantForAccessibility="yes"
       >
         {/* Sidebar Header */}
         <View className="bg-blue-600 p-4 pt-12">
           <View className="flex-row justify-between items-center">
             <View className="flex-row items-center">
               <View className="bg-white rounded-lg w-10 h-10 items-center justify-center mr-3">
-                <Text className="text-xl">📰</Text>
+                <Ionicons name="stats-chart-outline" size={22} color="#2563EB" />
               </View>
-              <Text className="text-white text-xl font-bold">News & Elections</Text>
+              <Text className="text-white text-xl font-bold">CivicLens</Text>
             </View>
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={24} color="white" />
             </TouchableOpacity>
           </View>
+          <Text className="text-blue-100 mt-2">Tracking Political Priorities</Text>
         </View>
 
         {/* Menu Items */}
         <ScrollView className="flex-1">
+          {/* Core Navigation Items */}
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('Home')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="home-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Home</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('Dashboard')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="grid-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Dashboard</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('Hierarchy')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="git-network-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Political Hierarchy</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('Comparison')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="people-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Compare Politicians</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('PoliticalQuiz')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="help-circle-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Political Quiz</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('QuizHistory')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="time-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Quiz History</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('PoliBot')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">PoliBot Assistant</Text>
+          </TouchableOpacity>
+
+          {/* Performance Features */}
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('PoliticianPromises')}
+          >
+            <View className="w-10 items-center">
+              <MaterialIcons name="assignment" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Politician Promises</Text>
+          </TouchableOpacity>
+
           {/* News Feed */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
@@ -109,7 +191,7 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             <Text className="text-gray-800 ml-3 font-medium">News Feed</Text>
           </TouchableOpacity>
 
-          {/* Election Countdown */}
+          {/* Election Items */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
             onPress={() => navigateTo('ElectionCountdown')}
@@ -123,7 +205,6 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             </View>
           </TouchableOpacity>
 
-          {/* Election Notifications */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
             onPress={() => navigateTo('Notifications')}
@@ -134,7 +215,6 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             <Text className="text-gray-800 ml-3 font-medium">Election Notifications</Text>
           </TouchableOpacity>
 
-          {/* Past Elections */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
             onPress={() => navigateTo('PastElections')}
@@ -145,37 +225,56 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             <Text className="text-gray-800 ml-3 font-medium">Past Elections</Text>
           </TouchableOpacity>
 
-          {/* Election Maps */}
+          {/* Additional Features (these might not be implemented yet) */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateTo('ElectionMap')}
+            onPress={() => console.log('Growth News - not implemented yet')}
           >
             <View className="w-10 items-center">
-              <Ionicons name="map-outline" size={22} color="#2563EB" />
+              <Ionicons name="trending-up" size={22} color="#2563EB" />
             </View>
-            <Text className="text-gray-800 ml-3 font-medium">Election Maps</Text>
+            <Text className="text-gray-800 ml-3 font-medium">Growth News</Text>
           </TouchableOpacity>
 
-          {/* Voting Information */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateToFutureScreen('Voting Information')}
+            onPress={() => console.log('Ministry Performance - not implemented yet')}
+          >
+            <View className="w-10 items-center">
+              <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">Ministry Performance</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => console.log('WatchList - not implemented yet')}
+          >
+            <View className="w-10 items-center">
+              <Ionicons name="eye" size={22} color="#2563EB" />
+            </View>
+            <Text className="text-gray-800 ml-3 font-medium">WatchList</Text>
+          </TouchableOpacity>
+
+          {/* Supporting Features */}
+          <TouchableOpacity 
+            className="flex-row items-center px-4 py-4 border-b border-gray-200"
+            onPress={() => navigateTo('HelpAndSupport')}
           >
             <View className="w-10 items-center">
               <Ionicons name="information-circle-outline" size={22} color="#2563EB" />
             </View>
-            <Text className="text-gray-800 ml-3 font-medium">Voting Information</Text>
+            <Text className="text-gray-800 ml-3 font-medium">Help & Support</Text>
           </TouchableOpacity>
 
-          {/* Candidate Profiles */}
           <TouchableOpacity 
             className="flex-row items-center px-4 py-4 border-b border-gray-200"
-            onPress={() => navigateToFutureScreen('Candidate Profiles')}
+            onPress={() => navigateTo('Login')}
           >
             <View className="w-10 items-center">
-              <Ionicons name="people-outline" size={22} color="#2563EB" />
+              <Ionicons name="log-out-outline" size={22} color="#2563EB" />
             </View>
-            <Text className="text-gray-800 ml-3 font-medium">Candidate Profiles</Text>
+            <Text className="text-gray-800 ml-3 font-medium">Sign Out</Text>
           </TouchableOpacity>
         </ScrollView>
 
@@ -191,6 +290,9 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ visible, onClose }) => {
             <View className="h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
               <View className="h-full bg-blue-600 rounded-full" style={{ width: '60%' }} />
             </View>
+          </View>
+          <View className="mt-2">
+            <Text className="text-gray-500 text-xs">Version 1.0.0</Text>
           </View>
         </View>
       </Animated.View>
@@ -211,6 +313,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex: 50,
   },
 });
 

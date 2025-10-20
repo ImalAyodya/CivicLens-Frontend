@@ -18,15 +18,13 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState('Home');
-  const { handleTabPress: navHandler } = useAppNavigation();
 
   const handleTabPress = (tabName: string) => {
     setActiveTab(tabName);
-    // Only navigate to screens that exist
-    if (['Home', 'Dashboard'].includes(tabName)) {
-      navigation.navigate(tabName as any);
+    // Only navigate if not already on the tab
+    if (tabName !== activeTab) {
+      navigation.navigate(tabName as never);
     }
-    setActiveTab(navHandler(tabName, 'Home'));
   };
 
   // Dummy data for featured issues
@@ -120,6 +118,19 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             <Text className="text-2xl font-bold text-gray-800">15</Text>
           </View>
         </View>
+        
+        {/* Admin Panel Button */}
+        {/* <View className="px-4 py-2">
+          <TouchableOpacity 
+            className="bg-purple-600 rounded-xl p-4 shadow-sm"
+            onPress={() => navigation.navigate('AdminPanel')}
+          >
+            <View className="flex-row items-center justify-center">
+              <Text style={{ fontSize: 18, marginRight: 8 }}>⚙️</Text>
+              <Text className="text-white font-bold text-center">Admin Panel</Text>
+            </View>
+          </TouchableOpacity>
+        </View> */}
         
         {/* Featured Issues Section */}
         <View className="px-4 mt-4">

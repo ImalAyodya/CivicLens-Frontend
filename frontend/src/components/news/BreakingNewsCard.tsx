@@ -1,57 +1,94 @@
 import React from 'react';
-import { View, Text, ImageBackground, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../navigation/types';
-import type { NewsItem } from '../../types/news';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { NewsItem } from '../../types/news';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'NewsFeed'>;
+// Update Props interface to include onPress
+type Props = {
+  news: NewsItem;
+  onPress: () => void;  // Add this line
+};
 
-interface BreakingNewsCardProps {
-  item: NewsItem;
-  onPress?: () => void;
-}
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width * 0.8;
 
-const BreakingNewsCard: React.FC<BreakingNewsCardProps> = ({ item, onPress }) => {
-  const navigation = useNavigation<NavigationProp>();
-
-  const handlePress = () => {
-    if (onPress) {
-      onPress();
-    }
-    navigation.navigate('NewsDetail', { newsItem: item });
-  };
-
+export const BreakingNewsCard = ({ news, onPress }: Props) => {
   return (
-    <TouchableOpacity 
-      onPress={handlePress} 
-      activeOpacity={0.9}
-      className="mb-4"
-    >
-      <View className="relative rounded-xl overflow-hidden h-48 mb-1">
-        <ImageBackground 
-         
-          className="w-full h-full"
-        >
-          <View className="absolute top-0 left-0 right-0 bottom-0 bg-black/40" />
-          
-          <View className="absolute top-3 left-3 bg-red-500 rounded-full px-3 py-1 flex-row items-center">
-            <View className="w-2 h-2 bg-white rounded-full mr-1" />
-            <Text className="text-white text-xs font-medium">Breaking</Text>
-          </View>
-          
-          <View className="absolute bottom-0 p-4">
-            <Text className="text-white text-xl font-bold mb-1" numberOfLines={2}>
-              {item.title}
-            </Text>
-            <View className="flex-row items-center">
-              <Text className="text-white/80 text-xs">{item.source} • {item.date}</Text>
-            </View>
-          </View>
-        </ImageBackground>
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <Image 
+        source={news.imageUrl ? 
+          { uri: news.imageUrl } : 
+          require('../../../assets/news-placeholder.png')  // Local placeholder image
+        }
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <View style={styles.overlay}>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>BREAKING</Text>
+        </View>
+        <Text style={styles.title} numberOfLines={2}>{news.title}</Text>
+        <Text style={styles.timestamp}>
+          {isValidDate(news.date) ? 
+            new Date(news.date).toLocaleTimeString('en-US', {
+              hour: '2-digit', 
+              minute: '2-digit'
+            }) : 'Recent'}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default BreakingNewsCard;
+// Make sure to have the isValidDate function
+function isValidDate(dateString: string | Date | undefined): boolean {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  return !isNaN(date.getTime());
+}
+
+const styles = StyleSheet.create({
+  card: {
+    width: CARD_WIDTH,
+    height: 180,
+    marginLeft: 15,
+    marginRight: 5,
+    borderRadius: 10,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 15,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  badge: {
+    backgroundColor: '#ff3b30',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  title: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  timestamp: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 12,
+  },
+});
