@@ -39,8 +39,8 @@ const Header: React.FC<HeaderProps> = ({
   // Combined menu items from both versions
   const menuItems: MenuItem[] = [
     // Core navigation items
-    { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
-    { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
+    // { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
+    // { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
     { id: '3', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
     { id: '4', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
     { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
@@ -48,10 +48,10 @@ const Header: React.FC<HeaderProps> = ({
     { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
 
     // News & Election features
-    { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
+    // { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
     { id: '9', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
     { id: '10', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
-    { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
+    // { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
     { id: '12', title: 'Election Notifications', icon: <Ionicons name="notifications-outline" size={22} color="#2563EB" />, screen: 'Notifications' },
 
     // Performance features
@@ -161,7 +161,8 @@ const Header: React.FC<HeaderProps> = ({
                         'Home', 'Login', 'Dashboard', 'Hierarchy', 'Comparison', 
                         'PoliticalQuiz', 'PoliBot', 'QuizHistory', 'HelpAndSupport', 
                         'Notifications', 'Profile',
-                        'WatchList', 'MinistryPerformance', 'GrowthNews' // ADD THESE
+                        'WatchList', 'MinistryPerformance', 'GrowthNews',
+                        'PastElections', 'ElectionCountdown' // <-- Add these!
                       ].includes(item.screen)
                     ) {
                       navigation.navigate(item.screen);

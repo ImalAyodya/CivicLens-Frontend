@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Alert, Image } from "react-native";
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -66,7 +66,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         <View className="w-full max-w-sm">
           {/* Header Section */}
           <View className="items-center mb-8">
-            <AppIcon />
+            <Image
+              source={require('../../assets/civic.png')}
+              style={{ width: 120, height: 120, marginBottom: 8, resizeMode: 'contain' }}
+            />
             <Text className="text-white text-2xl font-bold mb-1">CivicLens</Text>
             <Text className="text-blue-100 text-sm">Tracking Political Priorities</Text>
           </View>

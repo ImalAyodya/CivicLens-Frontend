@@ -26,6 +26,7 @@ import { electionService } from '../../services/electionService';
 import { useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns';
 import { ElectionData } from '../../types/election';
+import BlueHeader from '../../components/BlueHeader';
 
 const { width } = Dimensions.get('window');
 
@@ -321,12 +322,6 @@ const PastElectionsScreen: React.FC<Props> = ({ navigation }) => {
     return (
       <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Past Elections</Text>
-        </View>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#2563EB" />
           <Text style={styles.loadingText}>Loading elections...</Text>
@@ -339,12 +334,6 @@ const PastElectionsScreen: React.FC<Props> = ({ navigation }) => {
     return (
       <SafeAreaView style={styles.safeArea}>
         <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Past Elections</Text>
-        </View>
         <View style={styles.errorContainer}>
           <Ionicons name="cloud-offline-outline" size={48} color="#DC2626" />
           <Text style={styles.errorTitle}>Error Loading Data</Text>
@@ -358,13 +347,10 @@ const PastElectionsScreen: React.FC<Props> = ({ navigation }) => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Past Elections</Text>
-      </View>
+      <BlueHeader
+        title="Past Elections"
+        onBack={handleGoBack}
+      />
       
       {!pastElections || pastElections.length === 0 ? (
         <View style={styles.emptyContainer}>

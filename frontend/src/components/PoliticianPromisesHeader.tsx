@@ -26,17 +26,17 @@ interface MenuItem {
 
 // Use the same menuItems as Header for consistency
 const menuItems: MenuItem[] = [
-  { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
-  { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
+  // { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
+  // { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
   { id: '3', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
   { id: '4', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
   { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
   { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
   { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-  { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
+  // { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
   { id: '9', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
   { id: '10', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
-  { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
+  // { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
   { id: '12', title: 'Election Notifications', icon: <Ionicons name="notifications-outline" size={22} color="#2563EB" />, screen: 'Notifications' },
   { id: '13', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
   { id: '14', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
