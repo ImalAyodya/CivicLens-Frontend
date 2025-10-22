@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, Alert, Image } from "react-native";
 import Input from '../components/Input';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import GoogleIcon from '../components/icons/GoogleIcon';
-import AppIcon from '../components/icons/AppIcon';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
 import axios from 'axios';
@@ -12,7 +11,6 @@ import axios from 'axios';
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
 const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/api/users/signup';
-
 
 const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -24,7 +22,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
-    // Basic validation
     if (!name || !email || !phoneNumber || !nic || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields.');
       return;
@@ -58,17 +55,60 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <ScrollView
-      className="flex-1 bg-blue-100"
+      style={{ flex: 1, backgroundColor: '#2563EB' }}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 flex-1 items-center justify-center p-4">
-        <View className="w-full max-w-sm">
+      <View style={{
+        minHeight: '100%',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+        backgroundColor: '#2563EB'
+      }}>
+        <View style={{ width: '100%', maxWidth: 400 }}>
           {/* Header Section */}
-          <View className="items-center mb-8">
-            <AppIcon />
-            <Text className="text-blue-500 text-2xl font-bold mb-1">PollTrack</Text>
-            <Text className="text-blue-100 text-sm">Tracking Political Priorities</Text>
+          <View style={{ alignItems: 'center', marginBottom: 32 }}>
+            <View style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.18,
+              shadowRadius: 16,
+              elevation: 12,
+              backgroundColor: 'rgba(255,255,255,0.05)',
+              borderRadius: 100,
+              padding: 16,
+              marginBottom: 18,
+            }}>
+              <Image
+                source={require('../../assets/logo.png')}
+                style={{ width: 120, height: 120, resizeMode: 'contain' }}
+              />
+            </View>
+            <Text style={{
+              color: '#fff',
+              fontSize: 36,
+              fontWeight: 'bold',
+              letterSpacing: 2,
+              marginBottom: 8,
+              textAlign: 'center',
+              textShadowColor: 'rgba(0,0,0,0.3)',
+              textShadowOffset: { width: 0, height: 2 },
+              textShadowRadius: 4,
+            }}>
+              CIVICLENS
+            </Text>
+            <Text style={{
+              color: '#dbeafe',
+              fontSize: 16,
+              letterSpacing: 1,
+              textAlign: 'center',
+              marginBottom: 2,
+              fontWeight: '500',
+            }}>
+              Your Lens on Politics
+            </Text>
           </View>
 
           {/* SignUp Card */}
@@ -81,39 +121,33 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
             <View className="space-y-1">
               <Input
                 label="Full Name"
-                placeholder="John Doe"
                 value={name}
                 onChangeText={setName}
               />
               <Input
                 label="Email"
-                placeholder="you@example.com"
                 value={email}
                 onChangeText={setEmail}
               />
               <Input
                 label="Phone Number"
-                placeholder="0771234567"
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
               />
               <Input
                 label="NIC No"
-                placeholder="123456789V"
                 value={nic}
                 onChangeText={setNic}
               />
               <Input
                 label="Password"
                 secureTextEntry={true}
-                placeholder="••••••••"
                 value={password}
                 onChangeText={setPassword}
               />
               <Input
                 label="Confirm Password"
                 secureTextEntry={true}
-                placeholder="••••••••"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
               />

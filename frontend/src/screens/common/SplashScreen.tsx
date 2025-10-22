@@ -20,7 +20,7 @@ const SplashScreen = ({ navigation }: any) => {
         }).start(() => {
           navigation.replace('Login');
         });
-      }, 900); // Show splash fully for 0.9s after fade-in
+      }, 2000); // Show splash fully for 2s after fade-in
     });
   }, [navigation, fadeAnim]);
 
