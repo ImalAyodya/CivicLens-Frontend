@@ -118,11 +118,13 @@ export default function PoliticianPromisesScreen() {
       // Status filter - show all if "All" is selected, otherwise match exact status
       const matchStatus = selectedStatus === 'All' || (p.promiseStatus === selectedStatus);
       
-      // Search filter - if search is empty, show all, otherwise check name and title
+      // Search filter - Fixed to use correct field names
       const matchSearch = search.trim() === '' || 
-        (p.promiseName && p.promiseName.toLowerCase().includes(search.toLowerCase())) ||
-        (p.title && p.title.toLowerCase().includes(search.toLowerCase()));
-      
+        (p.ministerName && p.ministerName.toLowerCase().includes(search.toLowerCase())) ||
+        (p.promiseTitle && p.promiseTitle.toLowerCase().includes(search.toLowerCase())) ||
+        (p.promiseDetails && p.promiseDetails.toLowerCase().includes(search.toLowerCase())) ||
+        (p.ministryName && p.ministryName.toLowerCase().includes(search.toLowerCase()));
+    
       return matchCategory && matchStatus && matchSearch;
     } catch (err) {
       console.error('Error filtering promise:', err, p);
