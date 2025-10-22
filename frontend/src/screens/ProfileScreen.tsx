@@ -129,11 +129,15 @@ const ProfileScreen = ({ navigation }: any) => {
             />
           </View>
           <Text style={styles.name}>{user.fullName}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.email}>{user.name}</Text>
         </View>
 
         <View style={styles.infoSection}>
           <Text style={styles.sectionTitle}>Personal Information</Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Email:</Text>
+            <Text style={styles.infoValue}>{user.email}</Text>
+          </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Phone Number:</Text>
             <Text style={styles.infoValue}>{user.phoneNumber}</Text>

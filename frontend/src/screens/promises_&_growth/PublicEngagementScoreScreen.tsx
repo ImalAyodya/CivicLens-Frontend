@@ -147,9 +147,9 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
     .map(([key, value], index) => ({
       name: `${reactionEmojis[key as keyof typeof reactionEmojis]} ${key}`,
       population: value,
-      color: ['#2563EB', '#EF4444', '#F59E0B', '#10B981'][index],
+      color: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'][index], // Better mobile colors
       legendFontColor: '#374151',
-      legendFontSize: 12
+      legendFontSize: 10 // Smaller font for mobile
     })) : [];
 
   if (loading) {
@@ -218,42 +218,35 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
             <Text style={styles.chartTitle}>Top 5 Most Engaging Promises</Text>
             <BarChart
               data={chartData}
-              width={screenWidth - 48}
-              height={220}
+              width={screenWidth - 64} // More padding for mobile
+              height={180} // Reduced height for mobile
               yAxisLabel=""
-              yAxisSuffix=" pts"
+              yAxisSuffix="pts" // Removed space for mobile
               chartConfig={{
-                backgroundColor: 'transparent', // Make transparent
-                backgroundGradientFrom: 'transparent', // Make transparent
-                backgroundGradientTo: 'transparent', // Make transparent
+                backgroundColor: 'transparent',
+                backgroundGradientFrom: 'transparent',
+                backgroundGradientTo: 'transparent',
                 decimalPlaces: 0,
-                color: (opacity = 1) => {
-                  // Beautiful gradient colors for bars
-                  const colors = [
-                    `rgba(59, 130, 246, ${opacity})`, // Blue
-                    `rgba(16, 185, 129, ${opacity})`, // Green  
-                    `rgba(245, 158, 11, ${opacity})`, // Yellow
-                    `rgba(239, 68, 68, ${opacity})`,  // Red
-                    `rgba(139, 92, 246, ${opacity})` // Purple
-                  ];
-                  return colors[0]; // Default color
-                },
-                labelColor: (opacity = 1) => `rgba(55, 65, 81, ${opacity})`, // Dark gray labels
+                color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`, // Consistent blue
+                labelColor: (opacity = 1) => `rgba(55, 65, 81, ${opacity})`,
                 style: {
-                  borderRadius: 16,
+                  borderRadius: 12,
+                  paddingRight: 0, // Remove extra padding
                 },
-                propsForDots: {
-                  r: '6',
-                  strokeWidth: '2',
-                  stroke: '#2563EB'
+                propsForBackgroundLines: {
+                  strokeWidth: 1,
+                  stroke: '#F3F4F6',
+                  strokeDasharray: '0', // Solid lines for mobile
                 },
-                // Remove these two lines that cause dark background:
-                // fillShadowGradient: '#2563EB',
-                // fillShadowGradientOpacity: 0.8,
+                barPercentage: 0.7, // Make bars thinner for mobile
               }}
-              style={{ ...styles.chart, backgroundColor: 'transparent' }} // Make transparent
+              style={styles.chart}
               fromZero={true}
-              segments={4}
+              segments={3} // Fewer segments for mobile
+              showValuesOnTopOfBars={false} // Hide values on top for cleaner look
+              withHorizontalLabels={true}
+              withVerticalLabels={true}
+              withInnerLines={true}
             />
             
             {/* Legend showing actual promise names */}
@@ -280,16 +273,18 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
             <Text style={styles.chartTitle}>Reaction Distribution - Top Promise</Text>
             <PieChart
               data={pieData}
-              width={screenWidth - 48}
-              height={200}
+              width={screenWidth - 64} // More padding for mobile
+              height={160} // Reduced height for mobile
               chartConfig={{
                 color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               }}
               accessor="population"
               backgroundColor="transparent"
-              paddingLeft="15"
-              absolute
+              paddingLeft="5" // Reduced padding for mobile
+              absolute={false} // Show percentages instead of absolute values
               style={styles.chart}
+              hasLegend={true}
+              center={[10, 0]} // Center the chart better on mobile
             />
           </View>
         )}
@@ -550,24 +545,26 @@ const styles = StyleSheet.create({
   },
   chartCard: {
     backgroundColor: '#fff',
-    marginHorizontal: 16,
+    marginHorizontal: 12, // Reduced margin for mobile
     marginBottom: 16,
     borderRadius: 16,
-    padding: 20,
+    padding: 16, // Reduced padding for mobile
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
   },
   chartTitle: {
-    fontSize: 18,
+    fontSize: 16, // Slightly smaller for mobile
     fontWeight: 'bold',
     color: '#1F2937',
-    marginBottom: 16,
+    marginBottom: 12, // Reduced margin
     textAlign: 'center',
   },
   chart: {
-    borderRadius: 16,
+    borderRadius: 12,
+    alignSelf: 'center', // Center charts on mobile
+    marginLeft: -10, // Adjust positioning for mobile
   },
   listCard: {
     backgroundColor: '#fff',
@@ -668,46 +665,48 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   chartLegend: {
-    marginTop: 16,
-    paddingTop: 16,
+    marginTop: 12, // Reduced for mobile
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#F3F4F6',
   },
   legendTitle: {
-    fontSize: 16,
+    fontSize: 14, // Smaller for mobile
     fontWeight: '600',
     color: '#374151',
-    marginBottom: 12,
+    marginBottom: 8, // Reduced margin
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+    paddingVertical: 6, // Reduced padding
+    paddingHorizontal: 2,
+    flexWrap: 'wrap', // Allow wrapping on mobile
   },
   legendColor: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 8,
+    width: 10, // Smaller for mobile
+    height: 10,
+    borderRadius: 5,
+    marginRight: 6,
   },
   legendRank: {
-    fontSize: 12,
+    fontSize: 11, // Smaller for mobile
     fontWeight: '600',
     color: '#374151',
-    minWidth: 40,
+    minWidth: 35, // Reduced width
   },
   legendPromise: {
     flex: 1,
-    fontSize: 12,
+    fontSize: 11, // Smaller for mobile
     color: '#6B7280',
-    marginLeft: 4,
-    marginRight: 8,
+    marginLeft: 2,
+    marginRight: 6,
   },
   legendScore: {
-    fontSize: 12,
+    fontSize: 11, // Smaller for mobile
     fontWeight: '600',
     color: '#2563EB',
+    minWidth: 35, // Ensure consistent width
   },
 });
 
