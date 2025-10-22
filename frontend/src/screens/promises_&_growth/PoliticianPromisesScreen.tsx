@@ -337,7 +337,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: 16,
     overflow: 'hidden',
-    marginTop: 16, // <-- Add this line for top margin
   },
   categoryTab: {
     flex: 1,

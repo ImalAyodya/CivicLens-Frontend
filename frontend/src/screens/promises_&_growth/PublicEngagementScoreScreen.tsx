@@ -3,11 +3,11 @@ import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { BarChart, PieChart } from 'react-native-chart-kit';
 import axios from 'axios';
-import PoliticianPromisesHeader from '~/components/PoliticianPromisesHeader';
+import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 import BottomNavBar from '../../components/BottomNavBar';
-import Header from '~/components/Header';
+// import Header from '~/components/Header';
 
-const API_BASE_URL = 'http://localhost:5000/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
 const screenWidth = Dimensions.get('window').width;
 
 // Scoring system for reactions
@@ -133,10 +133,9 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
     }
   };
 
-  // Prepare chart data for top 5
+  // Prepare chart data for top 5 - Updated with simple labels
   const chartData = {
-    labels: top5Scores.map(score => score.promiseTitle.length > 15 ? 
-      score.promiseTitle.substring(0, 15) + '...' : score.promiseTitle),
+    labels: top5Scores.map((_, index) => `Top ${index + 1}`), // Simple labels like "Top 1", "Top 2"
     datasets: [{
       data: top5Scores.map(score => score.totalScore)
     }]
@@ -164,7 +163,7 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <PoliticianPromisesHeader navigation={navigation} pageTitle="Public Engagement Score" />
+      <PoliticianPromisesHeader navigation={navigation} pageTitle="Civic Insights Score" />
       
       {/* Back Button */}
       <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
@@ -175,7 +174,7 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
         {/* Page Title */}
         <View style={styles.titleContainer}>
           <MaterialIcons name="analytics" size={32} color="#2563EB" />
-          <Text style={styles.pageTitle}>Public Engagement Score</Text>
+          <Text style={styles.pageTitle}>Civic Insights Score</Text>
           <Text style={styles.pageSubtitle}>
             Based on direct reactions to political promises
           </Text>
@@ -212,20 +211,6 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
           </View>
         )}
 
-        {/* Scoring System Info */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Point System</Text>
-          <Text style={styles.infoSubtitle}>Points awarded for each reaction on promises:</Text>
-          <View style={styles.scoreList}>
-            {Object.entries(REACTION_SCORES).map(([type, score]) => (
-              <View key={type} style={styles.scoreItem}>
-                <Text style={styles.reactionEmoji}>{reactionEmojis[type as keyof typeof reactionEmojis]}</Text>
-                <Text style={styles.reactionName}>{type.charAt(0).toUpperCase() + type.slice(1)}</Text>
-                <Text style={styles.reactionScore}>{score} points</Text>
-              </View>
-            ))}
-          </View>
-        </View>
 
         {/* Top 5 Chart */}
         {top5Scores.length > 0 && top5Scores.some(score => score.totalScore > 0) && (
@@ -238,27 +223,58 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
               yAxisLabel=""
               yAxisSuffix=" pts"
               chartConfig={{
-                backgroundColor: '#ffffff',
-                backgroundGradientFrom: '#ffffff',
-                backgroundGradientTo: '#ffffff',
+                backgroundColor: 'transparent', // Make transparent
+                backgroundGradientFrom: 'transparent', // Make transparent
+                backgroundGradientTo: 'transparent', // Make transparent
                 decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(55, 65, 81, ${opacity})`,
+                color: (opacity = 1) => {
+                  // Beautiful gradient colors for bars
+                  const colors = [
+                    `rgba(59, 130, 246, ${opacity})`, // Blue
+                    `rgba(16, 185, 129, ${opacity})`, // Green  
+                    `rgba(245, 158, 11, ${opacity})`, // Yellow
+                    `rgba(239, 68, 68, ${opacity})`,  // Red
+                    `rgba(139, 92, 246, ${opacity})` // Purple
+                  ];
+                  return colors[0]; // Default color
+                },
+                labelColor: (opacity = 1) => `rgba(55, 65, 81, ${opacity})`, // Dark gray labels
                 style: {
-                  borderRadius: 16
+                  borderRadius: 16,
                 },
                 propsForDots: {
                   r: '6',
                   strokeWidth: '2',
                   stroke: '#2563EB'
-                }
+                },
+                // Remove these two lines that cause dark background:
+                // fillShadowGradient: '#2563EB',
+                // fillShadowGradientOpacity: 0.8,
               }}
-              style={styles.chart}
+              style={{ ...styles.chart, backgroundColor: 'transparent' }} // Make transparent
+              fromZero={true}
+              segments={4}
             />
+            
+            {/* Legend showing actual promise names */}
+            <View style={styles.chartLegend}>
+              <Text style={styles.legendTitle}>Promise Rankings:</Text>
+              {top5Scores.map((score, index) => (
+                <View key={score.promiseId} style={styles.legendItem}>
+                  <View style={[styles.legendColor, { backgroundColor: getLegendColor(index) }]} />
+                  <Text style={styles.legendRank}>Top {index + 1}:</Text>
+                  <Text style={styles.legendPromise} numberOfLines={2}>
+                    {score.promiseTitle}
+                  </Text>
+                  <Text style={styles.legendScore}>{score.totalScore} pts</Text>
+                </View>
+              ))}
+            </View>
           </View>
         )}
 
-        {/* Reaction Distribution Pie Chart */}
+
+                        {/* Reaction Distribution Pie Chart */}
         {topScorer && pieData.length > 0 && (
           <View style={styles.chartCard}>
             <Text style={styles.chartTitle}>Reaction Distribution - Top Promise</Text>
@@ -322,6 +338,21 @@ export default function PublicEngagementScoreScreen({ navigation }: any) {
             </Text>
           </View>
         )}
+
+                {/* Scoring System Info */}
+        <View style={styles.infoCard}>
+          <Text style={styles.infoTitle}>Point System</Text>
+          <Text style={styles.infoSubtitle}>Points awarded for each reaction on promises:</Text>
+          <View style={styles.scoreList}>
+            {Object.entries(REACTION_SCORES).map(([type, score]) => (
+              <View key={type} style={styles.scoreItem}>
+                <Text style={styles.reactionEmoji}>{reactionEmojis[type as keyof typeof reactionEmojis]}</Text>
+                <Text style={styles.reactionName}>{type.charAt(0).toUpperCase() + type.slice(1)}</Text>
+                <Text style={styles.reactionScore}>{score} points</Text>
+              </View>
+            ))}
+          </View>
+        </View>
       </ScrollView>
 
       <BottomNavBar 
@@ -636,4 +667,52 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
   },
+  chartLegend: {
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+  },
+  legendTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 12,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 8,
+  },
+  legendRank: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#374151',
+    minWidth: 40,
+  },
+  legendPromise: {
+    flex: 1,
+    fontSize: 12,
+    color: '#6B7280',
+    marginLeft: 4,
+    marginRight: 8,
+  },
+  legendScore: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#2563EB',
+  },
 });
+
+// Helper function to get legend colors
+const getLegendColor = (index: number) => {
+  const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+  return colors[index] || '#6B7280';
+};

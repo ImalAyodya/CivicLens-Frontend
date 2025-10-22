@@ -8,14 +8,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // For web image upload
 const isWeb = Platform.OS === 'web';
 
-const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
+const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/api/users';
 
 const ProfileScreen = ({ navigation }: any) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [editVisible, setEditVisible] = useState(false);
   const [editData, setEditData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     phoneNumber: '',
     nic: '',
@@ -47,7 +47,7 @@ const ProfileScreen = ({ navigation }: any) => {
 
   const openEditModal = () => {
     setEditData({
-      fullName: user.fullName || '',
+      name: user.name || '',
       email: user.email || '',
       phoneNumber: user.phoneNumber || '',
       nic: user.nic || '',
@@ -179,9 +179,9 @@ const ProfileScreen = ({ navigation }: any) => {
             </View>
             <TextInput
               style={styles.input}
-              placeholder="Full Name"
-              value={editData.fullName}
-              onChangeText={text => setEditData({ ...editData, fullName: text })}
+              placeholder="Name"
+              value={editData.name}
+              onChangeText={text => setEditData({ ...editData, name: text })}
             />
             <TextInput
               style={styles.input}
@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     alignItems: 'center',
+    top: 100,
     paddingVertical: 32,
     paddingHorizontal: 16,
   },
@@ -354,7 +355,7 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     position: 'absolute',
-    top: 44,
+    top: 60,
     left: 18,
     zIndex: 10,
     backgroundColor: 'rgba(37,99,235,0.7)',
