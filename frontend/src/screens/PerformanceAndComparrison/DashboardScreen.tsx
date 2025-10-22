@@ -359,19 +359,33 @@ const getStatusStyle = (status: string) => {
           </View>
           
           {/* Search Bar */}
-         <View className="px-4 py-3">
-          <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-2">
-            <Text className="text-gray-500 mr-2">🔍</Text>
-            <TextInput
-              placeholder="Search for a politician..."
-              value={searchText}
-              onChangeText={setSearchText}
-              className="flex-1 text-base text-gray-800"
-              style={{ paddingVertical: 0 }}
-              underlineColorAndroid="transparent"
-            />
-          </View>
-        </View>
+         <View style={{
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginHorizontal: 16,
+  marginBottom: 12,
+  marginTop: 16,
+  paddingHorizontal: 12,
+  backgroundColor: '#F9FAFB',
+  borderWidth: 1,
+  borderColor: '#E2E8F0',
+  borderRadius: 20,
+}}>
+  <Ionicons name="search-outline" size={16} color="#9CA3AF" style={{ marginRight: 6 }} />
+  <TextInput
+    style={{
+      flex: 1,
+      height: 36,
+      fontSize: 14,
+      color: '#1E293B',
+    }}
+    placeholder="Search for a politician..."
+    value={searchText}
+    onChangeText={setSearchText}
+    placeholderTextColor="#9CA3AF"
+    underlineColorAndroid="transparent"
+  />
+</View>
           
           {/* Politicians List */}
           <View className="px-4 py-4">

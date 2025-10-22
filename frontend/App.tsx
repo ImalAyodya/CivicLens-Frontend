@@ -56,6 +56,7 @@ import LevelListScreen from './src/screens/adminPanel/LevelListScreen';
 import AddLevelScreen from './src/screens/adminPanel/AddLevelScreen';
 import PastElectionDetailsScreen from '~/screens/elections/PastElectionDetailsScreen';
 import ElectionPredictionsScreen from './src/screens/elections/ElectionPredictionsScreen';
+import SplashScreen from './src/screens/common/SplashScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -64,13 +65,14 @@ export default function App() {
     <UserProvider>
     <NavigationContainer>
       <Stack.Navigator 
-        initialRouteName="Login"
+        initialRouteName="Splash"
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: 'transparent' },
           animation: 'slide_from_right'
         }}
       >
+        <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />

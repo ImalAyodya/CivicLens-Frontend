@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "CivicLens",
+    "slug": "CivicLens",
     "version": "1.0.0",
     "web": {
       "bundler": "metro",

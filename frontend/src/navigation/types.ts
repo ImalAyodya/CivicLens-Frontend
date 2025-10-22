@@ -2,6 +2,7 @@ import { AIQuestion, UserAnswer } from '../services/types';
 import { NewsItem } from '../types/news';
 
 export type RootStackParamList = {
+  Splash: undefined;
   Login: undefined;
   SignUp: undefined;
   Home: undefined;
