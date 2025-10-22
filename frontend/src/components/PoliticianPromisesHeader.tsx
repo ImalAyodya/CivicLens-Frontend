@@ -39,7 +39,7 @@ const menuItems: MenuItem[] = [
   // { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
   { id: '13', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
   { id: '14', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
-  { id: '15', title: 'WatchList', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'WatchList' },
+  { id: '15', title: 'Civic Insight Score', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'PublicEngagementScore' },
   { id: '16', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
   { id: '17', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
 ];
@@ -50,7 +50,7 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
   const allowedScreens = [
     'Home', 'Login', 'Dashboard', 'Hierarchy', 'Comparison',
     'PoliticalQuiz', 'PoliBot', 'QuizHistory', 'HelpAndSupport',
-    'Notifications', 'Profile', 'WatchList', 'MinistryPerformance',
+    'Notifications', 'Profile', 'PublicEngagementScore', 'MinistryPerformance',
     'GrowthNews', 'NewsFeed', 'ElectionCountdown', 'PastElections', 'PoliticianPromises'
   ];
 
@@ -80,7 +80,7 @@ export default function PoliticianPromisesHeader({ navigation, pageTitle = "Poli
               <NotificationIcon />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate('Profile')}
+              onPress={() => navigation.navigate('UserProfile')}
               activeOpacity={0.7}
             >
               <ProfileIcon />

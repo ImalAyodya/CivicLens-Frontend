@@ -335,8 +335,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E8F0',
     borderRadius: 20,
     marginHorizontal: 16,
+    marginTop: 16,
     overflow: 'hidden',
-    marginTop: 16, // <-- Add this line for top margin
   },
   categoryTab: {
     flex: 1,

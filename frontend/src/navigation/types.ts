@@ -88,6 +88,7 @@ QuizQuestion: {
     // other params
   };
   ElectionPredictions: { electionId: string };
+  PublicEngagementScore: undefined;
 };
 
 
