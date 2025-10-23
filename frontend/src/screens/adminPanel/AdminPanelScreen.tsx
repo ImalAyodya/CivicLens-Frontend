@@ -1,8 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React,{ useState }  from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AdminSidebar from '../../components/admin/AdminSidebar'; // 👈 import your sidebar component
+
+const { width } = Dimensions.get('window');
 
 const AdminPanelScreen = ({ navigation }: any) => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   // Dummy data
   const stats = {
     politicians: 247,
@@ -23,6 +27,17 @@ const AdminPanelScreen = ({ navigation }: any) => {
   ];
 
   return (
+
+    <View style={styles.mainContainer}>
+      {/* Sidebar */}
+      <View style={styles.sidebarContainer}>
+        <AdminSidebar 
+          activeScreen="politician-management" 
+          isMobile={width < 768} 
+          closeMenu={() => setSidebarOpen(false)} 
+        />
+      </View>
+
     <ScrollView style={styles.container}>
       {/* Top Stats */}
       <View style={styles.statsCard}>
@@ -160,6 +175,7 @@ const AdminPanelScreen = ({ navigation }: any) => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+     </View>
   );
 };
 
@@ -167,6 +183,11 @@ export default AdminPanelScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f0f4ff' },
+  mainContainer: { flex: 1, flexDirection: 'row', backgroundColor: '#f0f4ff' },
+  sidebarContainer: { width: 220, backgroundColor: '#fff', borderRightWidth: 1, borderRightColor: '#e5e7eb' },
+  contentContainer: { flex: 1, padding: 16 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  headerTitle: { fontSize: 18, fontWeight: 'bold', marginLeft: 8 },
   statsCard: { backgroundColor: '#4f6df5', borderRadius: 12, padding: 16, marginBottom: 16 },
   statsTitle: { fontSize: 18, color: '#fff', fontWeight: 'bold' },
   statsSubtitle: { fontSize: 14, color: '#dfe4ff', marginBottom: 12 },

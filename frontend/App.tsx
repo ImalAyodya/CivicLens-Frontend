@@ -1,3 +1,5 @@
+import 'text-encoding';
+import PoliticalPartyListScreen from './src/screens/party/PoliticalPartyListScreen';
 import React from 'react';
 import './global.css';
 import { NavigationContainer } from '@react-navigation/native';
@@ -20,6 +22,8 @@ import NewsDetailScreen from './src/screens/news/NewsDetailScreen';
 import NotificationsScreen from './src/screens/notifications/NotificationsScreen';
 import ElectionCountdownScreen from './src/screens/elections/ElectionCountdownScreen';
 import PastElectionsScreen from './src/screens/elections/PastElectionsScreen';
+import ElectionScreen from './src/screens/virtualElection/ElectionScreen';
+import AddElectionScreen from './src/screens/virtualElection/AddElectionScreen';
 import DirectoryScreen from './src/screens/politicianDirectory/DirectoryScreen';
 import AdminPanelScreen from './src/screens/adminPanel/AdminPanelScreen';
 import HierarchyScreen from './src/screens/politicianHierarchy/HierarchyScreen';
@@ -58,13 +62,15 @@ import PastElectionDetailsScreen from '~/screens/elections/PastElectionDetailsSc
 import ElectionPredictionsScreen from './src/screens/elections/ElectionPredictionsScreen';
 import SplashScreen from './src/screens/common/SplashScreen';
 
+
 // Import the new screens
 import NewsListScreen from './src/screens/adminPanel/NewsListScreen';
 import AddNewsScreen from './src/screens/adminPanel/AddNewsScreen';
 import EditNewsScreen from './src/screens/adminPanel/EditNewsScreen';
 import ElectionListScreen from './src/screens/adminPanel/ElectionListScreen';
-import AddElectionScreen from './src/screens/adminPanel/AddElectionScreen';
+import AdminAddElectionScreen from './src/screens/adminPanel/AddElectionScreen';
 import EditElectionScreen from './src/screens/adminPanel/EditElectionScreen';
+import ElectionResult   from './src/screens/virtualElection/ElectionResultScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -105,6 +111,8 @@ export default function App() {
         <Stack.Screen name="ElectionCountdown" component={ElectionCountdownScreen} />
         <Stack.Screen name="PastElections" component={PastElectionsScreen} />
         <Stack.Screen name="PastElectionDetails" component={PastElectionDetailsScreen} />
+        <Stack.Screen name="ElectionScreen" component={ElectionScreen} />
+        <Stack.Screen name="AddElectionScreen" component={AddElectionScreen} />
         <Stack.Screen name="DirectoryScreen" component={DirectoryScreen} />
         <Stack.Screen name="PoliticianDetails" component={PoliticianProfileScreen} />
         <Stack.Screen name="AdminPanel" component={AdminPanelScreen} />
@@ -123,14 +131,16 @@ export default function App() {
         <Stack.Screen name="PoliticianPromises" component={PoliticianPromisesScreen} />
         <Stack.Screen name="GrowthNews" component={GrowthNewsScreen} />
         <Stack.Screen name="MinistryPerformance" component={MinistryPerformanceScreen} />
-        <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} />
-        <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
-        <Stack.Screen name="QuizHistory" component={QuizHistoryScreen} />
-        <Stack.Screen name="QuizSummary" component={QuizSummaryScreen} />
-        <Stack.Screen name="QuizDetail" component={QuizDetailScreen} />
-        <Stack.Screen name="HelpAndSupport" component={HelpAndSupportScreen} />
-        <Stack.Screen name="SupportHistory" component={SupportHistoryScreen} />
-        <Stack.Screen name="SupportDetail" component={SupportDetailScreen} />
+  <Stack.Screen name="PromiseDetail" component={PromiseDetailScreen} />
+  <Stack.Screen name="GrowthNewsDetail" component={GrowthNewsDetailScreen} />
+  <Stack.Screen name="QuizHistory" component={QuizHistoryScreen} />
+  <Stack.Screen name="QuizSummary" component={QuizSummaryScreen} />
+  <Stack.Screen name="QuizDetail" component={QuizDetailScreen} />
+  <Stack.Screen name="PoliticalPartyList" component={PoliticalPartyListScreen} />
+  <Stack.Screen name="ElectionResultScreen" component={ElectionResult} />
+  <Stack.Screen name="HelpAndSupport" component={HelpAndSupportScreen} />
+  <Stack.Screen name="SupportHistory" component={SupportHistoryScreen} />
+  <Stack.Screen name="SupportDetail" component={SupportDetailScreen} />
         
         {/* Admin Screens */}
         <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
@@ -143,7 +153,7 @@ export default function App() {
         <Stack.Screen name="AddNews" component={AddNewsScreen} />
         <Stack.Screen name="EditNews" component={EditNewsScreen} />
         <Stack.Screen name="ElectionList" component={ElectionListScreen} />
-        <Stack.Screen name="AddElection" component={AddElectionScreen} />
+        <Stack.Screen name="AddElection" component={AdminAddElectionScreen} />
         <Stack.Screen name="EditElection" component={EditElectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
