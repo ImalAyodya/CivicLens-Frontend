@@ -1,3 +1,4 @@
+import 'text-encoding';
 import React from 'react';
 import './global.css';
 import { NavigationContainer } from '@react-navigation/native';
