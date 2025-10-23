@@ -4,12 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import BottomNavBar from '../../components/BottomNavBar';
 import PoliticianPromisesHeader from '../../components/PoliticianPromisesHeader';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import * as IntentLauncher from 'expo-intent-launcher';
 import * as Sharing from 'expo-sharing';
 // import { FileSystemDirectory, FileSystemFile } from 'expo-file-system';
 
 const API_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/promise/api';
+const USER_BASE_URL = 'https://civiclens-backend-production-2c6d.up.railway.app/api/users';
 
 const evidenceIcon = (type: string) => {
   switch (type?.toLowerCase()) {
@@ -58,10 +60,26 @@ export default function GrowthNewsDetailScreen({ route, navigation }: any) {
   const [error, setError] = useState<string | null>(null);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     fetchNewsById();
+    getCurrentUser();
   }, [newsId]);
+
+  const getCurrentUser = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        const response = await axios.get(`${USER_BASE_URL}/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setCurrentUser(response.data);
+      }
+    } catch (err) {
+      console.log('Error getting current user:', err);
+    }
+  };
 
   const fetchNewsById = async () => {
     try {
@@ -79,11 +97,12 @@ export default function GrowthNewsDetailScreen({ route, navigation }: any) {
 
   const handleAddComment = () => {
     if (comment.trim()) {
+      const userName = currentUser?.name || currentUser?.fullName || 'You';
       setComments([
         ...comments,
         {
           id: comments.length + 1,
-          name: 'You',
+          name: userName,
           date: new Date().toISOString().slice(0, 10),
           comment,
         },

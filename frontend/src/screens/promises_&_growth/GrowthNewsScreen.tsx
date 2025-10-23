@@ -94,10 +94,11 @@ export default function GrowthNewsScreen({ navigation }: { navigation: any }) {
                 <Text style={styles.categoryTagText}>{news.newsCategory}</Text>
               </View>
               <Text style={styles.newsTitle}>{news.newsTitle}</Text>
-              <Text style={styles.newsDesc}>{news.newsDetails}</Text>
               <View style={styles.newsMeta}>
                 <Ionicons name="calendar-outline" size={14} color="#64748B" />
-                <Text style={styles.newsDate}>{news.newsDate}</Text>
+                <Text style={styles.newsDate}>
+                  {news.newsDate ? new Date(news.newsDate).toISOString().slice(0, 10).replace(/-/g, '-') : ''}
+                </Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
   },
   newsImage: {
     width: '100%',
-    height: 110,
+    height: 150,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     backgroundColor: '#F3F4F6',
