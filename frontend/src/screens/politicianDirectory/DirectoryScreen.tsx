@@ -163,7 +163,7 @@ const DirectoryScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Header/>
+      <Header navigation={navigation} />
       
       <View style={styles.content}>
         {/* Backend Status Indicator */}

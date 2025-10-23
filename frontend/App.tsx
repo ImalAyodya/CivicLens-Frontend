@@ -48,6 +48,7 @@ import AdminTicketDetailScreen from './src/screens/admin/AdminTicketDetailScreen
 
 import UserProfileScreen from './src/screens/ProfileScreen';
 import PoliticianProfileScreen from './src/screens/politicianProfile/ProfileScreen';
+import PublicEngagementScoreScreen from './src/screens/promises_&_growth/PublicEngagementScoreScreen';
 import type { RootStackParamList } from './src/navigation/types';
 import RoleListScreen from './src/screens/adminPanel/RoleListScreen';
 import AddRoleScreen from './src/screens/adminPanel/AddRoleScreen';
@@ -129,6 +130,7 @@ export default function App() {
         <Stack.Screen name="AdminTicketDetail" component={AdminTicketDetailScreen} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="ElectionPredictions" component={ElectionPredictionsScreen} />
+        <Stack.Screen name="PublicEngagementScore" component={PublicEngagementScoreScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </UserProvider>
