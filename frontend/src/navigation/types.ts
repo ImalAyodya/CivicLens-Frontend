@@ -47,12 +47,15 @@ QuizQuestion: {
     electionId: string;
   };
   ElectionMap: undefined;
+  ElectionScreen: undefined;
+  AddElectionScreen: undefined;
   ElectionLaws: undefined;
   PoliticianDetails: { id: string }; 
   DirectoryScreen: undefined;
   AdminPanel: undefined;
   AddParty: undefined;
   PartyList: undefined;
+  PoliticalPartyList: undefined;
   PoliticianList: undefined;
   AddPoliticianForm: undefined;
   RoleList: undefined;
@@ -95,6 +98,7 @@ QuizQuestion: {
   ElectionList: undefined;
   AddElection: undefined;
   EditElection: { electionId: string };
+  ElectionResultScreen: { electionId: string };
 };
 
 

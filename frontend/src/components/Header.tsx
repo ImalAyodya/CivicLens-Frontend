@@ -38,30 +38,22 @@ const Header: React.FC<HeaderProps> = ({
 
   // Combined menu items from both versions
   const menuItems: MenuItem[] = [
-    // Core navigation items
-    // { id: '1', title: 'Home', icon: <Ionicons name="home-outline" size={22} color="#2563EB" />, screen: 'Home' },
-    // { id: '2', title: 'Dashboard', icon: <Ionicons name="grid-outline" size={22} color="#2563EB" />, screen: 'Dashboard' },
-    { id: '3', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
-    { id: '4', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
-    { id: '5', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
-    { id: '6', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
-    { id: '7', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
-
-    // News & Election features
-    // { id: '8', title: 'News Feed', icon: <Ionicons name="newspaper-outline" size={22} color="#2563EB" />, screen: 'NewsFeed' },
-    { id: '9', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
-    { id: '10', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
-    // { id: '11', title: 'Politician Promises', icon: <MaterialIcons name="assignment" size={22} color="#2563EB" />, screen: 'PoliticianPromises' },
-    // { id: '12', title: 'Election Notifications', icon: <Ionicons name="notifications-outline" size={22} color="#2563EB" />, screen: 'Notifications' },
-
-    // Performance features
+    { id: '1', title: 'Political Hierarchy', icon: <Ionicons name="git-network-outline" size={22} color="#2563EB" />, screen: 'Hierarchy' },
+    { id: '2', title: 'Compare Politicians', icon: <Ionicons name="people-outline" size={22} color="#2563EB" />, screen: 'Comparison' },
+    { id: '3', title: 'Political Quiz', icon: <Ionicons name="help-circle-outline" size={22} color="#2563EB" />, screen: 'PoliticalQuiz' },
+    { id: '4', title: 'Quiz History', icon: <Ionicons name="time-outline" size={22} color="#2563EB" />, screen: 'QuizHistory' },
+    { id: '5', title: 'PoliBot Assistant', icon: <Ionicons name="chatbubble-ellipses-outline" size={22} color="#2563EB" />, screen: 'PoliBot' },
+    { id: '6', title: 'Virtual Election', icon: <Ionicons name="checkbox-outline" size={22} color="#2563EB" />, screen: 'ElectionScreen' },
+    { id: '7', title: 'Add Election', icon: <Ionicons name="add-circle-outline" size={22} color="#2563EB" />, screen: 'AddElectionScreen' },
+    { id: '8', title: 'All Parties', icon: <Ionicons name="flag-outline" size={22} color="#2563EB" />, screen: 'PoliticalPartyList' },
+    { id: '9', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
+    { id: '10', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+    { id: '11', title: 'Election Countdown', icon: <Ionicons name="timer-outline" size={22} color="#2563EB" />, screen: 'ElectionCountdown' },
+    { id: '12', title: 'Past Elections', icon: <Ionicons name="albums-outline" size={22} color="#2563EB" />, screen: 'PastElections' },
     { id: '13', title: 'Growth News', icon: <Ionicons name="trending-up" size={22} color="#2563EB" />, screen: 'GrowthNews' },
     { id: '14', title: 'Ministry Performance', icon: <FontAwesome5 name="chart-bar" size={20} color="#2563EB" />, screen: 'MinistryPerformance' },
     { id: '15', title: 'Civic Insight Score', icon: <Ionicons name="eye" size={22} color="#2563EB" />, screen: 'PublicEngagementScore' },
-
-    // Supporting features
-    { id: '16', title: 'Help & Support', icon: <Ionicons name="information-circle-outline" size={22} color="#2563EB" />, screen: 'HelpAndSupport' },
-    { id: '17', title: 'Sign Out', icon: <Ionicons name="log-out-outline" size={22} color="#2563EB" />, screen: 'Login' },
+   
   ];
 
   const handleMenuPress = () => {
@@ -155,19 +147,30 @@ const Header: React.FC<HeaderProps> = ({
                   className="flex-row items-center px-4 py-3 border-b border-gray-200"
                   onPress={() => {
                     setMenuVisible(false);
-                    if (
-                      navigation &&
-                      [
-                        'Home', 'Login', 'Dashboard', 'Hierarchy', 'Comparison', 
-                        'PoliticalQuiz', 'PoliBot', 'QuizHistory', 'HelpAndSupport', 
+                    if (navigation) {
+                      // Add explicit navigation for All Parties
+                      if (item.screen === 'PoliticalPartyList') {
+                        navigation.navigate('PoliticalPartyList');
+                      } else if ([
+                        'Home',
+                        'Login',
+                        'Dashboard',
+                        'Hierarchy',
+                        'Comparison',
+                        'PoliticalQuiz',
+                        'PoliBot',
+                        'QuizHistory',
+                        'ElectionScreen',
+                        'AddElectionScreen',
+                        'HelpAndSupport',
                         'Notifications', 'Profile',
                         'PublicEngagementScore', 'MinistryPerformance', 'GrowthNews',
-                        'PastElections', 'ElectionCountdown' // <-- Add these!
-                      ].includes(item.screen)
-                    ) {
-                      navigation.navigate(item.screen);
-                    } else {
-                      console.log(`Screen ${item.screen} not implemented yet`);
+                        'PastElections', 'ElectionCountdown'
+                      ].includes(item.screen)) {
+                        navigation.navigate(item.screen);
+                      } else {
+                        console.log(`Screen ${item.screen} not implemented yet`);
+                      }
                     }
                   }}
                 >

@@ -24,6 +24,18 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       screen: 'AdminDashboard'
     },
     { 
+      id: 'politician-management',
+      title: 'Politician Management',
+      icon: 'person-outline',
+      screen: 'AdminPanel'
+    },
+    { 
+      id: 'virtual-election-management',
+      title: 'Virtual Election Management',
+      icon: 'checkbox-outline',
+      screen: 'AddElectionScreen'
+    },
+    { 
       id: 'support', 
       title: 'Support Tickets', 
       icon: 'help-buoy-outline',
