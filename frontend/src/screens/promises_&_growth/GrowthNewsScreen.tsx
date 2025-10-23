@@ -31,10 +31,19 @@ export default function GrowthNewsScreen({ navigation }: { navigation: any }) {
       setLoading(true);
       setError(null);
       const response = await axios.get(`${API_BASE_URL}/api/growthNews`);
-      setNewsData(Array.isArray(response.data) ? response.data : []);
+      const data = Array.isArray(response.data) ? response.data : [];
+      
+      // Debug: Log the data structure to help identify field names
+      if (data.length > 0) {
+        console.log('First news item structure:', data[0]);
+        console.log('Available categories:', [...new Set(data.map(news => news.newsCategory || news.category))]);
+      }
+      
+      setNewsData(data);
     } catch (err) {
       setError('Failed to fetch news data');
       setNewsData([]);
+      console.error('Error fetching news:', err);
     } finally {
       setLoading(false);
     }
@@ -42,7 +51,17 @@ export default function GrowthNewsScreen({ navigation }: { navigation: any }) {
 
   const filteredNews = selectedType === 'All'
     ? newsData
-    : newsData.filter(news => news.category === selectedType);
+    : newsData.filter(news => {
+        const matches = news.newsCategory === selectedType || news.category === selectedType;
+        // Debug logging
+        if (newsData.length > 0 && selectedType !== 'All') {
+          console.log(`Filtering news: ${news.newsTitle || 'Unknown'}, Category: ${news.newsCategory || news.category}, Selected: ${selectedType}, Matches: ${matches}`);
+        }
+        return matches;
+      });
+
+  // Debug: Log filtering results
+  console.log(`Total news: ${newsData.length}, Filtered: ${filteredNews.length}, Selected filter: ${selectedType}`);
 
   return (
     <View style={styles.container}>
@@ -97,7 +116,7 @@ export default function GrowthNewsScreen({ navigation }: { navigation: any }) {
               <View style={styles.newsMeta}>
                 <Ionicons name="calendar-outline" size={14} color="#64748B" />
                 <Text style={styles.newsDate}>
-                  {news.newsDate ? new Date(news.newsDate).toISOString().slice(0, 10).replace(/-/g, '-') : ''}
+                  {news.newsDate ? new Date(news.newsDate).toISOString().slice(0, 10).replace(/-/g, '/') : ''}
                 </Text>
               </View>
             </View>
