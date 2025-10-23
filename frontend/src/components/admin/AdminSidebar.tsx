@@ -53,6 +53,18 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
       icon: 'settings-outline',
       screen: 'AdminSettings'
     },
+    { 
+      id: 'news', 
+      title: 'News Management', 
+      icon: 'newspaper-outline',
+      screen: 'NewsList'
+    },
+    { 
+      id: 'elections', 
+      title: 'Elections Management', 
+      icon: 'calendar-outline',
+      screen: 'ElectionList'
+    },
   ];
 
   const handleNavigation = (screen: string) => {
