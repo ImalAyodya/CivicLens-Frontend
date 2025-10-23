@@ -110,6 +110,32 @@ const AdminPanelScreen = ({ navigation }: any) => {
             <Text style={styles.active}>View & Manage</Text>
           </View>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("NewsList")}>
+          <View style={styles.cardHeader}>
+            <Ionicons name="newspaper" size={24} color="#3498db" />
+            <View style={styles.cardTitleContainer}>
+              <Text style={styles.cardTitle}>News</Text>
+              <Text style={styles.cardSubtitle}>Manage news articles</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#64748B" />
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("ElectionList")}>
+          <View style={styles.cardHeader}>
+            <Ionicons name="calendar" size={24} color="#3498db" />
+            <View style={styles.cardTitleContainer}>
+              <Text style={styles.cardTitle}>Elections</Text>
+              <Text style={styles.cardSubtitle}>Manage elections & voting</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#64748B" />
+          </View>
+          <View style={styles.cardInfo}>
+            <Text style={styles.active}>{`Upcoming: ${stats.election2024}`}</Text>
+            <Text style={styles.inactive}>{`Past: ${stats.election2020}`}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* Recent Activity */}

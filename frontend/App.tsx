@@ -59,6 +59,14 @@ import PastElectionDetailsScreen from '~/screens/elections/PastElectionDetailsSc
 import ElectionPredictionsScreen from './src/screens/elections/ElectionPredictionsScreen';
 import SplashScreen from './src/screens/common/SplashScreen';
 
+// Import the new screens
+import NewsListScreen from './src/screens/adminPanel/NewsListScreen';
+import AddNewsScreen from './src/screens/adminPanel/AddNewsScreen';
+import EditNewsScreen from './src/screens/adminPanel/EditNewsScreen';
+import ElectionListScreen from './src/screens/adminPanel/ElectionListScreen';
+import AddElectionScreen from './src/screens/adminPanel/AddElectionScreen';
+import EditElectionScreen from './src/screens/adminPanel/EditElectionScreen';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
@@ -132,6 +140,12 @@ export default function App() {
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="ElectionPredictions" component={ElectionPredictionsScreen} />
         <Stack.Screen name="PublicEngagementScore" component={PublicEngagementScoreScreen} />
+        <Stack.Screen name="NewsList" component={NewsListScreen} />
+        <Stack.Screen name="AddNews" component={AddNewsScreen} />
+        <Stack.Screen name="EditNews" component={EditNewsScreen} />
+        <Stack.Screen name="ElectionList" component={ElectionListScreen} />
+        <Stack.Screen name="AddElection" component={AddElectionScreen} />
+        <Stack.Screen name="EditElection" component={EditElectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
     </UserProvider>
